@@ -5,7 +5,8 @@
   "description": "Android wrapper for VIVO social network",
   "scripts": {
     "android:sync": "cap sync android",
-    "android:open": "cap open android"
+    "android:open": "cap open android",
+    "android:build": "npx cap sync android && cd android && ./gradlew --no-daemon assembleDebug"
   },
   "dependencies": {
     "@capacitor/android": "^7.4.3",
