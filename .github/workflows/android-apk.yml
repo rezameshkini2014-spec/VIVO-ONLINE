@@ -1,0 +1,51 @@
+name: Build VIVO Android APK
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - 'index.html'
+      - 'manifest.webmanifest'
+      - 'sw.js'
+      - 'package.json'
+      - 'capacitor.config.json'
+      - 'www/**'
+      - '.github/workflows/android-apk.yml'
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout source
+        uses: actions/checkout@v4
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Set up Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '21'
+      - name: Install dependencies
+        run: npm install
+      - name: Generate Android project
+        run: npx cap add android
+      - name: Sync Android project
+        run: npx cap sync android
+      - name: Build installable debug APK
+        run: cd android && chmod +x gradlew && ./gradlew assembleDebug
+      - name: Publish APK to GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: vivo-android-${{ github.run_number }}
+          name: VIVO Android build ${{ github.run_number }}
+          body: |
+            VIVO Android test build.
+            This APK is an installable debug build and requires an internet connection to load the current VIVO web app.
+          files: android/app/build/outputs/apk/debug/app-debug.apk
+          make_latest: true
