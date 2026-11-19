@@ -99,6 +99,75 @@ body[data-font="small"]{font-size:13px}body[data-font="large"]{font-size:16px}
 .vs-swatches,.vs-actions{display:flex;gap:8px;flex-wrap:wrap}.vs-swatch{border:2px solid transparent;border-radius:13px;padding:8px 12px;background:#1a2d37;color:#eaf5f4}.vs-swatch.active{border-color:#70dfc6;box-shadow:0 0 0 3px #70dfc620}.vs-actions{margin-top:12px}.vs-actions button{padding:10px 13px}
 .msg-attachment{display:block;max-width:min(100%,420px);margin:8px 0}.msg-attachment img{display:block;max-width:100%;max-height:340px;object-fit:contain;border-radius:12px}.msg-attachment audio,.msg-attachment video{max-width:100%}.msg-file{display:flex;gap:8px;padding:10px;border:1px solid #ffffff22;border-radius:11px;color:inherit;text-decoration:none;overflow-wrap:anywhere}.msg-reaction{margin-top:5px;font-size:12px}
 @media(max-width:620px){.settings-dialog{max-height:92dvh!important}.vs-body{grid-template-columns:1fr;min-height:0}.vs-nav{display:flex;overflow:auto;border-left:0;border-bottom:1px solid #304650;padding:8px}.vs-nav button{white-space:nowrap;width:auto;flex:none}.vs-panel{max-height:60dvh;padding:15px}.vs-head{padding:14px 16px}}
+
+/* VIVO mobile-first layout refinement */
+:root{--bg:#07111b;--panel:#0e1d29;--panel2:#142a38;--line:#294454;--text:#f3f8fa;--muted:#9bb0bd;--blue:#3c9ed0;--cyan:#35c8b1;--violet:#6688db;--shadow:0 24px 70px #0009}
+html,body{background:linear-gradient(160deg,#081724 0%,#07111b 52%,#091622 100%);overscroll-behavior-y:contain}
+.top{background:#091722f2;border-bottom-color:#294454}
+.logo{background:linear-gradient(145deg,#35c8b1,#1686a6 58%,#315caa);color:#06141c;box-shadow:0 8px 26px #22b9a344}
+.btn.primary,.send{background:linear-gradient(110deg,#087f70,#126a9b);box-shadow:0 8px 24px #087f7040}
+.iconbtn,.btn{border-color:#345364;background:#102432}
+.tab{white-space:nowrap}
+.tab.active{background:#126b60;border-color:#238c7d;color:#f4fffc}
+.chatrow:hover,.chatrow.active{background:#102b37;border-color:#286052}
+.avatar{background:linear-gradient(145deg,#087f70,#125b91 68%,#263e83)}
+.modal{padding:16px}
+.dialog{background:linear-gradient(155deg,#102431,#0a1722);border-color:#345363}
+.field{background:#0a1924;border-color:#36505e}
+.settings-dialog{width:min(100%,760px)!important;max-height:88dvh!important;overflow:hidden!important}
+.vs-body{min-height:0}
+.vs-panel{max-height:65dvh}
+.profile-dialog{max-height:88dvh!important}
+.empty{max-width:440px;margin:22px auto;padding:24px;border:1px solid #294653;border-radius:20px;background:linear-gradient(145deg,#102330,#0b1924);line-height:2.2}
+.mobilebar{background:#081722f7;border-top-color:#294454;padding-bottom:env(safe-area-inset-bottom);height:calc(60px + env(safe-area-inset-bottom))}
+@media(max-width:760px){
+ .top{height:58px;padding:0 12px}
+ .brand{font-size:18px}
+ .layout{min-height:calc(100dvh - 58px)}
+ .sidebar{padding:14px 13px calc(88px + env(safe-area-inset-bottom));min-height:calc(100dvh - 58px)}
+ .sidehead{margin:2px 1px 16px;gap:10px}
+ .sidehead h2{font-size:20px}
+ .sidehead .btn{padding:11px 13px;border-radius:14px}
+ .search{height:52px;border-radius:16px;margin-bottom:14px}
+ .tabs{gap:7px;padding:2px 0 8px;margin-bottom:10px;scrollbar-width:none}
+ .tab{padding:9px 14px;border-radius:999px;font-size:12px}
+ .chatlist{gap:7px}
+ .chatrow{padding:12px 10px;border:1px solid #1d3542;background:#0d1d28;border-radius:17px;min-height:72px}
+ .chatrow.active{background:#10312f;border-color:#28796c}
+ .chatmeta strong{font-size:14px}
+ .chatmeta small{font-size:11px;line-height:1.7}
+ .main{padding:12px 13px calc(76px + env(safe-area-inset-bottom));height:calc(100dvh - 58px)}
+ .welcome{margin:auto;padding:22px 12px;max-width:440px}
+ .welcome .heroicon{width:76px;height:76px;border-radius:25px;font-size:34px;margin-bottom:15px}
+ .welcome h1{font-size:23px}
+ .welcome p{font-size:13px;line-height:2}
+ .featuregrid{grid-template-columns:1fr 1fr;gap:8px;margin:18px 0}
+ .feature{padding:12px;border-radius:14px;font-size:14px}
+ .mobilebar{height:calc(62px + env(safe-area-inset-bottom));padding-bottom:env(safe-area-inset-bottom)}
+ .modal{align-items:flex-end;padding:10px 10px calc(10px + env(safe-area-inset-bottom))}
+ .dialog{width:100%;max-height:84dvh;border-radius:24px 24px 18px 18px;padding:20px 17px;overscroll-behavior:contain}
+ .settings-dialog{width:100%!important;max-height:88dvh!important;border-radius:23px!important}
+ .vs-head{padding:15px 16px}
+ .vs-head h2{font-size:18px}
+ .vs-body{display:flex;flex-direction:column;min-height:0}
+ .vs-nav{display:flex;gap:6px;overflow-x:auto;padding:9px 11px;border-left:0;border-bottom:1px solid #304650;scrollbar-width:none}
+ .vs-nav button{display:inline-block;flex:0 0 auto;width:auto;white-space:nowrap;padding:9px 12px;margin:0;font-size:12px}
+ .vs-panel{padding:14px 16px;max-height:calc(88dvh - 125px);overflow:auto}
+ .vs-section{padding:13px 0}
+ .profile-dialog{width:100%!important;max-height:88dvh!important;border-radius:22px!important}
+ .vp-cover{height:130px}
+ .vp-head{padding:0 16px 15px;gap:12px}
+ .vp-avatar{width:86px;height:86px;border-radius:25px}
+ .roomhead{gap:9px;padding-bottom:12px}
+ .messages{min-height:0;padding:14px 0}
+ .composer{padding-bottom:4px}
+}
+@media(max-width:380px){
+ .sidehead .btn{font-size:12px;padding:10px}
+ .tab{padding:8px 11px}
+ .vs-nav button{padding:8px 10px}
+}
+
 </style></head>
 <body>
 <section id="authScreen" class="authscreen">
