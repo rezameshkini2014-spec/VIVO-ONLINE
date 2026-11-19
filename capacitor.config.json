@@ -1,0 +1,16 @@
+{
+  "appId": "app.vivo.social",
+  "appName": "ویوو",
+  "webDir": "www",
+  "server": {
+    "url": "https://vivo-messenger.vercel.app",
+    "cleartext": false,
+    "allowNavigation": [
+      "vivo-messenger.vercel.app",
+      "otp-push-server.vercel.app"
+    ]
+  },
+  "android": {
+    "allowMixedContent": false
+  }
+}
