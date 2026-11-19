@@ -168,6 +168,42 @@ html,body{background:linear-gradient(160deg,#081724 0%,#07111b 52%,#091622 100%)
  .vs-nav button{padding:8px 10px}
 }
 
+
+/* VIVO complete interface refresh */
+:root{--bg:#0b1020;--panel:#111a2d;--panel2:#18243b;--line:#283653;--text:#f5f7ff;--muted:#9aa8c1;--blue:#8da7ff;--cyan:#55d9c4;--violet:#b59aff;--shadow:0 24px 70px #02061188}
+html,body{background:#0b1020;color:var(--text);font-family:Vazirmatn,Tahoma,sans-serif}
+body:before{content:"";position:fixed;inset:0;pointer-events:none;background:radial-gradient(ellipse at 82% 4%,#4d63a51d,transparent 35%),radial-gradient(ellipse at 10% 80%,#23a99412,transparent 32%);z-index:0}
+#app{position:relative;z-index:1;max-width:1600px;min-height:100dvh;padding:18px;gap:14px}
+.top{height:76px;flex-shrink:0;border:1px solid #2b3956;border-radius:22px;padding:0 22px;background:#111a2dee;box-shadow:0 10px 35px #0003}
+.brand{font-size:23px;gap:13px}.logo{width:46px;height:46px;border-radius:16px;background:linear-gradient(145deg,#70e5d0,#7c9cff 65%,#b49aff);box-shadow:0 8px 26px #658cff40}
+.topright{gap:8px}.iconbtn,.btn{border:1px solid #344362;background:#1a2740;border-radius:14px;transition:.18s ease}.iconbtn:hover,.btn:hover{transform:translateY(-1px);border-color:#8298d2;background:#243553}.iconbtn{width:44px;height:44px}
+.layout{grid-template-columns:minmax(300px,350px) minmax(0,1fr);gap:14px;min-height:calc(100dvh - 138px)}
+.sidebar{border:1px solid #2b3956;border-radius:22px;padding:20px 16px;background:linear-gradient(160deg,#141f34,#101827);box-shadow:var(--shadow);min-width:0}
+.sidehead{margin:0 3px 20px;align-items:center}.sidehead h2{font-size:24px;font-weight:800;margin-top:3px}.eyebrow{font-size:10px;letter-spacing:1.8px;color:#7f9bdb;font-weight:800}
+.live-mark{font-size:11px;color:#a9b8d0;border:1px solid #34445f;border-radius:30px;padding:7px 10px;display:flex;align-items:center;gap:7px}.live-mark i{width:7px;height:7px;border-radius:50%;background:#56d6ae;box-shadow:0 0 10px #56d6ae}
+.search{border-radius:15px;background:#0c1424;border:1px solid #2c3a56;padding:14px 16px;margin-bottom:14px}
+.tabs{gap:7px;margin-bottom:15px;padding-bottom:5px}.tab{border:1px solid #2e3d5a;background:#17243a;color:#aab8d1;padding:9px 13px;border-radius:12px}.tab.active{background:#d8e4ff;color:#17223a;border-color:#d8e4ff;font-weight:800}
+.chatlist{gap:7px}.chatrow{border:1px solid transparent;border-radius:16px;padding:13px 11px;transition:.18s}.chatrow:hover{background:#202f49;border-color:#344766}.chatrow.active{background:linear-gradient(110deg,#233a58,#1b3145);border-color:#56769b}
+.main{min-width:0;border:1px solid #2b3956;border-radius:22px;background:linear-gradient(160deg,#141f34eF,#101827f5);box-shadow:var(--shadow);overflow:hidden}
+.welcome{height:100%;padding:clamp(22px,4vw,48px);display:block;overflow:auto}
+.welcome-head{display:flex;justify-content:space-between;align-items:center;gap:20px;padding:10px 0 30px;border-bottom:1px solid #2c3a55}
+.welcome-head h1{font-size:clamp(23px,3vw,36px);line-height:1.5;margin:9px 0 4px;font-weight:900;letter-spacing:-.6px}.welcome-head p{color:#9eacc4;margin:0;font-size:14px}
+.welcome-mark{width:82px;height:82px;flex:0 0 82px;border-radius:27px;display:grid;place-items:center;font-size:42px;font-weight:900;color:#101a2b;background:linear-gradient(145deg,#69e0cc,#8ca7ff 70%,#b99bff);box-shadow:0 14px 38px #668cff30}
+.overview-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px;padding-top:22px}
+.overview-card{min-width:0;border:1px solid #2d3d5b;border-radius:19px;padding:20px;background:linear-gradient(145deg,#1a2942,#141f33);display:flex;align-items:flex-start;gap:15px;box-shadow:0 12px 28px #03081633}
+.overview-icon{width:46px;height:46px;flex:0 0 46px;border-radius:15px;background:#263e62;color:#a9c1ff;display:grid;place-items:center;font-size:23px}.overview-icon.violet{background:#392d59;color:#d0baff}
+.overview-card small{display:block;color:#94a7c5;font-size:12px}.overview-card strong{display:block;font-size:25px;margin:4px 0}.overview-card p{font-size:12px;line-height:1.9;color:#9eacc3;margin:4px 0 0}
+.overview-card.wide{grid-column:1/-1;display:block}.card-heading{display:flex;justify-content:space-between;align-items:center;gap:12px}.card-heading h2{font-size:18px;margin:3px 0 8px}.secure-mark{border:1px solid #316b61;color:#79dfc5;background:#15372f;border-radius:30px;padding:6px 10px;font-size:11px}
+.info-line{display:flex;justify-content:space-between;gap:12px;padding:11px 0;border-top:1px solid #2a3953;margin-top:10px;font-size:12px;color:#9eacc3}.info-line b{color:#dce5f8}
+.recent-card{min-height:150px}.welcome-recent{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;margin-top:12px}.recent-item{display:flex;align-items:center;gap:10px;text-align:right;border:1px solid #30415f;background:#111d31;border-radius:13px;padding:11px;min-width:0}.recent-item:hover{border-color:#8199d2;background:#1c2b45}.recent-avatar{width:36px;height:36px;border-radius:12px;background:linear-gradient(140deg,#58d5c2,#7798ff);display:grid;place-items:center;color:#102033;font-weight:900;flex:0 0 36px}.recent-item span:nth-child(2){min-width:0;flex:1}.recent-item b,.recent-item small{display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.recent-item b{font-size:12px}.recent-item small{font-size:10px;color:#8fa0bd;margin-top:3px}.recent-item i{font-style:normal;color:#90a7d8}
+.room{height:100%;min-height:0}.roomhead{min-height:82px;padding:15px 22px;background:#17243a;border-bottom:1px solid #2c3c59}.roominfo strong{font-size:16px}.messages{padding:24px;gap:12px}.composerwrap{padding:14px 20px 18px;background:#111b2e;border-top:1px solid #2b3a56}.composer{border:1px solid #354766;border-radius:18px;background:#0d1729;padding:8px;gap:9px}.composer textarea{background:transparent;padding:10px}.send{width:44px;height:44px;border-radius:14px;background:linear-gradient(140deg,#66dbc6,#809dff);color:#101a2b}
+.mobilebar{display:none}
+.empty{border:1px dashed #344563;border-radius:16px;padding:22px;color:#9baac2;background:#111c30}
+.modal .dialog{border:1px solid #344563;border-radius:22px;background:#141f34;box-shadow:0 25px 90px #0009}
+@media(max-width:900px){#app{padding:10px;gap:10px}.top{height:66px;padding:0 14px;border-radius:18px}.layout{grid-template-columns:280px minmax(0,1fr);gap:10px;min-height:calc(100dvh - 96px)}.sidebar,.main{border-radius:18px}.overview-grid{gap:10px}.welcome{padding:24px}}
+@media(max-width:680px){#app{padding:0;gap:0;min-height:100dvh}.top{height:66px;border-radius:0;border:0;border-bottom:1px solid #2b3956;padding:0 15px}.brand{font-size:20px}.logo{width:40px;height:40px}.topright .iconbtn{width:38px;height:38px}.topright #installBtn{display:none}.layout{display:block;min-height:0;flex:1;padding:10px 10px 84px}.sidebar{border-radius:18px;padding:16px 13px;min-height:calc(100dvh - 156px)}.main{display:none;min-height:calc(100dvh - 156px)}.layout.roomopen .sidebar{display:none}.layout.roomopen .main{display:block}.welcome{padding:20px 16px}.welcome-head{padding:6px 0 20px}.welcome-head h1{font-size:24px}.welcome-mark{width:58px;height:58px;flex-basis:58px;border-radius:19px;font-size:30px}.overview-grid{grid-template-columns:1fr;gap:10px;padding-top:15px}.overview-card.wide{grid-column:auto}.overview-card{padding:16px}.welcome-recent{grid-template-columns:1fr}.room{height:calc(100dvh - 160px)}.roomhead{padding:12px;min-height:68px}.messages{padding:14px 10px}.composerwrap{padding:10px}.mobilebar{display:grid;grid-template-columns:repeat(3,1fr);position:fixed;bottom:0;left:0;right:0;z-index:20;padding:8px 12px calc(8px + env(safe-area-inset-bottom));background:#101a2cf5;border-top:1px solid #34435f;backdrop-filter:blur(18px)}.mobilebar button{border:0;background:transparent;color:#9eacc5;display:flex;flex-direction:column;align-items:center;gap:3px;font-size:10px;padding:5px}.mobilebar button b{font-size:19px;font-weight:500}.mobilebar button:active{color:#fff}.mobilebar #navChats{color:#9ec3ff}}
+@media(max-width:380px){.sidehead h2{font-size:21px}.live-mark{font-size:10px}.overview-card{gap:10px}.overview-icon{width:40px;height:40px;flex-basis:40px}}
+
 </style></head>
 <body>
 <section id="authScreen" class="authscreen">
@@ -194,13 +230,13 @@ html,body{background:linear-gradient(160deg,#081724 0%,#07111b 52%,#091622 100%)
  <header class="top"><div class="brand"><span class="logo">V</span> ویوو</div><div class="topright"><button class="iconbtn" id="installBtn" title="نصب برنامه">⇩</button><button class="iconbtn" id="notifyBtn" title="اعلان‌ها">♧</button><button class="iconbtn" id="settingsBtn" title="تنظیمات ویوو">⚙</button><button class="iconbtn" id="profileBtn" title="حساب کاربری">◉</button></div></header>
  <div class="layout" id="layout">
   <aside class="sidebar">
-   <div class="sidehead"><h2>پیام‌ها</h2><button class="btn primary" id="newChat">＋ گفتگوی جدید</button></div>
+   <div class="sidehead"><div><span class="eyebrow">VIVO MESSENGER</span><h2>پیام‌ها</h2></div><span class="live-mark"><i></i> فضای شخصی</span></div>
    <input class="search" id="search" placeholder="جست‌وجوی گفتگو، مخاطب یا پیام…">
    <div class="tabs"><button class="tab active" data-filter="all">همه</button><button class="tab" data-filter="private">شخصی</button><button class="tab" data-filter="group">گروه‌ها</button><button class="tab" data-filter="channel">کانال‌ها</button><button class="tab" data-filter="saved">ذخیره‌شده</button></div>
    <div class="chatlist" id="chatList"></div>
   </aside>
   <main class="main">
-   <section class="welcome" id="welcome"><div class="heroicon">✦</div><h1>فضای گفت‌وگوی ویوو</h1><p>گفتگوی تازه بسازید، پیام‌ها را مدیریت کنید و فضای شخصی خود را مرتب نگه دارید.</p><div class="featuregrid"><div class="feature">↩<b>پاسخ هوشمند</b><small>پاسخ مستقیم به پیام‌ها</small></div><div class="feature">⌕<b>جست‌وجو</b><small>پیدا کردن گفتگوها</small></div><div class="feature">◉<b>گروه و کانال</b><small>ساخت فضای گفتگو</small></div></div><button class="btn primary" id="welcomeNew">شروع گفتگوی جدید</button></section>
+   <section class="welcome" id="welcome"><div class="welcome-head"><div><span class="eyebrow">YOUR SPACE · VIVO</span><h1>همه‌چیز برای گفت‌وگو، در یک نگاه</h1><p>از فهرست سمت راست، یکی از گفتگوهای خود را انتخاب کنید.</p></div><div class="welcome-mark">V</div></div><div class="overview-grid"><article class="overview-card"><span class="overview-icon">▤</span><div><small>گفتگوهای شما</small><strong id="overviewChats">۰</strong><p>گفتگوهای ذخیره‌شده روی این دستگاه</p></div></article><article class="overview-card"><span class="overview-icon violet">◷</span><div><small>آخرین فعالیت</small><strong>تاریخچهٔ پیام‌ها</strong><p>آخرین پیام‌ها در فهرست گفتگوها نمایش داده می‌شوند</p></div></article><article class="overview-card wide"><div class="card-heading"><div><small>فضای شخصی</small><h2>کنترل و حریم خصوصی</h2></div><span class="secure-mark">● محلی</span></div><p>اطلاعات این نسخه روی همین دستگاه نگهداری می‌شود. همگام‌سازی پیام‌ها میان کاربران تا زمان اتصال سرویس سمت سرور فعال نیست.</p><div class="info-line"><span>ذخیره‌سازی</span><b>حافظهٔ دستگاه</b></div><div class="info-line"><span>مدیریت ظاهر و اعلان‌ها</span><b>از تنظیمات ویوو</b></div></article><article class="overview-card wide recent-card"><div class="card-heading"><div><small>شروع سریع</small><h2>گفتگوهای اخیر</h2></div><span class="muted">از فهرست گفتگوها انتخاب کنید</span></div><div id="welcomeRecent" class="welcome-recent"></div></article></div></section>
    <section class="room hidden" id="room">
     <div class="roomhead"><button class="iconbtn mobileback" id="backChats">‹</button><div class="avatar" id="roomAvatar">V</div><div class="roominfo"><strong id="roomName">گفتگو</strong><small id="roomSub">گفتگوی ذخیره‌شده روی این دستگاه</small></div><div class="roomtools"><button class="iconbtn" id="roomSearch">⌕</button><button class="iconbtn optional" id="roomMore">⋯</button></div></div>
     <div class="messages" id="messages"><div class="empty">هنوز پیامی در این گفتگو نیست.</div></div>
@@ -208,7 +244,7 @@ html,body{background:linear-gradient(160deg,#081724 0%,#07111b 52%,#091622 100%)
    </section>
   </main>
  </div>
- <nav class="mobilebar"><button id="navChats"><b>▤</b>گفتگوها</button><button id="navNew"><b>＋</b>گفتگوی جدید</button><button id="navAccount"><b>◉</b>حساب کاربری</button></nav>
+ <nav class="mobilebar"><button id="navChats"><b>▤</b>گفتگوها</button><button id="navAccount"><b>◉</b>حساب کاربری</button><button id="navSettings"><b>⚙</b>تنظیمات</button></nav>
 </div>
 <div class="modal" id="modal"><div class="dialog" id="dialog"></div></div>
 <div class="menu" id="menu"><div class="menupanel" id="menuPanel"></div></div>
@@ -247,8 +283,7 @@ function messageMenu(id){const c=current(),m=c?.messages.find(x=>x.id===id);if(!
 function openModal(html){$('dialog').innerHTML=html;$('modal').classList.add('open')}function closeModal(){$('modal').classList.remove('open')}
 function openMenu(html){$('menuPanel').innerHTML=html;$('menu').classList.add('open')}function closeMenu(){$('menu').classList.remove('open')}
 $('modal').onclick=e=>{if(e.target===$('modal'))closeModal()};$('menu').onclick=e=>{if(e.target===$('menu'))closeMenu()};
-function newChat(){openModal('<h2>گفتگوی تازه</h2><p class="muted small">در این نسخه، گفتگو و پیام‌ها روی همین دستگاه ذخیره می‌شوند. برای گفتگوی واقعی بین چند نفر، سرور پیام‌رسان باید فعال شود.</p><label>نام گفتگو</label><input class="field" id="newName" placeholder="نام گفتگو"><label>نوع</label><select class="field" id="newType"><option value="private">شخصی</option><option value="group">گروه</option><option value="channel">کانال</option></select><div class="actions"><button class="btn primary" id="createBtn">ایجاد گفتگو</button><button class="btn" onclick="closeModal()">انصراف</button></div>');$('createBtn').onclick=()=>{const name=$('newName').value.trim(),type=$('newType').value;if(!name)return toast('نام گفتگو را وارد کنید.');const c={id:crypto.randomUUID(),name,type,messages:[],createdAt:Date.now()};db.chats.unshift(c);save();closeModal();openChat(c.id)}}
-$('newChat').onclick=newChat;$('welcomeNew').onclick=newChat;$('navNew').onclick=newChat;$('search').oninput=renderList;
+$('search').oninput=renderList;
 document.querySelectorAll('[data-filter]').forEach(b=>b.onclick=()=>{filter=b.dataset.filter;document.querySelectorAll('[data-filter]').forEach(x=>x.classList.toggle('active',x===b));renderList()});
 $('backChats').onclick=()=>{$('layout').classList.remove('roomopen');db.active=null;save();$('room').classList.add('hidden');$('welcome').classList.remove('hidden');renderList()};
 $('roomMore').onclick=()=>{const c=current();if(!c)return;openMenu('<h3>تنظیمات گفتگو</h3><button class="menuitem" id="pinChat">📌 '+(c.pinned?'برداشتن سنجاق':'سنجاق گفتگو')+'</button><button class="menuitem" id="renameChat">✎ تغییر نام</button><button class="menuitem" id="deleteChat">حذف گفتگو</button>');$('pinChat').onclick=()=>{c.pinned=!c.pinned;save();closeMenu();renderList()};$('renameChat').onclick=()=>{const v=prompt('نام جدید',c.name);if(v?.trim()){c.name=v.trim();save();$('roomName').textContent=c.name;renderList()}closeMenu()};$('deleteChat').onclick=()=>{if(confirm('این گفتگو و پیام‌های ذخیره‌شده آن حذف شود؟')){db.chats=db.chats.filter(x=>x.id!==c.id);db.active=null;save();closeMenu();$('backChats').click()}}};
@@ -290,7 +325,7 @@ window.vivoRequestNotifications=async function(){if(!('Notification'in window))r
 window.vivoExportData=function(){const data={app:'VIVO',version:2,exportedAt:new Date().toISOString(),db,prefs:vivoPrefs},blob=new Blob([JSON.stringify(data,null,2)],{type:'application/json'}),url=URL.createObjectURL(blob),a=document.createElement('a');a.href=url;a.download='vivo-backup-'+new Date().toISOString().slice(0,10)+'.json';a.click();setTimeout(()=>URL.revokeObjectURL(url),1000);toast('نسخه پشتیبان آماده شد.')}
 window.vivoImportData=async function(file){if(!file)return;try{const x=JSON.parse(await file.text());if(x.app!=='VIVO'||!x.db||!Array.isArray(x.db.chats))throw new Error('ساختار فایل معتبر نیست.');if(!confirm('اطلاعات فعلی با نسخه پشتیبان جایگزین شود؟'))return;db=x.db;vivoPrefs={...vivoPrefs,...(x.prefs||{})};save();saveVivoPrefs();closeVivoSettings();enterApp();toast('نسخه پشتیبان بازیابی شد.')}catch(e){toast(e.message||'بازیابی انجام نشد.')}finally{$('vivoImportFile').value=''}}
 window.vivoClearLocalData=function(){if(!confirm('همه گفتگوها و پیام‌های ذخیره‌شده روی این دستگاه حذف شوند؟ این کار قابل بازگشت نیست مگر نسخه پشتیبان داشته باشی.'))return;db.chats=[];db.active=null;save();closeVivoSettings();$('room').classList.add('hidden');$('welcome').classList.remove('hidden');$('layout').classList.remove('roomopen');renderList();toast('اطلاعات محلی گفتگوها پاک شد.')}
-$('settingsBtn').onclick=()=>vivoSettingsOpen();applyVivoPrefs();window.addEventListener('keydown',e=>{if((e.ctrlKey||e.metaKey)&&e.key===','){e.preventDefault();vivoSettingsOpen()}});
+$('settingsBtn').onclick=()=>vivoSettingsOpen();$('navSettings').onclick=()=>vivoSettingsOpen();applyVivoPrefs();window.addEventListener('keydown',e=>{if((e.ctrlKey||e.metaKey)&&e.key===','){e.preventDefault();vivoSettingsOpen()}});
 
 if('serviceWorker'in navigator)navigator.serviceWorker.register('/sw.js').catch(()=>{});
 if(db.user){enterApp()}
