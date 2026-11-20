@@ -154,12 +154,12 @@
       <div class="auth-brand"><span class="brand-mark">V</span><b>VIVO</b></div>
       <span class="auth-kicker">ورود امن به ویوو</span>
       <h2 id="authTitle">ساخت حساب یا ورود</h2>
-      <p class="auth-description" id="authDescription">شماره موبایل خود را تأیید کن تا حساب ابری ویوو برایت فعال شود.</p>
+      <p class="auth-description" id="authDescription">ورود تا اتصال روش احراز هویت واقعی و امن غیرفعال است. کد اعلان دستگاه، مالکیت شماره تلفن را اثبات نمی‌کند.</p>
       <div id="phoneStep">
         <label class="auth-label" for="authName">نام نمایشی</label><input class="auth-input" id="authName" maxlength="50" autocomplete="name" placeholder="نامی که دیگران می‌بینند">
         <label class="auth-label" for="authUsername">نام کاربری انگلیسی</label><input class="auth-input" id="authUsername" maxlength="30" autocomplete="username" autocapitalize="none" placeholder="مثلاً vivo_user">
         <small class="auth-hint">۴ تا ۳۰ نویسه؛ فقط حروف کوچک انگلیسی، عدد و زیرخط. شروع با حرف.</small>
-        <label class="auth-label" for="authPhone">شماره موبایل</label><input class="auth-input" id="authPhone" inputmode="tel" autocomplete="tel" maxlength="14" placeholder="09xxxxxxxxx">
+        <label class="auth-label" for="authPhone">شناسه شماره موبایل</label><input class="auth-input" id="authPhone" inputmode="tel" autocomplete="tel" maxlength="14" placeholder="09xxxxxxxxx"><small class="auth-hint auth-security-note">این روش در حال حاضر برای ورود به حساب‌های واقعی قابل استفاده نیست.</small>
         <button class="primary-button auth-submit" id="sendOtp">دریافت کد تأیید</button>
       </div>
       <div id="codeStep" hidden>
@@ -173,7 +173,8 @@
     </section>
   </div>
   <div class="chat-composer-overlay" id="chatComposer" hidden><section class="chat-composer-card" role="dialog" aria-modal="true" aria-labelledby="chatComposerTitle"><button class="auth-close" data-action="close-chat-composer">×</button><span class="auth-kicker">ارتباط در VIVO</span><h2 id="chatComposerTitle">گفت‌وگوی جدید</h2><label class="field-label" for="chatTargetUsername">نام کاربری مخاطب</label><input id="chatTargetUsername" class="auth-input" maxlength="30" placeholder="username"><button class="primary-button auth-submit" data-action="create-private-chat">شروع گفت‌وگوی خصوصی</button><div class="chat-group-divider">یا ساخت گروه</div><label class="field-label" for="newGroupName">نام گروه</label><input id="newGroupName" class="auth-input" maxlength="60" placeholder="نام گروه"><label class="field-label" for="newGroupMembers">نام کاربری اعضا، با ویرگول جدا کن</label><input id="newGroupMembers" class="auth-input" placeholder="user_one, user_two"><button class="secondary-button auth-submit" data-action="create-group-chat">ساخت گروه</button><p class="auth-hint">برای حفظ حریم خصوصی، اعضای گفت‌وگو باید دنبال‌کنندگان متقابل باشند.</p><p class="auth-error" id="chatComposerError"></p></section></div>
-  <div class="story-composer-overlay" id="storyComposer" hidden>
+  <div class="profile-editor-overlay" id="profileEditor" hidden><section class="profile-editor-card" role="dialog" aria-modal="true" aria-labelledby="profileEditorTitle"><button class="auth-close" data-action="close-profile-editor" aria-label="بستن">×</button><span class="auth-kicker">حساب کاربری VIVO</span><h2 id="profileEditorTitle">ویرایش پروفایل</h2><label class="auth-label" for="profileName">نام نمایشی</label><input class="auth-input" id="profileName" maxlength="50" autocomplete="name"><label class="auth-label" for="profileUsername">نام کاربری</label><input class="auth-input" id="profileUsername" maxlength="30" autocomplete="username" autocapitalize="none"><label class="auth-label" for="profileBio">معرفی کوتاه</label><textarea class="text-field" id="profileBio" rows="4" maxlength="500" placeholder="چند جمله درباره خودت"></textarea><label class="profile-privacy-option"><input type="checkbox" id="profilePrivate"><span><b>حساب خصوصی</b><small>محتوای حساب فقط برای دنبال‌کنندگان پذیرفته‌شده نمایش داده شود.</small></span></label><button class="primary-button auth-submit" data-action="save-profile" id="saveProfileButton">ذخیره تغییرات</button><p class="auth-error" id="profileEditorError" role="alert"></p></section></div>
+    <div class="story-composer-overlay" id="storyComposer" hidden>
     <section class="story-composer-card" role="dialog" aria-modal="true" aria-labelledby="storyComposerTitle">
       <button class="auth-close" data-action="close-story-composer" aria-label="بستن">×</button>
       <span class="auth-kicker">لحظه‌ای از امروز</span><h2 id="storyComposerTitle">ساخت استوری متنی</h2>

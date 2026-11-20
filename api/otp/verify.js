@@ -1,35 +1,8 @@
-const API = "https://otp-push-server.vercel.app";
-
-function normalizeIranMobile(value) {
-  const digits = String(value || "")
-    .replace(/[۰-۹]/g, d => String("۰۱۲۳۴۵۶۷۸۹".indexOf(d)))
-    .replace(/[٠-٩]/g, d => String("٠١٢٣٤٥٦٧٨٩".indexOf(d)));
-  const compact = digits.replace(/[\s()-]/g, "");
-  const national = compact.replace(/^\+?98/, "0");
-  return /^09\d{9}$/.test(national) ? national : null;
-}
-
 module.exports = async (req, res) => {
+  res.setHeader("Cache-Control", "no-store");
   if (req.method !== "POST") return res.status(405).json({ ok: false, error: "Method not allowed" });
-  try {
-    const phone = normalizeIranMobile(req.body?.phone);
-    const requestId = req.body?.requestId;
-    const code = String(req.body?.code || "").replace(/[۰-۹]/g, d => String("۰۱۲۳۴۵۶۷۸۹".indexOf(d))).replace(/[٠-٩]/g, d => String("٠١٢٣٤٥٦٧٨٩".indexOf(d)));
-    if (!phone || !/^\d{6}$/.test(code) || typeof requestId !== "string" || !requestId) {
-      return res.status(400).json({ ok: false, error: "شماره، شناسه درخواست یا کد شش‌رقمی معتبر نیست." });
-    }
-    if (!process.env.OTP_API_KEY) return res.status(503).json({ ok: false, error: "سرویس تأیید کد هنوز پیکربندی نشده است." });
-
-    const response = await fetch(API + "/api/verify", {
-      method: "POST",
-      headers: { "content-type": "application/json", "x-api-key": process.env.OTP_API_KEY },
-      body: JSON.stringify({ userId: "vivo-phone-" + phone, requestId, code })
-    });
-    const data = await response.json().catch(() => ({}));
-    if (!response.ok) return res.status(response.status).json({ ok: false, error: data.error || "کد تأیید نامعتبر است" });
-    return res.json({ ok: true, verified: true });
-  } catch (error) {
-    console.error("VIVO OTP verify error:", error);
-    return res.status(502).json({ ok: false, error: "ارتباط با سرویس تأیید کد برقرار نشد." });
-  }
+  return res.status(503).json({
+    ok: false,
+    error: "سرویس ورود تا راه‌اندازی احراز هویت واقعی و امن موقتاً غیرفعال است."
+  });
 };

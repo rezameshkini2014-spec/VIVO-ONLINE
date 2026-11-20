@@ -1,0 +1,104 @@
+name: VIVO Quality Gate
+
+on:
+  push:
+    branches:
+      - mission/vivo-001-security
+  pull_request:
+    branches:
+      - rebuild/vivo-v2
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: vivo-quality-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  static-checks:
+    name: Static checks and server smoke test
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Set up Deno
+        uses: denoland/setup-deno@v2
+        with:
+          deno-version: v2.x
+
+      - name: Type-check Supabase Edge Function
+        run: deno check supabase/functions/vivo-api/index.ts
+
+      - name: Install dependencies
+        run: npm install --ignore-scripts
+
+      - name: Check JavaScript syntax
+        shell: bash
+        run: |
+          set -euo pipefail
+          for file in server.js vivo-v2.js sw.js api/webhook.js api/vivo/session.js api/vivo/logout.js api/vivo/'[...path].js' api/otp/config.js api/otp/send.js api/otp/verify.js api/otp/subscribe.js; do
+            if [ -f "$file" ]; then node --check "$file"; fi
+          done
+
+      - name: Validate JSON configuration
+        run: |
+          node -e "for (const f of ['package.json','capacitor.config.json','vercel.json','manifest.webmanifest']) JSON.parse(require('fs').readFileSync(f,'utf8'));"
+
+      - name: Validate public HTML structure and local assets
+        run: |
+          node <<'NODE'
+          const fs = require('node:fs');
+          const html = fs.readFileSync('vivo-v2.html', 'utf8');
+          const ids = [...html.matchAll(/\bid=["']([^"']+)["']/g)].map(match => match[1]);
+          const duplicates = [...new Set(ids.filter((id, index) => ids.indexOf(id) !== index))];
+          if (duplicates.length) throw new Error('Duplicate HTML IDs: ' + duplicates.join(', '));
+          const refs = [...html.matchAll(/(?:href|src)=["'](\/[^"'?#]+)["']/g)].map(match => match[1]);
+          for (const ref of refs) {
+            const file = ref === '/' ? 'vivo-v2.html' : ref.slice(1);
+            if (!fs.existsSync(file) || !fs.statSync(file).isFile()) throw new Error('Missing local asset: ' + ref);
+          }
+          console.log('HTML IDs:', ids.length, '| local assets:', refs.length, '| duplicate IDs: 0');
+          NODE
+
+      - name: Verify authentication remains fail-closed
+        run: |
+          grep -q 'احراز هویت ویوو تا تکمیل سامانه نشست امن غیرفعال است' supabase/functions/vivo-api/index.ts
+          ! grep -q 'auth/issue' supabase/functions/vivo-api/index.ts
+
+      - name: Smoke test HTTP server
+        shell: bash
+        run: |
+          set -euo pipefail
+          PORT=3217 node server.js > /tmp/vivo-server.log 2>&1 &
+          server_pid=$!
+          trap 'kill "$server_pid" 2>/dev/null || true' EXIT
+          for i in $(seq 1 20); do
+            if curl --fail --silent http://127.0.0.1:3217/ > /tmp/vivo-home.html; then break; fi
+            sleep 1
+          done
+          grep -q 'VIVO' /tmp/vivo-home.html
+          for asset in vivo-v2.html vivo-v2.js vivo-v2.css vivo-v2-auth.css vivo-v2-social.css vivo-v2-chat.css manifest.webmanifest sw.js; do
+            test "$(curl --silent --output /dev/null --write-out '%{http_code}' "http://127.0.0.1:3217/$asset")" = "200"
+          done
+          for private_path in server.js package.json supabase/functions/vivo-api/index.ts .github/workflows/vivo-quality.yml; do
+            test "$(curl --path-as-is --silent --output /dev/null --write-out '%{http_code}' "http://127.0.0.1:3217/$private_path")" = "404"
+          done
+          test "$(curl --path-as-is --silent --output /dev/null --write-out '%{http_code}' http://127.0.0.1:3217/%2e%2e/server.js)" = "404"
+          test "$(curl --silent --output /dev/null --write-out '%{http_code}' http://127.0.0.1:3217/api/vivo/chat/list)" = "503"
+          test "$(curl --silent --output /dev/null --write-out '%{http_code}' http://127.0.0.1:3217/api/vivo/chat/list -H 'cookie: vivo_session=legacy-token')" = "503"
+          test "$(curl --silent --output /dev/null --write-out '%{http_code}' http://127.0.0.1:3217/api/otp/config)" = "503"
+          test "$(curl --silent --output /dev/null --write-out '%{http_code}' http://127.0.0.1:3217/api/vivo/session -H 'content-type: application/json' -d '{"phone":"09123456789","name":"Test User","username":"test_user","requestId":"test","code":"123456"}')" = "503"
+          for endpoint in send subscribe verify; do
+            test "$(curl --silent --output /dev/null --write-out '%{http_code}' "http://127.0.0.1:3217/api/otp/$endpoint" -H 'content-type: application/json' -d '{}')" = "503"
+          done
+          test "$(curl --silent --output /dev/null --write-out '%{http_code}' http://127.0.0.1:3217/api/not-a-route)" = "404"
+          cat /tmp/vivo-server.log

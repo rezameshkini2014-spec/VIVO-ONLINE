@@ -1,1 +1,8 @@
-module.exports=async(req,res)=>{if(req.method!=="GET")return res.status(405).json({ok:false,error:"Method not allowed"});try{const r=await fetch("https://otp-push-server.vercel.app/api/config",{cache:"no-store"});const d=await r.json();if(!r.ok||!d.vapidPublicKey)throw new Error("Push configuration unavailable");res.setHeader("Cache-Control","no-store");res.json({ok:true,vapidPublicKey:d.vapidPublicKey})}catch(e){res.status(503).json({ok:false,error:"سرویس اعلان در دسترس نیست"})}};
+module.exports = async (req, res) => {
+  res.setHeader("Cache-Control", "no-store");
+  if (req.method !== "GET") return res.status(405).json({ ok: false, error: "Method not allowed" });
+  return res.status(503).json({
+    ok: false,
+    error: "سامانه اعلان ورود تا راه‌اندازی احراز هویت امن موقتاً غیرفعال است."
+  });
+};

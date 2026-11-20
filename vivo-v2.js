@@ -29,47 +29,14 @@ function authOpen(){
  if(pendingOtp&&pendingOtp.expiresAt>Date.now())showCodeStep();else showPhoneStep();
 }
 function authClose(){$('authOverlay').classList.remove('open');$('authOverlay').setAttribute('aria-hidden','true')}
-function showPhoneStep(){$('phoneStep').hidden=false;$('codeStep').hidden=true;$('authTitle').textContent='ساخت حساب یا ورود';$('authDescription').textContent='شماره موبایل خود را تأیید کن تا حساب ابری ویوو برایت فعال شود.'}
-function showCodeStep(){$('phoneStep').hidden=true;$('codeStep').hidden=false;$('authTitle').textContent='تأیید شماره موبایل';$('authDescription').textContent='کد شش‌رقمی را از اعلان همین دستگاه وارد کن.';$('otpHelp').textContent='کد برای '+(pendingOtp?.phone||'شماره واردشده')+' ارسال شده و پس از پایان اعتبار قابل استفاده نیست.';$('authCode').focus()}
+function showPhoneStep(){$('phoneStep').hidden=false;$('codeStep').hidden=true;$('authTitle').textContent='ساخت حساب یا ورود';$('authDescription').textContent='شماره موبایل در این نسخه فقط شناسه حساب است؛ اعلان همین دستگاه کد را دریافت می‌کند.'}
+function showCodeStep(){$('phoneStep').hidden=true;$('codeStep').hidden=false;$('authTitle').textContent='تأیید دستگاه';$('authDescription').textContent='کد شش‌رقمی را از اعلان همین دستگاه وارد کن. این کد مالکیت سیم‌کارت را اثبات نمی‌کند.';$('otpHelp').textContent='کد برای '+(pendingOtp?.phone||'شماره واردشده')+' ارسال شده و پس از پایان اعتبار قابل استفاده نیست.';$('authCode').focus()}
 function base64UrlToBytes(value){const normalized=value.replace(/-/g,'+').replace(/_/g,'/');const padded=normalized+'='.repeat((4-normalized.length%4)%4);const raw=atob(padded);return Uint8Array.from(raw,c=>c.charCodeAt(0))}
 async function sendOtp(){
- const phone=normalizePhone($('authPhone').value),name=$('authName').value.trim(),username=$('authUsername').value.trim().toLowerCase();
- if(!/^09\d{9}$/.test(phone))throw new Error('شماره موبایل معتبر ایران وارد کن.');
- if(name.length<2)throw new Error('نام نمایشی باید دست‌کم دو نویسه باشد.');
- if(!usernameValid(username))throw new Error('نام کاربری باید ۴ تا ۳۰ نویسه و با حرف انگلیسی شروع شود.');
- if(!('serviceWorker'in navigator)||!('PushManager'in window)||!('Notification'in window))throw new Error('این مرورگر از اعلان لازم برای دریافت کد پشتیبانی نمی‌کند.');
- $('sendOtp').disabled=true;$('sendOtp').textContent='در حال ارسال…';setAuthError('');
- try{
-  const config=await requestJson('/api/otp/config');
-  const registration=await navigator.serviceWorker.register('/sw.js');
-  await navigator.serviceWorker.ready;
-  let permission=Notification.permission;
-  if(permission!=='granted')permission=await Notification.requestPermission();
-  if(permission!=='granted')throw new Error('برای دریافت کد ورود، اجازه اعلان همین دستگاه لازم است.');
-  let subscription=await registration.pushManager.getSubscription();
-  if(!subscription)subscription=await registration.pushManager.subscribe({userVisibleOnly:true,applicationServerKey:base64UrlToBytes(config.vapidPublicKey)});
-  await requestJson('/api/otp/subscribe',{phone,subscription:subscription.toJSON()});
-  const result=await requestJson('/api/otp/send',{phone});
-  pendingOtp={phone,name,username,requestId:result.requestId,expiresAt:Date.now()+Math.min(Number(result.expiresIn)||120,120)*1000};
-  sessionStorage.setItem('vivo_v2_pending_otp',JSON.stringify(pendingOtp));$('authCode').value='';showCodeStep();
- }catch(error){setAuthError(error.message||'ارسال کد انجام نشد.')}
- finally{$('sendOtp').disabled=false;$('sendOtp').textContent='دریافت کد تأیید'}
+ setAuthError('ورود و ثبت‌نام تا اتصال روش احراز هویت واقعی و امن غیرفعال است.');
 }
 async function verifyOtp(){
- const code=normalizeDigits($('authCode').value).replace(/\D/g,'').slice(0,6);
- if(!pendingOtp||pendingOtp.expiresAt<=Date.now())return setAuthError('مهلت این کد تمام شده است؛ درخواست تازه ثبت کن.');
- if(!/^\d{6}$/.test(code))return setAuthError('کد باید دقیقاً شش رقم باشد.');
- $('verifyOtp').disabled=true;$('verifyOtp').textContent='در حال بررسی…';setAuthError('');
- try{
-  await requestJson('/api/otp/verify',{phone:pendingOtp.phone,requestId:pendingOtp.requestId,code});
-  const issued=await requestJson('/api/vivo/session',{phone:pendingOtp.phone,name:pendingOtp.name,username:pendingOtp.username});
-  currentUser=issued.user;
-  const profile=await requestJson('/api/vivo/profile');if(profile.user)currentUser=profile.user;
-  sessionStorage.removeItem('vivo_v2_pending_otp');pendingOtp=null;
-  updateUser(currentUser);authClose();toast('شماره تأیید شد و حساب ابری ویوو متصل شد.');
-  await loadHomeData();
- }catch(error){setAuthError(error.message||'تأیید حساب انجام نشد.')}
- finally{$('verifyOtp').disabled=false;$('verifyOtp').textContent='تأیید و ورود'}
+ setAuthError('ورود و ثبت‌نام تا اتصال روش احراز هویت واقعی و امن غیرفعال است.');
 }
 function updateUser(user){
  currentUser=user||null;
@@ -94,6 +61,33 @@ async function checkSession(){
 async function logout(){
  try{await requestJson('/api/vivo/logout',{})}catch(error){toast(error.message)}
  updateUser(null);$('postsList').replaceChildren();$('notificationList').replaceChildren();$('searchResults').replaceChildren();$('profilePosts').replaceChildren();storiesCache=[];chatsCache=[];currentChatId=null;$('chatList').replaceChildren();$('chatMessages').replaceChildren();$('chatWindow').hidden=true;$('chatPlaceholder').hidden=false;document.querySelector('.messages-shell').classList.remove('has-chat');document.querySelectorAll('.real-story').forEach(el=>el.remove());document.querySelector('.feed-empty').hidden=false;$('notificationsEmpty').hidden=false;$('profileEmpty').hidden=false;toast('از حساب ویوو خارج شدی.');
+}
+async function openProfileEditor(){
+ if(!currentUser){authOpen();return}
+ try{
+  const result=await requestJson('/api/vivo/profile');
+  const user=result.user||currentUser;
+  $('profileName').value=user.display_name||'';
+  $('profileUsername').value=user.username||'';
+  $('profileBio').value=user.bio||'';
+  $('profilePrivate').checked=!!user.is_private;
+  $('profileEditorError').textContent='';
+  $('profileEditor').hidden=false;$('profileEditor').classList.add('open');
+  $('profileName').focus();
+ }catch(error){toast(error.message)}
+}
+function closeProfileEditor(){$('profileEditor').classList.remove('open');$('profileEditor').hidden=true}
+async function saveProfile(){
+ if(!currentUser){authOpen();return}
+ const name=$('profileName').value.trim(),username=$('profileUsername').value.trim().toLowerCase(),bio=$('profileBio').value;
+ if(name.length<2){$('profileEditorError').textContent='نام نمایشی باید دست‌کم دو نویسه باشد.';return}
+ if(!usernameValid(username)){$('profileEditorError').textContent='نام کاربری معتبر نیست.';return}
+ const button=$('saveProfileButton');button.disabled=true;button.textContent='در حال ذخیره…';
+ try{
+  const result=await requestJson('/api/vivo/profile',{name,username,bio,isPrivate:$('profilePrivate').checked});
+  currentUser=result.user;updateUser(currentUser);closeProfileEditor();toast('پروفایل با موفقیت ذخیره شد.');await loadProfile();
+ }catch(error){$('profileEditorError').textContent=error.message||'ذخیره پروفایل ناموفق بود.'}
+ finally{button.disabled=false;button.textContent='ذخیره تغییرات'}
 }
 function formatTime(value){
  const d=new Date(value);if(Number.isNaN(d.getTime()))return '';
@@ -264,7 +258,8 @@ async function loadChatMessages(){
    bubble.append(node('time','',formatTime(message.sentAt)+(message.editedAt?' · ویرایش‌شده':'')));
    const controls=node('div','message-controls');
    const reply=node('button','text-button','پاسخ');reply.dataset.action='reply-message';reply.dataset.messageId=message.id;controls.append(reply);
-   const react=node('button','text-button','👍');react.dataset.action='react-message';react.dataset.messageId=message.id;controls.append(react);
+   for(const reaction of message.reactions||[]){const chip=node('button','text-button reaction-chip',reaction.reaction+' '+reaction.count);chip.dataset.action='react-message';chip.dataset.messageId=message.id;chip.dataset.reaction=reaction.reaction;if(reaction.mine)chip.classList.add('active');controls.append(chip)}
+   const react=node('button','text-button','＋ واکنش');react.dataset.action='react-message';react.dataset.messageId=message.id;controls.append(react);
    if(message.fromMe){const edit=node('button','text-button','ویرایش');edit.dataset.action='edit-message';edit.dataset.messageId=message.id;controls.append(edit);const del=node('button','text-button','حذف');del.dataset.action='delete-message';del.dataset.messageId=message.id;controls.append(del)}
    bubble.append(controls);list.append(bubble);
   }
@@ -308,6 +303,29 @@ document.addEventListener('click',async event=>{
  if(pageButton){event.preventDefault();go(pageButton.dataset.page);return}
  const actionButton=event.target.closest('[data-action]');if(!actionButton)return;
  const action=actionButton.dataset.action,postId=actionButton.dataset.postId;
+ if(action==='open-chat'){openChat(actionButton.dataset.chatId);return}
+ if(action==='reply-message'){
+  replyToMessageId=actionButton.dataset.messageId;
+  const preview=actionButton.closest('.message-bubble')?.querySelector('p')?.textContent||'پیام';
+  $('chatMessageInput').placeholder='پاسخ به: '+preview.slice(0,45);
+  $('chatMessageInput').focus();return;
+ }
+ if(action==='react-message'){
+  try{await requestJson('/api/vivo/chat/react',{messageId:actionButton.dataset.messageId,reaction:actionButton.dataset.reaction||'👍'});await loadChatMessages();toast('واکنش ثبت شد.')}
+  catch(error){toast(error.message)}return;
+ }
+ if(action==='edit-message'){
+  const bubble=actionButton.closest('.message-bubble'),oldText=bubble?.querySelector('p')?.textContent||'';
+  const updated=window.prompt('متن ویرایش‌شده پیام:',oldText);
+  if(updated===null||!updated.trim()||updated.trim()===oldText)return;
+  try{await requestJson('/api/vivo/chat/edit',{messageId:actionButton.dataset.messageId,text:updated.trim()});await loadChatMessages();toast('پیام ویرایش شد.')}
+  catch(error){toast(error.message)}return;
+ }
+ if(action==='delete-message'){
+  if(!window.confirm('این پیام حذف شود؟'))return;
+  try{await requestJson('/api/vivo/chat/delete',{messageId:actionButton.dataset.messageId});await loadChatMessages();toast('پیام حذف شد.')}
+  catch(error){toast(error.message)}return;
+ }
  if(action==='login'){authOpen();return}
  if(action==='logout'){logout();return}
  if(action==='choose-file'){$('postFile').click();return}
@@ -334,11 +352,43 @@ document.addEventListener('click',async event=>{
  if(action==='story'){if(!currentUser){authOpen();return}$('storyComposer').hidden=false;$('storyComposer').classList.add('open');$('storyText').focus();return}
  if(action==='close-story-composer'){$('storyComposer').classList.remove('open');$('storyComposer').hidden=true;return}
  if(action==='publish-story'){publishStory();return}
- if(action==='new-chat'){toast('پیام‌رسان چندکاربره هنوز در حال پیاده‌سازی است.');return}
+ if(action==='new-chat'){
+  if(!currentUser){authOpen();return}
+  $('chatComposer').hidden=false;$('chatComposer').classList.add('open');$('chatTargetUsername').focus();return;
+ }
+ if(action==='close-chat-composer'){$('chatComposer').classList.remove('open');$('chatComposer').hidden=true;return}
+ if(action==='create-private-chat'){createPrivateChat();return}
+ if(action==='create-group-chat'){createGroupChat();return}
+ if(action==='send-chat-message'){sendChatMessage();return}
+ if(action==='chat-back'){
+  currentChatId=null;$('chatWindow').hidden=true;$('chatPlaceholder').hidden=false;
+  document.querySelector('.messages-shell').classList.remove('has-chat');
+  document.querySelectorAll('.conversation-row').forEach(row=>row.classList.remove('active'));
+  return;
+ }
+ if(action==='refresh-chat'){loadChatMessages();return}
+ if(action==='mute-chat'){
+  if(!currentChatId)return;
+  const chat=chatsCache.find(item=>item.id===currentChatId);
+  const muted=!chat?.muted;
+  actionButton.disabled=true;
+  try{
+   const result=await requestJson('/api/vivo/chat/mute',{chatId:currentChatId,muted});
+   if(chat)chat.muted=result.muted;
+   actionButton.title=result.muted?'فعال‌کردن اعلان‌های گفتگو':'بی‌صداکردن گفتگو';
+   actionButton.setAttribute('aria-label',actionButton.title);
+   toast(result.muted?'گفتگو بی‌صدا شد.':'اعلان‌های گفتگو فعال شد.');
+  }catch(error){toast(error.message)}
+  finally{actionButton.disabled=false}
+  return;
+ }
  if(action==='search'){searchUsers();return}
  if(action==='feed-filter'){toast('فیلترهای فید در مرحله بعد اضافه می‌شوند.');return}
- if(action==='edit-profile'||action==='account'){if(!currentUser)authOpen();else{go('profile');toast('ویرایش کامل پروفایل در مرحله بعد فعال می‌شود.')}return}
- if(action==='security'||action==='privacy'||action==='notifications'||action==='notification-settings'||action==='appearance'||action==='support'){toast('این تنظیم پس از اتصال سرویس مربوطه فعال می‌شود.');return}
+ if(action==='edit-profile'||action==='account'||action==='privacy'){openProfileEditor();return}
+ if(action==='close-profile-editor'){closeProfileEditor();return}
+ if(action==='save-profile'){saveProfile();return}
+ if(action==='notifications'||action==='notification-settings'){if(!currentUser){authOpen();return}go('notifications');loadNotifications();return}
+ if(action==='security'||action==='appearance'||action==='support'){toast('این بخش هنوز آماده نیست؛ هیچ تنظیمی تغییر نکرده است.');return}
 });
 $('authClose').addEventListener('click',authClose);
 $('chatComposer').addEventListener('click',event=>{if(event.target===$('chatComposer')){$('chatComposer').classList.remove('open');$('chatComposer').hidden=true}});
