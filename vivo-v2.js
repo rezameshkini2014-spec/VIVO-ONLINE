@@ -263,7 +263,8 @@ async function loadChatMessages(){
    bubble.append(node('time','',formatTime(message.sentAt)+(message.editedAt?' · ویرایش‌شده':'')));
    const controls=node('div','message-controls');
    const reply=node('button','text-button','پاسخ');reply.dataset.action='reply-message';reply.dataset.messageId=message.id;controls.append(reply);
-   const react=node('button','text-button','👍');react.dataset.action='react-message';react.dataset.messageId=message.id;controls.append(react);
+   for(const reaction of message.reactions||[]){const chip=node('button','text-button reaction-chip',reaction.reaction+' '+reaction.count);chip.dataset.action='react-message';chip.dataset.messageId=message.id;chip.dataset.reaction=reaction.reaction;if(reaction.mine)chip.classList.add('active');controls.append(chip)}
+   const react=node('button','text-button','＋ واکنش');react.dataset.action='react-message';react.dataset.messageId=message.id;controls.append(react);
    if(message.fromMe){const edit=node('button','text-button','ویرایش');edit.dataset.action='edit-message';edit.dataset.messageId=message.id;controls.append(edit);const del=node('button','text-button','حذف');del.dataset.action='delete-message';del.dataset.messageId=message.id;controls.append(del)}
    bubble.append(controls);list.append(bubble);
   }
@@ -307,6 +308,29 @@ document.addEventListener('click',async event=>{
  if(pageButton){event.preventDefault();go(pageButton.dataset.page);return}
  const actionButton=event.target.closest('[data-action]');if(!actionButton)return;
  const action=actionButton.dataset.action,postId=actionButton.dataset.postId;
+ if(action==='open-chat'){openChat(actionButton.dataset.chatId);return}
+ if(action==='reply-message'){
+  replyToMessageId=actionButton.dataset.messageId;
+  const preview=actionButton.closest('.message-bubble')?.querySelector('p')?.textContent||'پیام';
+  $('chatMessageInput').placeholder='پاسخ به: '+preview.slice(0,45);
+  $('chatMessageInput').focus();return;
+ }
+ if(action==='react-message'){
+  try{await requestJson('/api/vivo/chat/react',{messageId:actionButton.dataset.messageId,reaction:actionButton.dataset.reaction||'👍'});await loadChatMessages();toast('واکنش ثبت شد.')}
+  catch(error){toast(error.message)}return;
+ }
+ if(action==='edit-message'){
+  const bubble=actionButton.closest('.message-bubble'),oldText=bubble?.querySelector('p')?.textContent||'';
+  const updated=window.prompt('متن ویرایش‌شده پیام:',oldText);
+  if(updated===null||!updated.trim()||updated.trim()===oldText)return;
+  try{await requestJson('/api/vivo/chat/edit',{messageId:actionButton.dataset.messageId,text:updated.trim()});await loadChatMessages();toast('پیام ویرایش شد.')}
+  catch(error){toast(error.message)}return;
+ }
+ if(action==='delete-message'){
+  if(!window.confirm('این پیام حذف شود؟'))return;
+  try{await requestJson('/api/vivo/chat/delete',{messageId:actionButton.dataset.messageId});await loadChatMessages();toast('پیام حذف شد.')}
+  catch(error){toast(error.message)}return;
+ }
  if(action==='login'){authOpen();return}
  if(action==='logout'){logout();return}
  if(action==='choose-file'){$('postFile').click();return}
