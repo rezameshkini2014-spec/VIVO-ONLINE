@@ -103,12 +103,18 @@ Deno.serve(async (req: Request) => {
       const body = await req.json().catch(() => ({}));
       const phone = body.phone;
       const name = safeText(body.name, 50).trim();
-      if (!validPhone(phone) || name.length < 2) return json(400, { ok: false, error: "شماره یا نام معتبر نیست." });
+      const username = safeText(body.username, 30).trim().toLowerCase();
+      if (!validPhone(phone) || name.length < 2 || !/^[a-z][a-z0-9_]{3,29}$/.test(username)) {
+        return json(400, { ok: false, error: "شماره، نام نمایشی یا نام کاربری معتبر نیست." });
+      }
       const { data: user, error } = await supabase.from("vivo_users")
-        .upsert({ phone, display_name: name, updated_at: new Date().toISOString() }, { onConflict: "phone" })
+        .upsert({ phone, display_name: name, username, updated_at: new Date().toISOString() }, { onConflict: "phone" })
         .select("id,phone,display_name,username,bio,avatar_url,created_at")
         .single();
-      if (error || !user) return json(500, { ok: false, error: "ساخت حساب ابری انجام نشد." });
+      if (error || !user) {
+        if (error?.code === "23505") return json(409, { ok: false, error: "این نام کاربری قبلاً انتخاب شده است." });
+        return json(500, { ok: false, error: "ساخت حساب ابری انجام نشد." });
+      }
       return json(200, { ok: true, user, sessionToken: await issueToken(user.id, key) });
     }
 
