@@ -286,9 +286,22 @@ Deno.serve(async (req: Request) => {
       const { data, error } = await supabase.from("vivo_messages").select("id,chat_id,sender_id,sender_type,body,attachment,reply_to,sent_at,status,edited_at,deleted_at").eq("chat_id", chatId).is("deleted_at", null).order("sent_at", { ascending: true }).limit(200);
       if (error) return json(500, { ok: false, error: "دریافت پیام‌ها ناموفق بود." });
       const senderIds = [...new Set((data || []).map((x: any) => x.sender_id).filter(Boolean))];
-      const users = senderIds.length ? await supabase.from("vivo_users").select("id,display_name,username,avatar_url").in("id", senderIds) : { data: [], error: null };
+      const messageIds = (data || []).map((x: any) => x.id);
+      const [users, reactionsResult] = await Promise.all([
+        senderIds.length ? supabase.from("vivo_users").select("id,display_name,username,avatar_url").in("id", senderIds) : Promise.resolve({ data: [], error: null }),
+        messageIds.length ? supabase.from("vivo_message_reactions").select("message_id,user_id,reaction").in("message_id", messageIds) : Promise.resolve({ data: [], error: null })
+      ]);
+      if (users.error || reactionsResult.error) return json(500, { ok: false, error: "دریافت جزئیات پیام‌ها ناموفق بود." });
       const userMap = new Map((users.data || []).map((x: any) => [x.id, x]));
-      return json(200, { ok: true, messages: (data || []).map((x: any) => ({ id: x.id, senderId: x.sender_id, sender: userMap.get(x.sender_id) || null, fromMe: x.sender_id === userId, text: x.body, attachment: x.attachment, replyTo: x.reply_to, sentAt: new Date(x.sent_at).getTime(), status: x.status, editedAt: x.edited_at })) });
+      const reactionsByMessage = new Map<string, any[]>();
+      for (const item of reactionsResult.data || []) {
+        const list = reactionsByMessage.get(item.message_id) || [];
+        const existing = list.find((x: any) => x.reaction === item.reaction);
+        if (existing) { existing.count++; existing.mine ||= item.user_id === userId; }
+        else list.push({ reaction: item.reaction, count: 1, mine: item.user_id === userId });
+        reactionsByMessage.set(item.message_id, list);
+      }
+      return json(200, { ok: true, messages: (data || []).map((x: any) => ({ id: x.id, senderId: x.sender_id, sender: userMap.get(x.sender_id) || null, fromMe: x.sender_id === userId, text: x.body, attachment: x.attachment, replyTo: x.reply_to, sentAt: new Date(x.sent_at).getTime(), status: x.status, editedAt: x.edited_at, reactions: reactionsByMessage.get(x.id) || [] })) });
     }
 
     if (path === "/chat/send" && req.method === "POST") {
