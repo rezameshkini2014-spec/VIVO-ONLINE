@@ -12,7 +12,31 @@ module.exports = async (req, res) => {
   const phone = normalizePhone(req.body?.phone);
   const name = String(req.body?.name || "").trim().slice(0, 50);
   const username = String(req.body?.username || "").trim().toLowerCase();
+  const requestId = String(req.body?.requestId || "").trim();
+  const code = String(req.body?.code || "")
+    .replace(/[۰-۹]/g, d => String("۰۱۲۳۴۵۶۷۸۹".indexOf(d)))
+    .replace(/[٠-٩]/g, d => String("٠١٢٣٤٥٦٧٨٩".indexOf(d)));
   if (!phone || name.length < 2 || !/^[a-z][a-z0-9_]{3,29}$/.test(username)) return res.status(400).json({ ok: false, error: "شماره موبایل، نام نمایشی یا نام کاربری معتبر نیست." });
+  if (!requestId || requestId.length > 200 || !/^\\d{6}$/.test(code)) return res.status(400).json({ ok: false, error: "کد تأیید یا شناسه درخواست معتبر نیست." });
+
+  const otpApiKey = process.env.OTP_API_KEY;
+  if (!otpApiKey) return res.status(503).json({ ok: false, error: "سرویس تأیید شماره هنوز پیکربندی نشده است." });
+
+  try {
+    const otpResponse = await fetch("https://otp-push-server.vercel.app/api/verify", {
+      method: "POST",
+      headers: { "content-type": "application/json", "x-api-key": otpApiKey },
+      body: JSON.stringify({ userId: "vivo-phone-" + phone, requestId, code })
+    });
+    const otpData = await otpResponse.json().catch(() => ({}));
+    if (!otpResponse.ok) {
+      return res.status(otpResponse.status >= 400 && otpResponse.status < 500 ? otpResponse.status : 502)
+        .json({ ok: false, error: otpData.error || "کد تأیید معتبر نیست یا مهلت آن پایان یافته است." });
+    }
+  } catch (error) {
+    console.error("VIVO OTP verification error:", error);
+    return res.status(502).json({ ok: false, error: "ارتباط با سرویس تأیید شماره برقرار نشد." });
+  }
 
   const base = process.env.VIVO_SUPABASE_URL;
   const publishableKey = process.env.VIVO_SUPABASE_PUBLISHABLE_KEY;
