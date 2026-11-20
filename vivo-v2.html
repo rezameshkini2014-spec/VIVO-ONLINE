@@ -11,6 +11,7 @@
 <link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="/vivo-v2.css">
 <link rel="stylesheet" href="/vivo-v2-auth.css">
+<link rel="stylesheet" href="/vivo-v2-social.css">
 </head>
 <body>
 <div class="vivo-app" id="vivoApp">
@@ -61,7 +62,7 @@
       <div class="feed-layout">
         <section class="feed-column">
           <div class="section-heading feed-heading"><div><h2>جدیدترین پست‌ها</h2><p>محتوای تازه از جامعه ویوو</p></div><button class="filter-button" data-action="feed-filter">همه پست‌ها <span>⌄</span></button></div>
-          <div class="empty-card feed-empty"><div class="empty-illustration"><span>✧</span><b>V</b><i>＋</i></div><h3>هنوز پستی منتشر نشده است</h3><p>فضای فید با انتشار محتوای واقعی کاربران کامل می‌شود. برای شروع، اولین پست خودت را بساز.</p><button class="primary-button" data-page="create">ساخت پست جدید</button></div>
+          <div class="empty-card feed-empty"><div class="empty-illustration"><span>✧</span><b>V</b><i>＋</i></div><h3>هنوز پستی منتشر نشده است</h3><p>فضای فید با انتشار محتوای واقعی کاربران کامل می‌شود. برای شروع، اولین پست خودت را بساز.</p><button class="primary-button" data-page="create">ساخت پست جدید</button><div id="postsList" class="posts-list"></div>
         </section>
         <aside class="right-rail">
           <div class="rail-card profile-promo"><div class="rail-profile-top"><span class="avatar avatar-self large">و</span><div><b>به VIVO خوش آمدی</b><small>پروفایل خودت را تکمیل کن</small></div></div><button class="secondary-button full" data-page="profile">مشاهده پروفایل</button></div>
@@ -91,7 +92,7 @@
           <div class="upload-zone" id="uploadZone"><div class="upload-symbol">＋</div><b>افزودن تصویر یا ویدئو</b><small>انتخاب فایل از دستگاه</small><input id="postFile" type="file" accept="image/*,video/*" hidden><button class="secondary-button" type="button" data-action="choose-file">انتخاب فایل</button></div>
           <div id="filePreview" class="file-preview" hidden></div>
           <label class="field-label" for="postAudience">مخاطبان</label><select id="postAudience" class="text-field"><option value="followers" selected>دنبال‌کنندگان</option><option value="public">همه کاربران</option><option value="private">فقط خودم</option></select>
-          <div class="composer-actions"><span class="draft-note">پیش‌نویس تا زمان اتصال ذخیره‌سازی ابری فقط روی همین دستگاه می‌ماند.</span><button class="primary-button" data-action="publish" disabled>انتشار پس از اتصال سرویس</button></div>
+          <div class="composer-actions"><span class="draft-note">پیش‌نویس تا زمان اتصال ذخیره‌سازی ابری فقط روی همین دستگاه می‌ماند.</span><button class="primary-button" data-action="publish" id="publishButton" disabled>انتشار پست</button></div>
           <div class="inline-status" id="composerStatus" role="status">انتشار عمومی هنوز فعال نشده است؛ هیچ محتوایی بدون ذخیره‌سازی واقعی منتشر نمی‌شود.</div>
         </div>
       </div>
@@ -105,12 +106,12 @@
     <section class="page" id="page-explore" data-view="explore">
       <div class="section-heading"><div><h2>کشف و جست‌وجو</h2><p>کاربران، موضوعات و محتوای تازه را پیدا کن.</p></div></div>
       <div class="explore-search"><span>⌕</span><input id="exploreSearch" type="search" placeholder="نام کاربری، هشتگ یا موضوع را جست‌وجو کن"><button class="primary-button" data-action="search">جست‌وجو</button></div>
-      <div class="empty-card wide-empty"><div class="explore-symbol">✧</div><h3>دنیای تازه‌ای برای کشف</h3><p>جست‌وجوی کاربران و محتوا پس از اتصال API اجتماعی فعال می‌شود.</p></div>
+      <div class="empty-card wide-empty" id="exploreEmpty"><div class="explore-symbol">✧</div><h3>دنیای تازه‌ای برای کشف</h3><p>نام کاربری یا موضوعی را جست‌وجو کن.</p></div><div id="searchResults" class="results-list"></div>
     </section>
 
     <section class="page" id="page-notifications" data-view="notifications">
       <div class="section-heading"><div><h2>مرکز اعلان‌ها</h2><p>رویدادهای مهم حساب و ارتباطات تو</p></div><button class="text-button" data-action="notification-settings">تنظیم اعلان‌ها</button></div>
-      <div class="empty-card wide-empty"><div class="notification-symbol">♧</div><h3>اعلان تازه‌ای نداری</h3><p>دنبال‌کننده‌ها، پسندها، نظرها و پیام‌های جدید پس از اتصال سرویس اعلان در اینجا نمایش داده می‌شوند.</p></div>
+      <div class="empty-card wide-empty" id="notificationsEmpty"><div class="notification-symbol">♧</div><h3>اعلان تازه‌ای نداری</h3><p>وقتی فعالیت تازه‌ای روی حساب تو رخ دهد، اینجا نمایش داده می‌شود.</p></div><div id="notificationList" class="notification-list"></div>
     </section>
 
     <section class="page" id="page-profile" data-view="profile">
@@ -119,7 +120,7 @@
         <div class="profile-main"><span class="avatar profile-avatar avatar-self">و</span><div class="profile-identity"><h2>حساب ویوو</h2><span>@نام_کاربری</span><p>برای ساخت و تکمیل پروفایل وارد حساب خود شو.</p></div><button class="secondary-button" data-action="edit-profile">ویرایش پروفایل</button></div>
         <div class="profile-stats"><div><b>—</b><span>پست‌ها</span></div><div><b>—</b><span>دنبال‌کنندگان</span></div><div><b>—</b><span>دنبال‌شوندگان</span></div></div>
         <div class="profile-tabs"><button class="active">پست‌ها</button><button>ویدئوها</button><button>ذخیره‌شده‌ها</button></div>
-        <div class="profile-empty"><span>▦</span><b>هنوز محتوایی وجود ندارد</b><small>پس از ورود و انتشار محتوا، آثار تو اینجا نمایش داده می‌شوند.</small></div>
+        <div class="profile-empty" id="profileEmpty"><span>▦</span><b>هنوز محتوایی وجود ندارد</b><small>پس از انتشار محتوا، آثار تو اینجا نمایش داده می‌شوند.</small></div><div id="profilePosts" class="posts-list"></div>
       </div>
     </section>
 
