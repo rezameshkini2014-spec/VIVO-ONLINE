@@ -3,7 +3,7 @@
   "appName": "ویوو",
   "webDir": "www",
   "server": {
-    "url": "https://vivo-messenger.vercel.app",
+    "url": "https://vivo-messenger-git-vivo-original-upgrade-2-ac1091-reza-personal.vercel.app",
     "cleartext": false,
     "allowNavigation": [
       "vivo-messenger.vercel.app",
