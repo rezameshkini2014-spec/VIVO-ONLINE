@@ -267,7 +267,51 @@ html,body{background:radial-gradient(ellipse at 8% 0%,#284b8038,transparent 34%)
 @media(max-width:680px){#app{padding:0;gap:0}.top{height:68px;border-radius:0;padding:0 14px}.layout{padding:10px 9px 92px;min-height:0}.sidebar{min-height:calc(100dvh - 170px);padding:16px 13px}.main{min-height:calc(100dvh - 170px)}.welcome{padding:20px 15px}.welcome-head{padding:7px 0 21px}.welcome-head h1{font-size:25px}.welcome-mark{width:62px;height:62px;flex-basis:62px;border-radius:20px;font-size:28px}.overview-grid{grid-template-columns:1fr;gap:11px;padding-top:16px}.overview-card{padding:16px;border-radius:18px}.overview-card.wide{grid-column:auto}.room{height:calc(100dvh - 176px)}.roomhead{padding:11px 12px}.messages{padding:15px 9px}.composerwrap{padding:10px}.mobilebar{padding:8px 8px calc(8px + env(safe-area-inset-bottom))}.mobilebar button{font-size:10px}.vs-shell{padding:8px 12px 100px}.vs-top{padding:12px 0}.vs-brand{font-size:22px}.vs-tabs{gap:6px}.vs-tabs button{font-size:11px;padding:9px 12px}.vs-compose{padding:13px}.vs-post{border-radius:18px}}
 @media(prefers-reduced-motion:reduce){*,*::before,*::after{scroll-behavior:auto!important;transition:none!important;animation:none!important}}
 </style>
-</head>
+
+<style id="vivo-instagram-redesign">
+#vivoSocial{position:fixed;inset:0;z-index:1000;display:none;background:#fafafa;color:#262626;font-family:Inter,system-ui,-apple-system,"Segoe UI",sans-serif;overflow:auto}
+#vivoSocial.open{display:block}
+#vivoSocial *{box-sizing:border-box}
+.ig-app{min-height:100dvh;background:#fafafa}
+.ig-side{position:fixed;inset:0 auto 0 0;width:245px;background:#fff;border-right:1px solid #dbdbdb;padding:30px 14px 20px;display:flex;flex-direction:column;z-index:5}
+.ig-wordmark{font-family:Georgia,serif;font-size:34px;font-weight:800;letter-spacing:-2px;padding:0 14px 38px;color:#171717}
+.ig-nav{height:51px;border:0;background:transparent;color:#262626;border-radius:9px;display:flex;align-items:center;gap:17px;padding:0 14px;margin:3px 0;text-align:left;font-size:15px;cursor:pointer;transition:background .18s}
+.ig-nav i{font-style:normal;font-size:25px;width:25px;text-align:center;font-weight:300}.ig-nav span{font-weight:450}.ig-nav:hover,.ig-nav.active{background:#f1f1f1}.ig-nav.active span{font-weight:750}
+.ig-side-bottom{margin-top:auto}
+.ig-main{margin-left:245px;min-height:100dvh}
+.ig-feed-layout{max-width:1050px;margin:0 auto;display:grid;grid-template-columns:minmax(0,630px) 320px;gap:52px;padding:28px 24px 60px}
+.ig-center{min-width:0}
+.ig-stories-wrap{background:#fff;border:1px solid #dbdbdb;border-radius:9px;padding:18px 12px;margin-bottom:22px;overflow:hidden}
+.ig-stories{display:flex;gap:17px;overflow-x:auto;scrollbar-width:none;padding:1px 2px 4px}.ig-stories::-webkit-scrollbar{display:none}
+.ig-story{border:0;background:transparent;min-width:66px;width:66px;padding:0;display:flex;flex-direction:column;align-items:center;gap:7px;color:#262626;cursor:pointer;font-size:11px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.ig-story-ring{width:62px;height:62px;border-radius:50%;padding:3px;background:conic-gradient(#ffb347,#f53672,#a32be2,#ffb347);display:grid;place-items:center}
+.ig-story-ring.seen{background:#c7c7c7}.ig-story-avatar{width:100%;height:100%;border-radius:50%;border:2px solid #fff;background:#e9e9e9;display:grid;place-items:center;overflow:hidden;font-size:23px;font-weight:600;color:#666}.ig-story-avatar img{width:100%;height:100%;object-fit:cover}
+.ig-story-add{position:relative}.ig-story-add:after{content:"+";position:absolute;right:0;bottom:0;width:21px;height:21px;border-radius:50%;background:#0095f6;color:#fff;border:2px solid white;font-size:17px;line-height:17px}
+.ig-post{background:#fff;border:1px solid #dbdbdb;border-radius:9px;margin:0 0 20px;overflow:hidden}
+.ig-post-head{height:62px;padding:10px 13px;display:flex;align-items:center;gap:10px}
+.ig-avatar{width:38px;height:38px;border-radius:50%;background:#eee;display:grid;place-items:center;overflow:hidden;font-weight:700;flex:none}.ig-avatar img{width:100%;height:100%;object-fit:cover}
+.ig-post-user{flex:1;min-width:0;display:flex;flex-direction:column;gap:3px}.ig-post-user strong{font-size:13px}.ig-post-user small{font-size:11px;color:#8e8e8e}
+.ig-more{border:0;background:none;font-size:22px;cursor:pointer;color:#333}
+.ig-post-media{background:#f0f0f0;width:100%;max-height:760px;aspect-ratio:1/1;display:block;object-fit:cover}.ig-post-media.video{object-fit:contain;background:#111}
+.ig-post-placeholder{aspect-ratio:1/1;background:linear-gradient(135deg,#f7d9e7,#d8e7fb,#d8f1e8);display:grid;place-items:center;padding:35px;text-align:center;font-size:23px;font-weight:700;color:#39485c}
+.ig-post-actions{display:flex;align-items:center;gap:15px;padding:10px 13px 3px}.ig-action{border:0;background:none;padding:0;color:#262626;font-size:26px;line-height:1;cursor:pointer}.ig-action.liked{color:#ed4956}.ig-action.save{margin-left:auto}
+.ig-post-likes{font-weight:700;font-size:13px;padding:7px 13px 0}.ig-post-caption{font-size:13px;line-height:1.65;padding:5px 13px 8px;overflow-wrap:anywhere}.ig-post-caption b{margin-left:5px}.ig-post-comments{padding:0 13px 9px;color:#737373;font-size:12px}.ig-comment-link{border:0;background:none;color:#8e8e8e;padding:0;cursor:pointer;font-size:12px}
+.ig-post-time{padding:0 13px 13px;font-size:9px;color:#8e8e8e;text-transform:uppercase}
+.ig-add-comment{border-top:1px solid #efefef;display:flex;padding:10px 13px;gap:8px}.ig-add-comment input{border:0;outline:0;flex:1;font-size:12px;background:transparent}.ig-add-comment button{border:0;background:none;color:#0095f6;font-weight:700;cursor:pointer}
+.ig-suggestions{padding-top:18px;position:sticky;top:20px;height:max-content}.ig-own{display:flex;align-items:center;gap:12px;margin-bottom:22px}.ig-own .ig-avatar{width:48px;height:48px}.ig-own-info{flex:1;display:flex;flex-direction:column;gap:4px;font-size:12px}.ig-own-info small{color:#8e8e8e}.ig-link{border:0;background:none;color:#0095f6;font-size:11px;font-weight:700;cursor:pointer}.ig-suggest-title{display:flex;justify-content:space-between;color:#8e8e8e;font-weight:700;font-size:12px;margin:18px 0 15px}.ig-suggest-note{font-size:11px;line-height:1.8;color:#aaa}
+.ig-empty{background:#fff;border:1px solid #dbdbdb;border-radius:9px;padding:48px 22px;text-align:center;color:#8e8e8e;font-size:13px;line-height:2}
+.ig-page-title{font-size:22px;font-weight:700;margin:10px 0 20px}
+.ig-create-box{background:#fff;border:1px solid #dbdbdb;border-radius:12px;padding:22px;max-width:620px;margin:20px auto}.ig-create-box h2{font-size:19px;margin:0 0 18px}.ig-field{width:100%;border:1px solid #dbdbdb;border-radius:8px;padding:12px;margin:8px 0;font:inherit;outline-color:#0095f6}.ig-create-preview{width:100%;max-height:340px;object-fit:contain;background:#f5f5f5;border-radius:8px;margin:10px 0}.ig-primary{background:#0095f6;color:#fff;border:0;border-radius:8px;padding:11px 18px;font-weight:700;cursor:pointer}.ig-secondary{background:#efefef;color:#262626;border:0;border-radius:8px;padding:10px 16px;cursor:pointer}.ig-form-row{display:flex;gap:9px;flex-wrap:wrap;margin-top:12px}
+.ig-profile-head{display:flex;align-items:center;gap:45px;padding:28px 5%;border-bottom:1px solid #dbdbdb}.ig-profile-photo{width:125px;height:125px;border-radius:50%;background:#eee;display:grid;place-items:center;overflow:hidden;font-size:44px}.ig-profile-photo img{width:100%;height:100%;object-fit:cover}.ig-profile-info h2{font-size:21px;font-weight:400;margin:0 0 15px}.ig-profile-stats{display:flex;gap:28px;font-size:14px;margin-bottom:15px}.ig-profile-bio{font-size:13px;line-height:1.7}.ig-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:4px;margin-top:18px}.ig-grid button{border:0;padding:0;background:#eee;aspect-ratio:1;overflow:hidden;cursor:pointer}.ig-grid img,.ig-grid video{width:100%;height:100%;object-fit:cover}.ig-grid span{display:grid;place-items:center;height:100%;padding:10px;font-size:12px}
+.ig-viewer{position:fixed;inset:0;background:rgba(0,0,0,.94);z-index:1200;display:none;align-items:center;justify-content:center;padding:20px}.ig-viewer.open{display:flex}.ig-viewer-close{position:absolute;right:22px;top:15px;border:0;background:none;color:#fff;font-size:38px;cursor:pointer}
+.ig-viewer-card{position:relative;width:min(420px,94vw);height:min(780px,90dvh);background:#222;border-radius:8px;overflow:hidden;color:#fff;display:flex;flex-direction:column;box-shadow:0 20px 80px #0008}
+.ig-story-progress{display:flex;gap:3px;padding:10px 9px 5px;position:absolute;left:0;right:0;top:0;z-index:3}.ig-progress-seg{height:2px;background:#ffffff66;flex:1;border-radius:4px;overflow:hidden}.ig-progress-seg i{display:block;height:100%;width:0;background:#fff}
+.ig-viewer-top{position:absolute;top:20px;left:0;right:0;z-index:3;display:flex;align-items:center;gap:8px;padding:12px}.ig-viewer-top .ig-avatar{width:32px;height:32px;border:1px solid #fff;color:#333}.ig-viewer-top strong{font-size:12px;text-shadow:0 1px 5px #000}.ig-viewer-top small{font-size:10px;opacity:.85}.ig-viewer-media{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}.ig-viewer-text{position:absolute;inset:0;display:grid;place-items:center;padding:45px;text-align:center;font-size:27px;font-weight:800;line-height:1.6;white-space:pre-wrap}.ig-viewer-bottom{position:absolute;bottom:0;left:0;right:0;z-index:3;padding:18px 14px;background:linear-gradient(transparent,#0007);display:flex;gap:8px;align-items:center}.ig-viewer-bottom input{flex:1;border:1px solid #ffffff9c;background:#0003;color:white;border-radius:22px;padding:10px 14px;outline:none}.ig-viewer-bottom button{background:none;border:0;color:#fff;font-size:22px;cursor:pointer}.ig-viewer-hit{position:absolute;top:80px;bottom:80px;width:35%;z-index:2}.ig-viewer-hit.prev{left:0}.ig-viewer-hit.next{right:0}
+.ig-modal{position:fixed;inset:0;z-index:1300;background:#0008;display:none;align-items:center;justify-content:center;padding:18px}.ig-modal.open{display:flex}.ig-modal-card{width:min(440px,100%);max-height:88dvh;overflow:auto;background:white;border-radius:14px;padding:22px;color:#262626}.ig-modal-card h3{margin:0 0 16px}.ig-modal-actions{display:flex;gap:9px;justify-content:flex-end;margin-top:16px}
+.ig-mobile-head,.ig-mobile-nav{display:none}
+@media(max-width:1050px){.ig-feed-layout{grid-template-columns:minmax(0,630px);justify-content:center}.ig-suggestions{display:none}}
+@media(max-width:760px){#vivoSocial{background:#fff}.ig-side{display:none}.ig-main{margin:0;padding-bottom:58px}.ig-mobile-head{height:52px;display:flex;align-items:center;justify-content:space-between;padding:0 15px;border-bottom:1px solid #dbdbdb;background:#fff;position:sticky;top:0;z-index:8}.ig-mobile-head b{font:800 26px Georgia,serif}.ig-mobile-head button{border:0;background:none;font-size:24px;margin-left:12px}.ig-feed-layout{display:block;padding:0 0 30px}.ig-stories-wrap{border:0;border-radius:0;border-bottom:1px solid #efefef;padding:13px 10px;margin:0}.ig-stories{gap:13px}.ig-post{border:0;border-radius:0;margin-bottom:12px;border-bottom:1px solid #efefef}.ig-post-media{max-height:620px}.ig-post-head{padding-left:12px;padding-right:12px}.ig-mobile-nav{display:flex;position:fixed;bottom:0;left:0;right:0;height:54px;background:#fff;border-top:1px solid #dbdbdb;z-index:10;justify-content:space-around;align-items:center}.ig-mobile-nav button{border:0;background:none;font-size:26px;color:#262626}.ig-feed{padding-bottom:10px}.ig-profile-head{gap:18px;padding:22px 14px}.ig-profile-photo{width:86px;height:86px}.ig-profile-info h2{font-size:17px}.ig-profile-stats{gap:13px;font-size:12px}.ig-grid{gap:2px;margin-top:10px}.ig-viewer{padding:0}.ig-viewer-card{width:100vw;height:100dvh;border-radius:0;max-height:none}.ig-viewer-close{right:13px;top:9px;z-index:1301}.ig-create-box{border:0;padding:18px}.ig-page-title{padding:0 14px}}
+</style></head>
 <body>
 <section id="authScreen" class="authscreen">
  <div class="authcard">
@@ -311,11 +355,37 @@ html,body{background:radial-gradient(ellipse at 8% 0%,#284b8038,transparent 34%)
 </div>
 
 <div id="vivoSocial" dir="rtl">
- <div class="vs-shell">
-  <header class="vs-top"><div class="vs-brand">VIVO <span>Social</span></div><div style="display:flex;gap:7px"><button class="vs-btn" onclick="vivoSocialProfile()">پروفایل</button><button class="vs-btn" onclick="vivoSocialClose()">بازگشت</button></div></header>
-  <nav class="vs-tabs" id="vsSocialTabs"><button class="vs-btn active" data-page="feed">خانه</button><button class="vs-btn" data-page="explore">اکسپلور</button><button class="vs-btn" data-page="reels">ویدئوها</button><button class="vs-btn" data-page="saved">ذخیره‌شده‌ها</button><button class="vs-btn" data-page="profile">پروفایل من</button></nav>
-  <section id="vsSocialContent"></section>
+ <div class="ig-app">
+  <aside class="ig-side">
+   <div class="ig-wordmark">VIVO</div>
+   <button class="ig-nav active" data-ig-page="home"><i>⌂</i><span>خانه</span></button>
+   <button class="ig-nav" data-ig-page="explore"><i>⌕</i><span>اکسپلور</span></button>
+   <button class="ig-nav" data-ig-page="reels"><i>▣</i><span>ویدئوها</span></button>
+   <button class="ig-nav" data-ig-page="messages"><i>➤</i><span>پیام‌ها</span></button>
+   <button class="ig-nav" data-ig-page="notifications"><i>♡</i><span>اعلان‌ها</span></button>
+   <button class="ig-nav" data-ig-page="create"><i>＋</i><span>ساختن</span></button>
+   <button class="ig-nav" data-ig-page="profile"><i>◉</i><span>پروفایل</span></button>
+   <div class="ig-side-bottom"><button class="ig-nav" data-ig-page="settings"><i>☷</i><span>تنظیمات</span></button><button class="ig-nav" id="igExit"><i>↩</i><span>بازگشت به پیام‌رسان</span></button></div>
+  </aside>
+  <main class="ig-main">
+   <header class="ig-mobile-head"><b>VIVO</b><div><button data-ig-page="notifications">♡</button><button id="igMobileExit">×</button></div></header>
+   <section class="ig-feed-layout">
+    <div class="ig-center">
+     <div class="ig-stories-wrap"><div class="ig-stories" id="igStories"></div></div>
+     <div class="ig-feed" id="igFeed"></div>
+    </div>
+    <aside class="ig-suggestions" id="igSuggestions"></aside>
+   </section>
+   <nav class="ig-mobile-nav">
+    <button class="active" data-ig-page="home">⌂</button><button data-ig-page="explore">⌕</button><button data-ig-page="create">＋</button><button data-ig-page="reels">▣</button><button data-ig-page="profile">◉</button>
+   </nav>
+  </main>
  </div>
+ <div class="ig-viewer" id="igViewer" aria-hidden="true">
+  <button class="ig-viewer-close" id="igViewerClose" aria-label="بستن">×</button>
+  <div class="ig-viewer-card" id="igViewerCard"></div>
+ </div>
+ <div class="ig-modal" id="igModal"><div class="ig-modal-card" id="igModalCard"></div></div>
 </div>
 <div class="modal" id="modal"><div class="dialog" id="dialog"></div></div>
 <div class="menu" id="menu"><div class="menupanel" id="menuPanel"></div></div>
@@ -455,4 +525,93 @@ nav.forEach(([id,ic,label])=>{const el=document.getElementById(id);if(el)el.inne
 document.querySelectorAll('#vsSocialTabs [data-page]').forEach(el=>{const map={feed:['feed','خانه'],explore:['explore','اکسپلور'],reels:['reels','ویدئوها'],saved:['saved','ذخیره‌شده‌ها'],profile:['profile','پروفایل']};const v=map[el.dataset.page];if(v)el.innerHTML=icon(v[0],17)+'<span>'+v[1]+'</span>'});
 })();
 </script>
-</body></html>
+
+<script id="vivo-instagram-engine">
+(()=>{
+const root=document.getElementById('vivoSocial');if(!root)return;
+const $=id=>document.getElementById(id);
+const esc=v=>String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const KEY='vivo_social_local_v1';
+let state={posts:[],stories:[],following:[],liked:[],saved:[],comments:{},viewed:[],archive:[],profile:{}};
+try{state={...state,...JSON.parse(localStorage.getItem(KEY)||'{}')}}catch{}
+let activeStories=[],storyIndex=0,storyTimer=null,storyStarted=0,storyRemaining=6000,storyPaused=false,storyReply='',previewUrl='';
+const me=()=>window.db?.user?.name||'کاربر ویوو';
+const handle=()=>window.db?.user?.username||'vivo_user';
+const persist=()=>localStorage.setItem(KEY,JSON.stringify(state));
+const avatar=(name,src)=>'<div class="ig-avatar">'+(src?'<img src="'+esc(src)+'">':esc((name||'و').slice(0,1)))+'</div>';
+const liveStories=()=>state.stories.filter(x=>!x.expiresAt||x.expiresAt>Date.now());
+const age=t=>{const n=Math.max(0,Date.now()-t);if(n<60000)return 'همین حالا';if(n<3600000)return Math.floor(n/60000)+' دقیقه پیش';if(n<86400000)return Math.floor(n/3600000)+' ساعت پیش';return new Date(t).toLocaleDateString('fa-IR')};
+function open(){root.classList.add('open');page('home')}
+function close(){root.classList.remove('open');stopTimer();$('igViewer').classList.remove('open')}
+function setPage(k){document.querySelectorAll('[data-ig-page]').forEach(b=>b.classList.toggle('active',b.dataset.igPage===k));}
+function storyStrip(){const stories=liveStories(),mine=stories.filter(x=>x.handle===handle()),others=stories.filter(x=>x.handle!==handle());$('igStories').innerHTML='<button class="ig-story" data-story-create><span class="ig-story-ring ig-story-add"><span class="ig-story-avatar">'+(state.profile.avatar?'<img src="'+esc(state.profile.avatar)+'">':esc(me().slice(0,1)))+'</span></span><span>استوری شما</span></button>'+others.map((x,i)=>'<button class="ig-story" data-story-user="'+esc(x.handle)+'"><span class="ig-story-ring '+(state.viewed.includes(x.id)?'seen':'')+'"><span class="ig-story-avatar">'+(x.avatar?'<img src="'+esc(x.avatar)+'">':esc((x.name||'و').slice(0,1)))+'</span></span><span>'+esc(x.name||x.handle)+'</span></button>').join('')+(mine.length?'<button class="ig-story" data-story-user="'+esc(handle())+'"><span class="ig-story-ring seen"><span class="ig-story-avatar">'+(state.profile.avatar?'<img src="'+esc(state.profile.avatar)+'">':esc(me().slice(0,1)))+'</span></span><span>استوری‌های شما</span></button>':'');}
+function postCard(p){const liked=state.liked.includes(p.id),saved=state.saved.includes(p.id),comments=state.comments[p.id]||[];const media=p.media?(p.type==='video'?'<video class="ig-post-media video" src="'+esc(p.media)+'" controls playsinline></video>':'<img class="ig-post-media" src="'+esc(p.media)+'" alt="تصویر پست">'):'<div class="ig-post-placeholder">'+esc(p.text||'VIVO')+'</div>';return '<article class="ig-post" data-post="'+esc(p.id)+'"><header class="ig-post-head">'+avatar(p.name,p.avatar)+'<div class="ig-post-user"><strong>'+esc(p.handle||'vivo_user')+'</strong><small>'+age(p.created||Date.now())+'</small></div><button class="ig-more" data-post-menu="'+esc(p.id)+'">•••</button></header>'+media+'<div class="ig-post-actions"><button class="ig-action '+(liked?'liked':'')+'" data-like="'+esc(p.id)+'">'+(liked?'♥':'♡')+'</button><button class="ig-action" data-comment="'+esc(p.id)+'">▢</button><button class="ig-action" data-share="'+esc(p.id)+'">⌁</button><button class="ig-action save" data-save="'+esc(p.id)+'">'+(saved?'▣':'♧')+'</button></div><div class="ig-post-likes">'+(p.likes||0).toLocaleString('fa-IR')+' پسند</div><div class="ig-post-caption"><b>'+esc(p.handle||'کاربر')+'</b>'+esc(p.text||'')+'</div><div class="ig-post-comments">'+(comments.slice(-2).map(c=>'<p><b>'+esc(c.name)+':</b> '+esc(c.text)+'</p>').join(''))+(comments.length>2?'<button class="ig-comment-link" data-comment="'+esc(p.id)+'">نمایش همه '+comments.length+' دیدگاه</button>':'')+'</div><div class="ig-post-time">'+new Date(p.created||Date.now()).toLocaleDateString('fa-IR')+'</div><form class="ig-add-comment" data-comment-form="'+esc(p.id)+'"><input name="comment" maxlength="500" placeholder="افزودن دیدگاه..."><button>ارسال</button></form></article>'}
+function feed(list=state.posts){$('igFeed').innerHTML=list.length?list.map(postCard).join(''):'<div class="ig-empty">هنوز پستی برای نمایش وجود ندارد.<br>اولین پستت را با دکمهٔ «ساختن» منتشر کن.</div>'}
+function suggestions(){$('igSuggestions').innerHTML='<div class="ig-own">'+avatar(me(),state.profile.avatar)+'<div class="ig-own-info"><b>'+esc(handle())+'</b><small>'+esc(me())+'</small></div><button class="ig-link" data-ig-page="profile">پروفایل</button></div><div class="ig-suggest-title"><span>فضای اجتماعی VIVO</span><span>درباره</span></div><p class="ig-suggest-note">پست‌ها و استوری‌های این نسخه روی همین دستگاه ذخیره می‌شوند. برای انتشار عمومی، دنبال‌کردن کاربران و آمار مشترک باید سرویس سرور و پایگاه داده متصل شود.</p>'}
+function page(k){setPage(k);storyStrip();suggestions();if(k==='home'){ $('igFeed').parentElement.className='ig-center';feed();return}
+if(k==='explore'){ $('igFeed').parentElement.className='ig-center';$('igFeed').innerHTML='<h2 class="ig-page-title">اکسپلور</h2><div class="ig-grid">'+state.posts.map(p=>'<button data-grid-post="'+esc(p.id)+'">'+(p.media?'<img src="'+esc(p.media)+'">':'<span>'+esc(p.text||'پست')+'</span>')+'</button>').join('')+'</div>';return}
+if(k==='reels'){ $('igFeed').parentElement.className='ig-center';const a=state.posts.filter(p=>p.type==='video');$('igFeed').innerHTML='<h2 class="ig-page-title">ویدئوها</h2>'+ (a.length?a.map(postCard).join(''):'<div class="ig-empty">هنوز ویدئویی منتشر نشده است.</div>');return}
+if(k==='saved'){ $('igFeed').parentElement.className='ig-center';feed(state.posts.filter(p=>state.saved.includes(p.id)));return}
+if(k==='profile'){const own=state.posts.filter(p=>p.handle===handle());$('igFeed').parentElement.className='ig-center';$('igFeed').innerHTML='<div class="ig-profile-head"><div class="ig-profile-photo">'+(state.profile.avatar?'<img src="'+esc(state.profile.avatar)+'">':esc(me().slice(0,1)))+'</div><div class="ig-profile-info"><h2>'+esc(handle())+' <button class="ig-secondary" data-edit-profile>ویرایش پروفایل</button></h2><div class="ig-profile-stats"><span><b>'+own.length+'</b> پست</span><span><b>'+liveStories().filter(x=>x.handle===handle()).length+'</b> استوری فعال</span><span><b>'+state.following.length+'</b> دنبال‌شونده</span></div><div class="ig-profile-bio">'+esc(state.profile.bio||me())+'</div></div></div><div class="ig-grid">'+own.map(p=>'<button data-grid-post="'+esc(p.id)+'">'+(p.media?'<img src="'+esc(p.media)+'">':'<span>'+esc(p.text||'پست')+'</span>')+'</button>').join('')+'</div>';return}
+if(k==='create'){ $('igFeed').parentElement.className='ig-center';$('igFeed').innerHTML='<div class="ig-create-box"><h2>ساخت پست جدید</h2><textarea class="ig-field" id="igPostText" rows="4" maxlength="2200" placeholder="چه چیزی در ذهن داری؟"></textarea><input class="ig-field" id="igPostFile" type="file" accept="image/*,video/*"><img id="igPostPreview" class="ig-create-preview" hidden><div class="ig-form-row"><button class="ig-primary" id="igPublish">انتشار پست</button><button class="ig-secondary" data-story-create>ساخت استوری</button></div><small style="color:#888;display:block;margin-top:12px">محدودیت فایل در این نسخه: ۵ مگابایت. محتوا روی همین دستگاه ذخیره می‌شود.</small></div>';return}
+if(k==='messages'){ $('igFeed').parentElement.className='ig-center';$('igFeed').innerHTML='<div class="ig-empty">برای گفتگو به بخش پیام‌رسان VIVO برگرد.</div>';return}
+if(k==='notifications'){ $('igFeed').parentElement.className='ig-center';$('igFeed').innerHTML='<div class="ig-empty">اعلان‌های اجتماعی مشترک در این نسخه فعال نیستند.</div>';return}
+if(k==='settings'){ $('igFeed').parentElement.className='ig-center';$('igFeed').innerHTML='<div class="ig-create-box"><h2>تنظیمات اجتماعی</h2><p>مدیریت داده‌های محلی، استوری‌ها و اطلاعات پروفایل</p><div class="ig-form-row"><button class="ig-secondary" id="igArchive">آرشیو استوری‌ها ('+state.archive.length+')</button><button class="ig-secondary" id="igClear">پاک‌سازی داده‌های اجتماعی</button></div></div>';return}}
+function modal(html){$('igModalCard').innerHTML=html;$('igModal').classList.add('open')}
+function closeModal(){$('igModal').classList.remove('open')}
+function readFile(file){return new Promise((res,rej)=>{const r=new FileReader();r.onload=()=>res(r.result);r.onerror=rej;r.readAsDataURL(file)})}
+function storyComposer(){modal('<h3>ساخت استوری</h3><textarea id="igStoryText" class="ig-field" rows="3" maxlength="500" placeholder="یک متن کوتاه برای استوری..."></textarea><input id="igStoryFile" class="ig-field" type="file" accept="image/*,video/*"><select id="igStoryStyle" class="ig-field"><option value="gradient">پس‌زمینه رنگی برای استوری متنی</option><option value="dark">تیره</option><option value="warm">گرم</option><option value="blue">آبی</option></select><select id="igStoryPrivacy" class="ig-field"><option value="public">نمایش برای همهٔ استوری‌های همین دستگاه</option><option value="close">فقط فهرست دوستان نزدیک (محلی)</option></select><div class="ig-form-row"><button class="ig-primary" id="igStoryPublish">اشتراک‌گذاری استوری</button><button class="ig-secondary" id="igModalCancel">انصراف</button></div><small style="color:#888">استوری پس از ۲۴ ساعت از ردیف فعال حذف و به آرشیو محلی منتقل می‌شود.</small>')}
+function publishStory(){const file=$('igStoryFile')?.files?.[0],text=$('igStoryText')?.value.trim()||'';if(!file&&!text)return alert('برای استوری متن یا فایل انتخاب کن.');if(file&&file.size>5*1024*1024)return alert('حجم فایل باید کمتر از ۵ مگابایت باشد.');const done=data=>{const item={id:crypto.randomUUID(),name:me(),handle:handle(),avatar:state.profile.avatar||'',text,media:data||'',type:file?.type?.startsWith('video/')?'video':file?'image':'text',style:$('igStoryStyle')?.value||'gradient',privacy:$('igStoryPrivacy')?.value||'public',created:Date.now(),expiresAt:Date.now()+86400000,views:0};state.stories.unshift(item);persist();closeModal();page('home');openStories(handle())};if(file)readFile(file).then(done);else done('')}
+function stopTimer(){if(storyTimer){clearTimeout(storyTimer);storyTimer=null}}
+function renderViewer(){const s=activeStories[storyIndex];if(!s)return closeViewer();const progress=activeStories.map((x,i)=>'<span class="ig-progress-seg"><i style="width:'+(i<storyIndex?'100%':i===storyIndex?'0%':'0%')+'"></i></span>').join('');const visual=s.media?(s.type==='video'?'<video class="ig-viewer-media" src="'+esc(s.media)+'" autoplay playsinline></video>':'<img class="ig-viewer-media" src="'+esc(s.media)+'">'):'<div class="ig-viewer-text" style="background:'+(s.style==='dark'?'linear-gradient(145deg,#171717,#424242)':s.style==='warm'?'linear-gradient(145deg,#f07b56,#8b2f62)':s.style==='blue'?'linear-gradient(145deg,#1c65a5,#5c3e9d)':'linear-gradient(145deg,#833ab4,#fd1d1d,#fcb045)')+'">'+esc(s.text)+'</div>';$('igViewerCard').innerHTML=progress+'<div class="ig-viewer-top">'+avatar(s.name,s.avatar)+'<div><strong>'+esc(s.name||s.handle)+'</strong><br><small>'+age(s.created)+'</small></div>'+(s.handle===handle()?'<button class="ig-more" style="color:white;margin-left:auto" id="igStoryManage">•••</button>':'')+'</div>'+visual+'<button class="ig-viewer-hit prev" id="igStoryPrev" aria-label="قبلی"></button><button class="ig-viewer-hit next" id="igStoryNext" aria-label="بعدی"></button><div class="ig-viewer-bottom">'+(s.handle===handle()?'<span style="font-size:11px;margin-right:5px">'+(s.views||0)+' بازدید محلی</span>':'<input id="igStoryReply" placeholder="پاسخ به استوری..."><button id="igStorySend">➤</button>')+'</div>';$('igViewer').classList.add('open');$('igViewer').setAttribute('aria-hidden','false');if(s.type==='video'){const v=$('igViewerCard').querySelector('video');v.onended=nextStory;v.onloadedmetadata=()=>startTimer(Math.min(15000,Math.max(5000,(v.duration||6)*1000)))}else startTimer(6000)}
+function startTimer(ms){stopTimer();storyRemaining=ms;storyStarted=Date.now();storyTimer=setTimeout(nextStory,ms)}
+function openStories(user){const list=liveStories().filter(x=>x.handle===user);if(!list.length)return;if(user!==handle())list.forEach(x=>{if(!state.viewed.includes(x.id)){state.viewed.push(x.id);x.views=(x.views||0)+1}});activeStories=list;storyIndex=0;persist();renderViewer()}
+function nextStory(){stopTimer();if(storyIndex<activeStories.length-1){storyIndex++;renderViewer()}else closeViewer()}
+function prevStory(){stopTimer();if(storyIndex>0){storyIndex--;renderViewer()}else{const s=activeStories[0];if(s)startTimer(6000)}}
+function closeViewer(){stopTimer();$('igViewer').classList.remove('open');$('igViewer').setAttribute('aria-hidden','true');activeStories=[];page(document.querySelector('.ig-nav.active')?.dataset.igPage||'home')}
+function storyManage(){const s=activeStories[storyIndex];if(!s)return;modal('<h3>مدیریت استوری</h3><p>بازدیدهای ثبت‌شده روی همین دستگاه: '+(s.views||0)+'</p><div class="ig-form-row"><button class="ig-secondary" id="igArchiveOne">انتقال به آرشیو</button><button class="ig-secondary" id="igDeleteStory">حذف استوری</button><button class="ig-secondary" id="igModalCancel">بستن</button></div>')}
+async function publishPost(){const text=$('igPostText')?.value.trim()||'',file=$('igPostFile')?.files?.[0];if(!text&&!file)return alert('متن یا تصویر/ویدئو انتخاب کن.');if(file&&file.size>5*1024*1024)return alert('حجم فایل باید کمتر از ۵ مگابایت باشد.');const add=data=>{state.posts.unshift({id:crypto.randomUUID(),name:me(),handle:handle(),avatar:state.profile.avatar||'',text,media:data||'',type:file?.type?.startsWith('video/')?'video':'image',created:Date.now(),likes:0});persist();page('home')};if(file)add(await readFile(file));else add('')}
+function comment(id){const p=state.posts.find(x=>x.id===id);if(!p)return;modal('<h3>دیدگاه‌ها</h3><div style="max-height:45vh;overflow:auto">'+(state.comments[id]||[]).map(c=>'<p><b>'+esc(c.name)+'</b> '+esc(c.text)+'</p>').join('')+'</div><form id="igCommentForm"><input class="ig-field" name="comment" maxlength="500" placeholder="نظر خود را بنویس..."><div class="ig-modal-actions"><button class="ig-primary">ارسال</button><button type="button" class="ig-secondary" id="igModalCancel">بستن</button></div></form>');}
+function editProfile(){modal('<h3>ویرایش پروفایل</h3><input id="igProfileName" class="ig-field" maxlength="60" value="'+esc(state.profile.name||me())+'" placeholder="نام نمایشی"><textarea id="igProfileBio" class="ig-field" maxlength="160" placeholder="بیوگرافی">'+esc(state.profile.bio||'')+'</textarea><input id="igProfileAvatar" class="ig-field" type="file" accept="image/*"><div class="ig-modal-actions"><button class="ig-primary" id="igProfileSave">ذخیره</button><button class="ig-secondary" id="igModalCancel">انصراف</button></div>')}
+function archive(){modal('<h3>آرشیو استوری‌ها</h3>'+(state.archive.length?state.archive.map((x,i)=>'<div style="display:flex;align-items:center;gap:10px;padding:8px;border-bottom:1px solid #eee">'+(x.media?'<img src="'+esc(x.media)+'" style="width:50px;height:60px;object-fit:cover;border-radius:5px">':'')+'<span style="flex:1;font-size:12px">'+esc(x.text||'استوری')+' · '+age(x.created)+'</span><button class="ig-secondary" data-archive-open="'+i+'">نمایش</button></div>').join(''):'<p>آرشیو خالی است.</p>')+'<div class="ig-modal-actions"><button class="ig-secondary" id="igModalCancel">بستن</button></div>')}
+function cleanup(){const expired=state.stories.filter(x=>x.expiresAt&&x.expiresAt<=Date.now());if(expired.length){state.archive.unshift(...expired);state.stories=state.stories.filter(x=>!expired.includes(x));persist()}}
+root.addEventListener('click',async e=>{
+const b=e.target.closest('button');if(!b)return;
+if(b.id==='igExit'||b.id==='igMobileExit'){close();return}
+if(b.dataset.igPage){page(b.dataset.igPage);return}
+if(b.hasAttribute('data-story-create')){storyComposer();return}
+if(b.dataset.storyUser){openStories(b.dataset.storyUser);return}
+if(b.id==='igModalCancel'){closeModal();return}
+if(b.id==='igStoryPublish'){publishStory();return}
+if(b.id==='igPublish'){publishPost();return}
+if(b.id==='igViewerClose'){closeViewer();return}
+if(b.id==='igStoryNext'){nextStory();return}
+if(b.id==='igStoryPrev'){prevStory();return}
+if(b.id==='igStoryManage'){storyManage();return}
+if(b.id==='igArchiveOne'||b.id==='igDeleteStory'){const s=activeStories[storyIndex];if(s){if(b.id==='igArchiveOne')state.archive.unshift(s);state.stories=state.stories.filter(x=>x.id!==s.id);persist();closeModal();closeViewer()}return}
+if(b.id==='igProfileSave'){const name=$('igProfileName').value.trim();if(!name)return alert('نام نمایشی را وارد کن.');state.profile.name=name;state.profile.bio=$('igProfileBio').value.trim();const f=$('igProfileAvatar').files?.[0];if(f){if(f.size>3*1024*1024)return alert('تصویر باید کمتر از ۳ مگابایت باشد.');state.profile.avatar=await readFile(f)}persist();closeModal();page('profile');return}
+if(b.id==='igArchive'){archive();return}
+if(b.dataset.archiveOpen!==undefined){const x=state.archive[Number(b.dataset.archiveOpen)];if(x){activeStories=[x];storyIndex=0;closeModal();renderViewer()}return}
+if(b.id==='igClear'){if(confirm('تمام پست‌ها، استوری‌ها، دیدگاه‌ها و ذخیره‌شده‌های محلی پاک شوند؟')){state={posts:[],stories:[],following:[],liked:[],saved:[],comments:{},viewed:[],archive:[],profile:{}};persist();page('home')}return}
+if(b.hasAttribute('data-edit-profile')){editProfile();return}
+if(b.dataset.like){const p=state.posts.find(x=>x.id===b.dataset.like);if(!p)return;if(state.liked.includes(p.id)){state.liked=state.liked.filter(x=>x!==p.id);p.likes=Math.max(0,(p.likes||0)-1)}else{state.liked.push(p.id);p.likes=(p.likes||0)+1}persist();page('home');return}
+if(b.dataset.save){const id=b.dataset.save;state.saved=state.saved.includes(id)?state.saved.filter(x=>x!==id):[...state.saved,id];persist();page('saved');return}
+if(b.dataset.comment){comment(b.dataset.comment);return}
+if(b.dataset.share){const p=state.posts.find(x=>x.id===b.dataset.share);if(p&&navigator.share)navigator.share({title:'VIVO',text:p.text||'پست ویوو'}).catch(()=>{});else if(p)navigator.clipboard?.writeText(p.text||'پست ویوو');return}
+if(b.dataset.postMenu){const p=state.posts.find(x=>x.id===b.dataset.postMenu);if(p&&p.handle===handle()&&confirm('این پست حذف شود؟')){state.posts=state.posts.filter(x=>x.id!==p.id);persist();page('home')}return}
+if(b.dataset.gridPost){const p=state.posts.find(x=>x.id===b.dataset.gridPost);if(p){$('igFeed').innerHTML=postCard(p);setPage('profile')}return}
+});
+root.addEventListener('submit',e=>{const f=e.target.closest('[data-comment-form]');if(f){e.preventDefault();const id=f.dataset.commentForm,t=f.elements.comment.value.trim();if(!t)return;(state.comments[id]??=[]).push({name:me(),text:t,at:Date.now()});persist();page('home');return}if(e.target.id==='igCommentForm'){e.preventDefault();const t=e.target.elements.comment.value.trim();if(t){const id=activeCommentId();(state.comments[id]??=[]).push({name:me(),text:t,at:Date.now()});persist();closeModal();page('home')}return}});
+let commentTarget='';function activeCommentId(){return commentTarget}
+const oldComment=comment;comment=function(id){commentTarget=id;oldComment(id)};
+root.addEventListener('change',e=>{if(e.target.id==='igPostFile'){const f=e.target.files?.[0];if(!f)return;const img=$('igPostPreview');if(f.type.startsWith('image/')){img.src=URL.createObjectURL(f);img.hidden=false}}});
+$('igViewer').addEventListener('click',e=>{if(e.target.id==='igViewer')closeViewer()});
+$('igViewerCard').addEventListener('click',e=>{if(e.target.id==='igStorySend'){const v=$('igStoryReply')?.value.trim();if(v)alert('پاسخ استوری فقط در همین دستگاه ثبت نشده؛ پیام‌رسان مشترک هنوز متصل نیست.')}})
+$('igViewerCard').addEventListener('touchstart',()=>{if(storyTimer){storyRemaining=Math.max(500,storyRemaining-(Date.now()-storyStarted));stopTimer();storyPaused=true}}, {passive:true});
+$('igViewerCard').addEventListener('touchend',()=>{if(storyPaused){storyPaused=false;startTimer(storyRemaining)}},{passive:true});
+document.addEventListener('keydown',e=>{if(!$('igViewer').classList.contains('open'))return;if(e.key==='Escape')closeViewer();if(e.key==='ArrowRight')nextStory();if(e.key==='ArrowLeft')prevStory()});
+cleanup();
+window.vivoSocialOpen=open;window.vivoSocialClose=close;window.vivoSocialProfile=()=>page('profile');
+page('home');
+})();
+</script></body></html>
