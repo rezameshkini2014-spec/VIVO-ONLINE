@@ -373,6 +373,92 @@ Deno.serve(async (req: Request) => {
       return json(201, { ok: true, chat: { id: created.data.id, name, type: "group" } });
     }
 
+    if (path === "/bots/list" && req.method === "GET") {
+      const { data, error } = await supabase.from("vivo_bots")
+        .select("id,name,username,about,description,avatar_url,commands,is_active,created_at,updated_at")
+        .eq("owner_id", userId).order("created_at", { ascending: false });
+      if (error) return json(500, { ok: false, error: "دریافت فهرست ربات‌ها انجام نشد." });
+      return json(200, { ok: true, bots: data || [] });
+    }
+
+    if (path === "/bots/create" && req.method === "POST") {
+      const body = await req.json().catch(() => ({}));
+      const name = safeText(body.name, 50).trim();
+      const username = safeText(body.username, 30).trim().toLowerCase();
+      const about = safeText(body.about, 120).trim();
+      const description = safeText(body.description, 1000).trim();
+      if (name.length < 2 || !/^[a-z][a-z0-9_]{3,29}$/.test(username)) {
+        return json(400, { ok: false, error: "نام ربات و شناسه معتبر لازم است؛ شناسه باید ۴ تا ۳۰ نویسه انگلیسی باشد." });
+      }
+      const tokenBytes = crypto.getRandomValues(new Uint8Array(32));
+      const token = "vivo_" + b64url(tokenBytes);
+      const tokenHash = await digestHex(token);
+      const { data, error } = await supabase.from("vivo_bots").insert({
+        owner_id: userId, name, username, about, description, token_hash: tokenHash
+      }).select("id,name,username,about,description,avatar_url,commands,is_active,created_at").single();
+      if (error || !data) {
+        if (error?.code === "23505") return json(409, { ok: false, error: "این شناسه قبلاً برای یک ربات انتخاب شده است." });
+        return json(500, { ok: false, error: "ساخت ربات انجام نشد." });
+      }
+      return json(201, { ok: true, bot: data, token, warning: "این توکن فقط همین یک‌بار نمایش داده می‌شود؛ آن را در اختیار دیگران قرار نده." });
+    }
+
+    if (path === "/bots/update" && req.method === "POST") {
+      const body = await req.json().catch(() => ({}));
+      const id = safeText(body.id, 64);
+      if (!id) return json(400, { ok: false, error: "شناسه ربات معتبر نیست." });
+      const update: Record<string, unknown> = { updated_at: new Date().toISOString() };
+      if (typeof body.name === "string") {
+        const name = body.name.trim().slice(0, 50);
+        if (name.length < 2) return json(400, { ok: false, error: "نام ربات باید دست‌کم دو نویسه باشد." });
+        update.name = name;
+      }
+      if (typeof body.about === "string") update.about = body.about.trim().slice(0, 120);
+      if (typeof body.description === "string") update.description = body.description.trim().slice(0, 1000);
+      if (typeof body.avatarUrl === "string") {
+        const avatarUrl = body.avatarUrl.trim().slice(0, 2048);
+        if (avatarUrl && !/^https:\/\//i.test(avatarUrl)) return json(400, { ok: false, error: "نشانی تصویر باید HTTPS باشد." });
+        update.avatar_url = avatarUrl || null;
+      }
+      if (Array.isArray(body.commands)) {
+        if (body.commands.length > 30) return json(400, { ok: false, error: "حداکثر ۳۰ فرمان می‌توان تعریف کرد." });
+        const commands = body.commands.map((item: any) => ({
+          command: safeText(item?.command, 32).trim().toLowerCase().replace(/^\//, ""),
+          description: safeText(item?.description, 100).trim()
+        }));
+        if (commands.some((item: any) => !/^[a-z0-9_]{1,32}$/.test(item.command) || !item.description)) {
+          return json(400, { ok: false, error: "ساختار یکی از فرمان‌ها معتبر نیست." });
+        }
+        update.commands = commands;
+      }
+      const { data, error } = await supabase.from("vivo_bots").update(update)
+        .eq("id", id).eq("owner_id", userId)
+        .select("id,name,username,about,description,avatar_url,commands,is_active,created_at,updated_at").maybeSingle();
+      if (error || !data) return json(404, { ok: false, error: "ربات پیدا نشد یا ذخیره تغییرات مجاز نیست." });
+      return json(200, { ok: true, bot: data });
+    }
+
+    if (path === "/bots/regenerate-token" && req.method === "POST") {
+      const body = await req.json().catch(() => ({}));
+      const id = safeText(body.id, 64);
+      if (!id) return json(400, { ok: false, error: "شناسه ربات معتبر نیست." });
+      const token = "vivo_" + b64url(crypto.getRandomValues(new Uint8Array(32)));
+      const tokenHash = await digestHex(token);
+      const { data, error } = await supabase.from("vivo_bots").update({ token_hash: tokenHash, updated_at: new Date().toISOString() })
+        .eq("id", id).eq("owner_id", userId).select("id,name,username").maybeSingle();
+      if (error || !data) return json(404, { ok: false, error: "ربات پیدا نشد." });
+      return json(200, { ok: true, bot: data, token, warning: "توکن قبلی فوراً باطل شد؛ این توکن فقط همین یک‌بار نمایش داده می‌شود." });
+    }
+
+    if (path === "/bots/delete" && req.method === "POST") {
+      const body = await req.json().catch(() => ({}));
+      const id = safeText(body.id, 64);
+      if (!id) return json(400, { ok: false, error: "شناسه ربات معتبر نیست." });
+      const { data, error } = await supabase.from("vivo_bots").delete().eq("id", id).eq("owner_id", userId).select("id").maybeSingle();
+      if (error || !data) return json(404, { ok: false, error: "ربات پیدا نشد." });
+      return json(200, { ok: true });
+    }
+
     if (path === "/chat/contact-preferences" && (req.method === "GET" || req.method === "POST")) {
       const body = req.method === "POST" ? await req.json().catch(() => ({})) : {};
       const chatId = safeText(req.method === "GET" ? url.searchParams.get("chatId") : body.chatId, 64);
