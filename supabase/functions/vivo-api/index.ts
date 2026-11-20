@@ -384,9 +384,11 @@ Deno.serve(async (req: Request) => {
         if (!owned) return json(403, { ok: false, error: "فایل استوری متعلق به این حساب نیست." });
       }
       const audience = ["public", "followers", "private"].includes(body.audience) ? body.audience : "followers";
+      const { data: account } = await supabase.from("vivo_users").select("is_private").eq("id", userId).single();
+      const safeAudience = account?.is_private && audience === "public" ? "followers" : audience;
       const { data, error } = await supabase.from("vivo_stories").insert({
         author_id: userId, body: text, media_path: mediaPath, media_type: mediaType,
-        background: safeText(body.background || "blue", 32), audience,
+        background: safeText(body.background || "blue", 32), audience: safeAudience,
         expires_at: new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString()
       }).select("*").single();
       if (error || !data) return json(500, { ok: false, error: "انتشار استوری انجام نشد." });
