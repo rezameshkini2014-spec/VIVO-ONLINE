@@ -142,6 +142,19 @@ async function addNotification(recipientId: string, actorId: string, kind: strin
   });
 }
 
+async function isChatMember(chatId: string, userId: string) {
+  const { data: membership } = await supabase.from("vivo_chat_members").select("chat_id").eq("chat_id", chatId).eq("user_id", userId).maybeSingle();
+  if (membership) return true;
+  const { data: owned } = await supabase.from("vivo_chats").select("id").eq("id", chatId).eq("owner_id", userId).maybeSingle();
+  return !!owned;
+}
+async function isChatAdmin(chatId: string, userId: string) {
+  const { data: chat } = await supabase.from("vivo_chats").select("owner_id").eq("id", chatId).maybeSingle();
+  if (chat?.owner_id === userId) return true;
+  const { data: member } = await supabase.from("vivo_chat_members").select("role").eq("chat_id", chatId).eq("user_id", userId).maybeSingle();
+  return member?.role === "admin" || member?.role === "owner";
+}
+
 Deno.serve(async (req: Request) => {
   if (req.method === "OPTIONS") return new Response("ok", { headers: cors });
   const url = new URL(req.url);
@@ -180,6 +193,209 @@ Deno.serve(async (req: Request) => {
     const userId = await authenticate(req, key);
     if (!userId) return json(401, { ok: false, error: "نشست معتبر نیست؛ دوباره وارد شوید." });
 
+
+
+    if (path === "/chat/list" && req.method === "GET") {
+      const { data: memberships, error: memberError } = await supabase.from("vivo_chat_members").select("chat_id,role,last_read_at,is_muted").eq("user_id", userId);
+      if (memberError) return json(500, { ok: false, error: "دریافت عضویت گفتگوها ناموفق بود." });
+      const ids = [...new Set((memberships || []).map((x: any) => x.chat_id))];
+      const { data: owned, error: ownedError } = await supabase.from("vivo_chats").select("id").eq("owner_id", userId);
+      if (ownedError) return json(500, { ok: false, error: "دریافت گفتگوهای شما ناموفق بود." });
+      for (const row of owned || []) if (!ids.includes(row.id)) ids.push(row.id);
+      if (!ids.length) return json(200, { ok: true, chats: [] });
+      const [chatsResult, messagesResult, membersResult] = await Promise.all([
+        supabase.from("vivo_chats").select("id,owner_id,name,chat_type,description,pinned,photo,created_at,last_message_at,is_archived").in("id", ids).eq("is_archived", false),
+        supabase.from("vivo_messages").select("id,chat_id,sender_id,body,attachment,sent_at,status,deleted_at").in("chat_id", ids).order("sent_at", { ascending: false }).limit(300),
+        supabase.from("vivo_chat_members").select("chat_id,user_id,role,last_read_at,is_muted").in("chat_id", ids)
+      ]);
+      if (chatsResult.error || messagesResult.error || membersResult.error) return json(500, { ok: false, error: "همگام‌سازی گفتگوها ناموفق بود." });
+      const allMembers = membersResult.data || [];
+      const userIds = [...new Set(allMembers.map((x: any) => x.user_id).concat((chatsResult.data || []).map((x: any) => x.owner_id)))];
+      const usersResult = userIds.length ? await supabase.from("vivo_users").select("id,display_name,username,avatar_url").in("id", userIds) : { data: [], error: null };
+      const userMap = new Map((usersResult.data || []).map((x: any) => [x.id, x]));
+      const latest = new Map<string, any>(), unread = new Map<string, number>();
+      for (const msg of messagesResult.data || []) {
+        if (msg.deleted_at) continue;
+        if (!latest.has(msg.chat_id)) latest.set(msg.chat_id, msg);
+        if (msg.sender_id && msg.sender_id !== userId) {
+          const membership = allMembers.find((x: any) => x.chat_id === msg.chat_id && x.user_id === userId);
+          if (!membership?.last_read_at || new Date(msg.sent_at).getTime() > new Date(membership.last_read_at).getTime()) unread.set(msg.chat_id, (unread.get(msg.chat_id) || 0) + 1);
+        }
+      }
+      const result = (chatsResult.data || []).map((chat: any) => {
+        const members = allMembers.filter((x: any) => x.chat_id === chat.id);
+        const others = members.filter((x: any) => x.user_id !== userId).map((x: any) => userMap.get(x.user_id)).filter(Boolean);
+        const last = latest.get(chat.id), member = members.find((x: any) => x.user_id === userId);
+        return { id: chat.id, name: chat.chat_type === "private" ? (others[0]?.display_name || chat.name) : chat.name,
+          type: chat.chat_type, description: chat.description, photo: chat.photo, pinned: chat.pinned,
+          unread: unread.get(chat.id) || 0, muted: !!member?.is_muted, participants: others,
+          lastMessage: last ? { text: last.body, senderId: last.sender_id, sentAt: new Date(last.sent_at).getTime(), status: last.status } : null,
+          updatedAt: new Date(chat.last_message_at || chat.created_at).getTime() };
+      }).sort((a: any,b: any) => Number(b.updatedAt)-Number(a.updatedAt));
+      return json(200, { ok: true, chats: result });
+    }
+
+    if (path === "/chat/create" && req.method === "POST") {
+      const body = await req.json().catch(() => ({})), type = body.type === "group" ? "group" : "private";
+      const blocked = await blockedUsers(userId);
+      if (type === "private") {
+        const username = safeText(body.username, 30).trim().toLowerCase();
+        const { data: target } = await supabase.from("vivo_users").select("id,username,display_name,is_suspended").eq("username", username).maybeSingle();
+        if (!target || target.is_suspended || target.id === userId || blocked.has(target.id)) return json(404, { ok: false, error: "کاربر مقصد در دسترس نیست." });
+        const mutual = await followsUser(userId, target.id) && await followsUser(target.id, userId);
+        if (!mutual) return json(403, { ok: false, error: "برای حفظ حریم خصوصی، گفت‌وگوی خصوصی فقط بین دنبال‌کنندگان متقابل فعال است." });
+        const keyValue = [userId, target.id].sort().join(":");
+        let { data: chat } = await supabase.from("vivo_chats").select("*").eq("conversation_key", keyValue).maybeSingle();
+        if (!chat) {
+          const created = await supabase.from("vivo_chats").insert({ owner_id: userId, client_id: crypto.randomUUID(), name: target.display_name, chat_type: "private", description: "", conversation_key: keyValue }).select("*").single();
+          if (created.error || !created.data) return json(500, { ok: false, error: "ساخت گفت‌وگو انجام نشد." });
+          chat = created.data;
+        }
+        const { error } = await supabase.from("vivo_chat_members").upsert([{ chat_id: chat.id, user_id: userId, role: "member" }, { chat_id: chat.id, user_id: target.id, role: "member" }], { onConflict: "chat_id,user_id" });
+        if (error) return json(500, { ok: false, error: "ثبت اعضای گفت‌وگو انجام نشد." });
+        return json(200, { ok: true, chat: { id: chat.id, name: target.display_name, type: "private" } });
+      }
+      const name = safeText(body.name, 60).trim();
+      const usernames = Array.isArray(body.usernames) ? [...new Set(body.usernames.map((x: any) => safeText(x, 30).trim().toLowerCase()).filter(Boolean))].slice(0, 49) : [];
+      if (name.length < 2 || usernames.length < 1) return json(400, { ok: false, error: "نام گروه و دست‌کم یک عضو لازم است." });
+      const { data: targets, error: targetError } = await supabase.from("vivo_users").select("id,username,display_name,is_suspended").in("username", usernames);
+      if (targetError || (targets || []).length !== usernames.length) return json(400, { ok: false, error: "یکی از نام‌های کاربری پیدا نشد." });
+      for (const target of targets || []) {
+        if (target.is_suspended || target.id === userId || blocked.has(target.id) || !(await followsUser(userId, target.id)) || !(await followsUser(target.id, userId))) return json(403, { ok: false, error: "همه اعضا باید حساب‌های فعال و ارتباط دنبال‌کردن متقابل داشته باشند." });
+      }
+      const created = await supabase.from("vivo_chats").insert({ owner_id: userId, client_id: crypto.randomUUID(), name, chat_type: "group", description: safeText(body.description, 300) }).select("*").single();
+      if (created.error || !created.data) return json(500, { ok: false, error: "ساخت گروه انجام نشد." });
+      const rows = [{ chat_id: created.data.id, user_id: userId, role: "admin" }, ...(targets || []).map((x: any) => ({ chat_id: created.data.id, user_id: x.id, role: "member" }))];
+      const { error: addError } = await supabase.from("vivo_chat_members").upsert(rows, { onConflict: "chat_id,user_id" });
+      if (addError) { await supabase.from("vivo_chats").delete().eq("id", created.data.id).eq("owner_id", userId); return json(500, { ok: false, error: "ثبت اعضای گروه انجام نشد." }); }
+      for (const target of targets || []) await addNotification(target.id, userId, "group_invite", "chat", created.data.id, { name });
+      return json(201, { ok: true, chat: { id: created.data.id, name, type: "group" } });
+    }
+
+    if (path === "/chat/messages" && req.method === "GET") {
+      const chatId = url.searchParams.get("chatId") || "";
+      if (!chatId || !(await isChatMember(chatId, userId))) return json(404, { ok: false, error: "گفت‌وگو پیدا نشد." });
+      const { data, error } = await supabase.from("vivo_messages").select("id,chat_id,sender_id,sender_type,body,attachment,reply_to,sent_at,status,edited_at,deleted_at").eq("chat_id", chatId).is("deleted_at", null).order("sent_at", { ascending: true }).limit(200);
+      if (error) return json(500, { ok: false, error: "دریافت پیام‌ها ناموفق بود." });
+      const senderIds = [...new Set((data || []).map((x: any) => x.sender_id).filter(Boolean))];
+      const users = senderIds.length ? await supabase.from("vivo_users").select("id,display_name,username,avatar_url").in("id", senderIds) : { data: [], error: null };
+      const userMap = new Map((users.data || []).map((x: any) => [x.id, x]));
+      return json(200, { ok: true, messages: (data || []).map((x: any) => ({ id: x.id, senderId: x.sender_id, sender: userMap.get(x.sender_id) || null, fromMe: x.sender_id === userId, text: x.body, attachment: x.attachment, replyTo: x.reply_to, sentAt: new Date(x.sent_at).getTime(), status: x.status, editedAt: x.edited_at })) });
+    }
+
+    if (path === "/chat/send" && req.method === "POST") {
+      const body = await req.json().catch(() => ({})), chatId = safeText(body.chatId, 64), text = safeText(body.text, 5000).trim();
+      const attachment = body.attachment && typeof body.attachment === "object" ? body.attachment : null;
+      if (!chatId || (!text && !attachment) || !(await isChatMember(chatId, userId))) return json(400, { ok: false, error: "پیام یا گفت‌وگوی معتبر نیست." });
+      if (attachment?.path) {
+        const { data: owned } = await supabase.from("vivo_media").select("object_path").eq("owner_id", userId).eq("object_path", safeText(attachment.path, 500)).maybeSingle();
+        if (!owned) return json(403, { ok: false, error: "فایل پیوست متعلق به این حساب نیست." });
+      }
+      const replyTo = body.replyTo ? safeText(body.replyTo, 64) : null;
+      if (replyTo) { const { data: parent } = await supabase.from("vivo_messages").select("id,chat_id").eq("id", replyTo).maybeSingle(); if (!parent || parent.chat_id !== chatId) return json(400, { ok: false, error: "پیام پاسخ معتبر نیست." }); }
+      const { data: message, error } = await supabase.from("vivo_messages").insert({ chat_id: chatId, owner_id: userId, client_id: crypto.randomUUID(), sender_id: userId, sender_type: "me", body: text, attachment, reply_to: replyTo, status: "sent" }).select("id,chat_id,sender_id,body,attachment,reply_to,sent_at,status").single();
+      if (error || !message) return json(500, { ok: false, error: "ارسال پیام انجام نشد." });
+      await supabase.from("vivo_chats").update({ last_message_at: message.sent_at, updated_at: message.sent_at }).eq("id", chatId);
+      const { data: members } = await supabase.from("vivo_chat_members").select("user_id,is_muted").eq("chat_id", chatId);
+      for (const member of members || []) if (member.user_id !== userId && !member.is_muted) await addNotification(member.user_id, userId, "message", "chat", chatId, { preview: text.slice(0, 80) });
+      return json(201, { ok: true, message });
+    }
+
+    if (path === "/chat/read" && req.method === "POST") {
+      const body = await req.json().catch(() => ({})), chatId = safeText(body.chatId, 64);
+      if (!chatId || !(await isChatMember(chatId, userId))) return json(404, { ok: false, error: "گفت‌وگو پیدا نشد." });
+      const { error } = await supabase.from("vivo_chat_members").upsert({ chat_id: chatId, user_id: userId, last_read_at: new Date().toISOString() }, { onConflict: "chat_id,user_id" });
+      if (error) return json(500, { ok: false, error: "ثبت وضعیت خوانده‌شدن انجام نشد." });
+      return json(200, { ok: true });
+    }
+
+    if (path === "/chat/react" && req.method === "POST") {
+      const body = await req.json().catch(() => ({})), messageId = safeText(body.messageId, 64), reaction = safeText(body.reaction, 32);
+      const { data: message } = await supabase.from("vivo_messages").select("id,chat_id").eq("id", messageId).maybeSingle();
+      if (!message || !(await isChatMember(message.chat_id, userId)) || !reaction) return json(404, { ok: false, error: "پیام در دسترس نیست." });
+      const { error } = await supabase.from("vivo_message_reactions").upsert({ message_id: messageId, user_id: userId, reaction }, { onConflict: "message_id,user_id,reaction" });
+      if (error) return json(500, { ok: false, error: "ثبت واکنش انجام نشد." });
+      return json(200, { ok: true });
+    }
+
+    if (path === "/chat/edit" && req.method === "POST") {
+      const body = await req.json().catch(() => ({})), messageId = safeText(body.messageId, 64), text = safeText(body.text, 5000).trim();
+      const { data: message } = await supabase.from("vivo_messages").select("id,sender_id,sent_at,deleted_at").eq("id", messageId).maybeSingle();
+      if (!message || message.sender_id !== userId || message.deleted_at || Date.now()-new Date(message.sent_at).getTime()>15*60*1000 || !text) return json(403, { ok: false, error: "ویرایش این پیام مجاز نیست." });
+      const { error } = await supabase.from("vivo_messages").update({ body: text, edited_at: new Date().toISOString() }).eq("id", messageId).eq("sender_id", userId);
+      if (error) return json(500, { ok: false, error: "ویرایش پیام انجام نشد." });
+      return json(200, { ok: true });
+    }
+
+    if (path === "/chat/delete" && req.method === "POST") {
+      const body = await req.json().catch(() => ({})), messageId = safeText(body.messageId, 64);
+      const { data: message } = await supabase.from("vivo_messages").select("id,sender_id,deleted_at").eq("id", messageId).maybeSingle();
+      if (!message || message.sender_id !== userId || message.deleted_at) return json(403, { ok: false, error: "حذف این پیام مجاز نیست." });
+      const { error } = await supabase.from("vivo_messages").update({ body: "", attachment: null, deleted_at: new Date().toISOString() }).eq("id", messageId).eq("sender_id", userId);
+      if (error) return json(500, { ok: false, error: "حذف پیام انجام نشد." });
+      return json(200, { ok: true });
+    }
+
+    if (path === "/chat/mute" && req.method === "POST") {
+      const body = await req.json().catch(() => ({})), chatId = safeText(body.chatId, 64), muted = !!body.muted;
+      if (!chatId || !(await isChatMember(chatId, userId))) return json(404, { ok: false, error: "گفت‌وگو پیدا نشد." });
+      const { error } = await supabase.from("vivo_chat_members").upsert({ chat_id: chatId, user_id: userId, is_muted: muted }, { onConflict: "chat_id,user_id" });
+      if (error) return json(500, { ok: false, error: "تنظیم بی‌صداکردن انجام نشد." });
+      return json(200, { ok: true, muted });
+    }
+
+    if (path === "/chat/rename" && req.method === "POST") {
+      const body = await req.json().catch(() => ({})), chatId = safeText(body.chatId, 64), name = safeText(body.name, 60).trim();
+      if (!chatId || name.length < 2 || !(await isChatAdmin(chatId, userId))) return json(403, { ok: false, error: "اجازه تغییر نام گروه را نداری." });
+      const { error } = await supabase.from("vivo_chats").update({ name, description: safeText(body.description, 300), updated_at: new Date().toISOString() }).eq("id", chatId).eq("chat_type", "group");
+      if (error) return json(500, { ok: false, error: "تغییر مشخصات گروه انجام نشد." });
+      return json(200, { ok: true });
+    }
+
+    if (path === "/chat/members/add" && req.method === "POST") {
+      const body = await req.json().catch(() => ({})), chatId = safeText(body.chatId, 64);
+      const usernames = Array.isArray(body.usernames) ? [...new Set(body.usernames.map((x: any) => safeText(x, 30).trim().toLowerCase()).filter(Boolean))].slice(0, 30) : [];
+      if (!chatId || !usernames.length || !(await isChatAdmin(chatId, userId))) return json(403, { ok: false, error: "افزودن عضو مجاز نیست." });
+      const { data: chat } = await supabase.from("vivo_chats").select("id,chat_type,name").eq("id", chatId).maybeSingle();
+      if (!chat || chat.chat_type !== "group") return json(400, { ok: false, error: "این عملیات فقط برای گروه است." });
+      const { data: targets } = await supabase.from("vivo_users").select("id,username,is_suspended").in("username", usernames);
+      if ((targets || []).length !== usernames.length) return json(400, { ok: false, error: "یکی از کاربران پیدا نشد." });
+      const blocked = await blockedUsers(userId);
+      for (const target of targets || []) if (target.is_suspended || target.id === userId || blocked.has(target.id) || !(await followsUser(userId, target.id)) || !(await followsUser(target.id, userId))) return json(403, { ok: false, error: "افزودن یکی از اعضا مجاز نیست." });
+      const { error } = await supabase.from("vivo_chat_members").upsert((targets || []).map((x: any) => ({ chat_id: chatId, user_id: x.id, role: "member" })), { onConflict: "chat_id,user_id" });
+      if (error) return json(500, { ok: false, error: "افزودن اعضا انجام نشد." });
+      for (const target of targets || []) await addNotification(target.id, userId, "group_invite", "chat", chatId, { name: chat.name });
+      return json(200, { ok: true, added: targets?.length || 0 });
+    }
+
+    if (path === "/chat/members/remove" && req.method === "POST") {
+      const body = await req.json().catch(() => ({})), chatId = safeText(body.chatId, 64), targetId = safeText(body.userId, 64);
+      if (!chatId || !targetId || targetId === userId || !(await isChatAdmin(chatId, userId))) return json(403, { ok: false, error: "حذف این عضو مجاز نیست." });
+      const { data: chat } = await supabase.from("vivo_chats").select("owner_id,chat_type").eq("id", chatId).maybeSingle();
+      if (!chat || chat.chat_type !== "group" || chat.owner_id === targetId) return json(403, { ok: false, error: "مدیر اصلی گروه قابل حذف نیست." });
+      const { error } = await supabase.from("vivo_chat_members").delete().eq("chat_id", chatId).eq("user_id", targetId);
+      if (error) return json(500, { ok: false, error: "حذف عضو انجام نشد." });
+      return json(200, { ok: true });
+    }
+
+    if (path === "/chat/leave" && req.method === "POST") {
+      const body = await req.json().catch(() => ({})), chatId = safeText(body.chatId, 64);
+      if (!chatId || !(await isChatMember(chatId, userId))) return json(404, { ok: false, error: "گفت‌وگو پیدا نشد." });
+      const { data: chat } = await supabase.from("vivo_chats").select("owner_id,chat_type").eq("id", chatId).maybeSingle();
+      if (chat?.owner_id === userId) {
+        const { data: others } = await supabase.from("vivo_chat_members").select("user_id").eq("chat_id", chatId).neq("user_id", userId).order("joined_at", { ascending: true }).limit(1);
+        if (others?.length) {
+          await supabase.from("vivo_chats").update({ owner_id: others[0].user_id }).eq("id", chatId);
+          await supabase.from("vivo_chat_members").update({ role: "admin" }).eq("chat_id", chatId).eq("user_id", others[0].user_id);
+        } else {
+          await supabase.from("vivo_chats").delete().eq("id", chatId);
+          return json(200, { ok: true, deleted: true });
+        }
+      }
+      const { error } = await supabase.from("vivo_chat_members").delete().eq("chat_id", chatId).eq("user_id", userId);
+      if (error) return json(500, { ok: false, error: "خروج از گفتگو انجام نشد." });
+      return json(200, { ok: true });
+    }
 
     if (path === "/social/feed" && req.method === "GET") {
       const blocked = await blockedUsers(userId);
