@@ -58,10 +58,10 @@ jobs:
           node <<'NODE'
           const fs = require('node:fs');
           const html = fs.readFileSync('vivo-v2.html', 'utf8');
-          const ids = [...html.matchAll(/\\bid=["']([^"']+)["']/g)].map(match => match[1]);
+          const ids = [...html.matchAll(/\bid=["']([^"']+)["']/g)].map(match => match[1]);
           const duplicates = [...new Set(ids.filter((id, index) => ids.indexOf(id) !== index))];
           if (duplicates.length) throw new Error('Duplicate HTML IDs: ' + duplicates.join(', '));
-          const refs = [...html.matchAll(/(?:href|src)=["'](\\/[^"'?#]+)["']/g)].map(match => match[1]);
+          const refs = [...html.matchAll(/(?:href|src)=["'](\/[^"'?#]+)["']/g)].map(match => match[1]);
           for (const ref of refs) {
             const file = ref === '/' ? 'vivo-v2.html' : ref.slice(1);
             if (!fs.existsSync(file) || !fs.statSync(file).isFile()) throw new Error('Missing local asset: ' + ref);
