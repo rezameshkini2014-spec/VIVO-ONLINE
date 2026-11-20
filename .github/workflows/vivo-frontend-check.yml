@@ -1,0 +1,32 @@
+name: VIVO frontend static validation
+
+on:
+  push:
+    branches:
+      - feature/vivo-botfather-chat-polish
+    paths:
+      - 'vivo-v2.js'
+      - 'vivo-v2.html'
+      - 'vivo-v2-chat.css'
+      - '.github/workflows/vivo-frontend-check.yml'
+  pull_request:
+    paths:
+      - 'vivo-v2.js'
+      - 'vivo-v2.html'
+      - 'vivo-v2-chat.css'
+
+jobs:
+  frontend-check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Check JavaScript syntax
+        run: node --check vivo-v2.js
+      - name: Verify required UI anchors
+        run: |
+          grep -q 'id="botfatherOverlay"' vivo-v2.html
+          grep -q 'id="contactProfileEditor"' vivo-v2.html
+          grep -q 'id="chatHeaderAvatar"' vivo-v2.html

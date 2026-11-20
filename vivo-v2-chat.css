@@ -14,3 +14,72 @@
 
 .message-reactions{display:flex;flex-wrap:wrap;gap:5px;margin-top:6px}
 .message-reaction{display:inline-flex;align-items:center;gap:4px;padding:3px 7px;border:1px solid #dce7f0;border-radius:12px;background:#fff;color:#52667b;font-size:9px}
+
+/* VIVO messenger refinement: visible avatars and translucent message actions. */
+.avatar-image{width:100%;height:100%;display:block;object-fit:cover;border-radius:inherit}
+.chat-header-avatar{width:42px;height:42px;flex:none;overflow:hidden;border:1px solid #ffffff70;box-shadow:0 5px 16px #172a1e20}
+.message-sender-line{display:flex;align-items:center;gap:7px;margin:0 0 7px}
+.message-sender-avatar{width:23px;height:23px;flex:none;overflow:hidden;border-radius:50%;font-size:9px}
+.message-sender{margin:0;color:#64796d;font-size:10px;font-weight:800}
+.message-controls{display:flex;flex-wrap:wrap;align-items:center;gap:6px;margin-top:9px;padding-top:7px;border-top:1px solid #829b8a22}
+.message-controls button,.reaction-picker button{min-height:29px;padding:5px 10px;border:1px solid #ffffffa8;border-radius:999px;background:linear-gradient(135deg,#ffffffb8,#f4f8f3a8);color:#314d3e;font-size:10px;font-weight:700;box-shadow:0 4px 12px #203d2c12,inset 0 1px 0 #ffffffd9;backdrop-filter:blur(14px) saturate(145%);-webkit-backdrop-filter:blur(14px) saturate(145%);transition:transform .16s ease,background .16s ease,border-color .16s ease}
+.message-controls button:active,.reaction-picker button:active{transform:scale(.96)}
+.message-controls button:hover{background:#ffffffed;border-color:#b8d0bd}
+.message-bubble.mine .message-controls{border-color:#ffffff2c}
+.message-bubble.mine .message-controls button{background:#ffffff20;border-color:#ffffff55;color:#f3faef;box-shadow:inset 0 1px 0 #ffffff30}
+.reaction-picker{border:1px solid #ffffffbd!important;background:#fffffff0!important;backdrop-filter:blur(18px) saturate(160%);-webkit-backdrop-filter:blur(18px) saturate(160%)}
+.contact-profile-overlay{position:fixed;inset:0;z-index:90;display:flex;align-items:center;justify-content:center;padding:18px;background:#1020169c;backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px)}
+.contact-profile-overlay[hidden]{display:none!important}
+.contact-profile-card{width:min(100%,440px);max-height:90dvh;overflow:auto;position:relative;padding:30px;border:1px solid #ffffffad;border-radius:24px;background:linear-gradient(145deg,#fffffff2,#f1f5edf2);box-shadow:0 30px 100px #06140c66,inset 0 1px 0 #fff}
+.contact-profile-card h2{margin:8px 0 12px;color:#203c2d;font-size:21px}
+.contact-profile-card .auth-hint{line-height:1.9;color:#69786c}
+.contact-profile-card .auth-input{width:100%;height:46px;border:1px solid #d9e3d9;border-radius:13px;background:#ffffffb8;padding:0 13px;outline:0}
+.contact-profile-card .auth-input:focus{border-color:#8eae92;box-shadow:0 0 0 3px #8eae9224}
+.contact-profile-actions{display:flex;gap:9px;flex-wrap:wrap;margin-top:20px}
+.contact-profile-actions button{flex:1;min-width:140px;min-height:42px}
+.chat-header [data-action="edit-contact-profile"]{border-color:#ffffffa8;background:linear-gradient(135deg,#ffffffc9,#edf3eac4);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px)}
+@media(max-width:700px){.chat-header-avatar{width:37px;height:37px}.message-controls button{min-height:31px;padding:6px 11px}.contact-profile-card{padding:25px 19px}.contact-profile-actions{display:grid}.contact-profile-actions button{width:100%}}
+
+/* BotFather: chat-like control center with translucent inline keyboard. */
+.botfather-overlay{position:fixed;inset:0;z-index:95;display:flex;align-items:center;justify-content:center;padding:16px;background:#101b15b8;backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px)}
+.botfather-overlay[hidden]{display:none!important}
+.botfather-card{width:min(100%,620px);max-height:min(92dvh,850px);display:flex;flex-direction:column;overflow:hidden;border:1px solid #ffffffa8;border-radius:25px;background:linear-gradient(150deg,#fbfcf7f5,#edf2e9f5);box-shadow:0 35px 110px #07130c70,inset 0 1px 0 #fff}
+.botfather-head{display:flex;align-items:center;justify-content:space-between;gap:15px;padding:23px 25px;border-bottom:1px solid #526e551d;background:#ffffffa1}
+.botfather-head h2{margin:5px 0 3px;color:#213c2d;font-size:22px}
+.botfather-head p{margin:0;color:#738174;font-size:10px}
+.botfather-scroll{padding:22px 24px 25px;overflow:auto}
+.botfather-message{display:flex;align-items:flex-start;gap:12px;padding:16px;border:1px solid #ffffffc7;border-radius:18px;background:linear-gradient(135deg,#ffffffd9,#f1f5edd9);box-shadow:0 8px 24px #1c382313}
+.botfather-mark{width:39px;height:39px;flex:none;display:grid;place-items:center;border-radius:13px;background:#203d2d;color:#d8f27b;font-size:19px;font-weight:900}
+.botfather-message b{display:block;margin:2px 0 6px;color:#203b2c;font-size:12px}
+.botfather-message p{margin:0;color:#66766a;font-size:10px;line-height:2}
+.botfather-inline-keyboard{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;margin:13px 0 20px}
+.botfather-inline-keyboard button,.botfather-bot-actions button{min-height:42px;padding:8px 11px;border:1px solid #ffffffd9;border-radius:13px;background:linear-gradient(135deg,#ffffffc9,#edf3eac9);color:#294634;font-size:10px;font-weight:800;box-shadow:0 5px 16px #233b2b13,inset 0 1px 0 #ffffff;backdrop-filter:blur(15px) saturate(150%);-webkit-backdrop-filter:blur(15px) saturate(150%);transition:transform .16s,box-shadow .16s}
+.botfather-inline-keyboard button:active,.botfather-bot-actions button:active{transform:scale(.97)}
+.botfather-inline-keyboard button:first-child{background:linear-gradient(135deg,#e8f6b7,#d8ed8d);border-color:#ffffff}
+.botfather-section-title{display:flex;align-items:center;justify-content:space-between;gap:10px;margin:5px 0 12px}
+.botfather-section-title b{color:#243d2e;font-size:13px}
+.botfather-section-title small{color:#8b978a;font-size:9px}
+.botfather-form,.botfather-bot-list,.botfather-token{padding:17px;border:1px solid #ffffffd0;border-radius:18px;background:#ffffffa8;box-shadow:0 8px 24px #203c2d0c}
+.botfather-form[hidden],.botfather-bot-list[hidden],.botfather-token[hidden]{display:none!important}
+.botfather-form .auth-input{width:100%;min-height:43px;border:1px solid #dce5d9;border-radius:12px;background:#ffffffd9;padding:10px 12px;color:#273d30;font:inherit;font-size:11px;outline:0}
+.botfather-form textarea.auth-input{resize:vertical}
+.bot-username-field{display:flex;align-items:center;gap:7px}
+.bot-username-field>span{color:#799078;font-weight:800}
+.bot-username-field input{flex:1;min-width:0}
+.botfather-form-actions{display:flex;gap:8px;margin-top:16px}
+.botfather-form-actions button{flex:1;min-height:41px}
+.botfather-bot-card{display:flex;align-items:center;gap:11px;padding:13px 0;border-bottom:1px solid #627d5b20}
+.botfather-bot-card:last-child{border-bottom:0}
+.botfather-bot-avatar{width:42px;height:42px;flex:none;display:grid;place-items:center;border-radius:13px;background:#dff0b0;color:#25432e;font-weight:900;overflow:hidden}
+.botfather-bot-copy{flex:1;min-width:0;display:grid;gap:4px}
+.botfather-bot-copy b{color:#294332;font-size:11px}
+.botfather-bot-copy small{color:#819080;font-size:9px}
+.botfather-bot-actions{display:flex;flex-wrap:wrap;gap:5px}
+.botfather-bot-actions button{min-height:31px;padding:5px 8px;font-size:9px}
+.botfather-token{margin-top:15px;border-color:#e2d9a8;background:linear-gradient(135deg,#fffdf0,#fff9dc)}
+.botfather-token b{color:#63552a;font-size:12px}
+.botfather-token p{color:#87794e;font-size:10px;line-height:1.8}
+.botfather-token code{display:block;overflow-wrap:anywhere;padding:12px;border-radius:10px;background:#2b382b;color:#e4f2c7;font-size:10px;direction:ltr;text-align:left;user-select:all}
+.botfather-token button{margin-top:10px}
+.botfather-feedback{min-height:18px;margin-top:10px;color:#6b7d6d;font-size:10px;line-height:1.8}
+@media(max-width:560px){.botfather-card{max-height:94dvh;border-radius:20px}.botfather-head{padding:19px}.botfather-scroll{padding:16px}.botfather-inline-keyboard{grid-template-columns:1fr}.botfather-form-actions{display:grid}.botfather-bot-card{align-items:flex-start;flex-wrap:wrap}.botfather-bot-actions{width:100%;padding-right:53px}.botfather-bot-actions button{flex:1}}
