@@ -333,7 +333,36 @@ document.addEventListener('click',async event=>{
  if(action==='story'){if(!currentUser){authOpen();return}$('storyComposer').hidden=false;$('storyComposer').classList.add('open');$('storyText').focus();return}
  if(action==='close-story-composer'){$('storyComposer').classList.remove('open');$('storyComposer').hidden=true;return}
  if(action==='publish-story'){publishStory();return}
- if(action==='new-chat'){toast('پیام‌رسان چندکاربره هنوز در حال پیاده‌سازی است.');return}
+ if(action==='new-chat'){
+  if(!currentUser){authOpen();return}
+  $('chatComposer').hidden=false;$('chatComposer').classList.add('open');$('chatTargetUsername').focus();return;
+ }
+ if(action==='close-chat-composer'){$('chatComposer').classList.remove('open');$('chatComposer').hidden=true;return}
+ if(action==='create-private-chat'){createPrivateChat();return}
+ if(action==='create-group-chat'){createGroupChat();return}
+ if(action==='send-chat-message'){sendChatMessage();return}
+ if(action==='chat-back'){
+  currentChatId=null;$('chatWindow').hidden=true;$('chatPlaceholder').hidden=false;
+  document.querySelector('.messages-shell').classList.remove('has-chat');
+  document.querySelectorAll('.conversation-row').forEach(row=>row.classList.remove('active'));
+  return;
+ }
+ if(action==='refresh-chat'){loadChatMessages();return}
+ if(action==='mute-chat'){
+  if(!currentChatId)return;
+  const chat=chatsCache.find(item=>item.id===currentChatId);
+  const muted=!chat?.muted;
+  actionButton.disabled=true;
+  try{
+   const result=await requestJson('/api/vivo/chat/mute',{chatId:currentChatId,muted});
+   if(chat)chat.muted=result.muted;
+   actionButton.title=result.muted?'فعال‌کردن اعلان‌های گفتگو':'بی‌صداکردن گفتگو';
+   actionButton.setAttribute('aria-label',actionButton.title);
+   toast(result.muted?'گفتگو بی‌صدا شد.':'اعلان‌های گفتگو فعال شد.');
+  }catch(error){toast(error.message)}
+  finally{actionButton.disabled=false}
+  return;
+ }
  if(action==='search'){searchUsers();return}
  if(action==='feed-filter'){toast('فیلترهای فید در مرحله بعد اضافه می‌شوند.');return}
  if(action==='edit-profile'||action==='account'){if(!currentUser)authOpen();else{go('profile');toast('ویرایش کامل پروفایل در مرحله بعد فعال می‌شود.')}return}
