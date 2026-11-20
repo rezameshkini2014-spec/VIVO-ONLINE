@@ -143,10 +143,16 @@ async function addNotification(recipientId: string, actorId: string, kind: strin
 }
 
 async function isChatMember(chatId: string, userId: string) {
+  const { data: chat } = await supabase.from("vivo_chats").select("id,owner_id,chat_type").eq("id", chatId).maybeSingle();
+  if (!chat) return false;
   const { data: membership } = await supabase.from("vivo_chat_members").select("chat_id").eq("chat_id", chatId).eq("user_id", userId).maybeSingle();
-  if (membership) return true;
-  const { data: owned } = await supabase.from("vivo_chats").select("id").eq("id", chatId).eq("owner_id", userId).maybeSingle();
-  return !!owned;
+  if (!membership && chat.owner_id !== userId) return false;
+  if (chat.chat_type === "private") {
+    const { data: others } = await supabase.from("vivo_chat_members").select("user_id").eq("chat_id", chatId).neq("user_id", userId);
+    const blocked = await blockedUsers(userId);
+    if ((others || []).some((x: any) => blocked.has(x.user_id))) return false;
+  }
+  return true;
 }
 async function isChatAdmin(chatId: string, userId: string) {
   const { data: chat } = await supabase.from("vivo_chats").select("owner_id").eq("id", chatId).maybeSingle();
@@ -222,6 +228,7 @@ Deno.serve(async (req: Request) => {
           if (!membership?.last_read_at || new Date(msg.sent_at).getTime() > new Date(membership.last_read_at).getTime()) unread.set(msg.chat_id, (unread.get(msg.chat_id) || 0) + 1);
         }
       }
+      const blocked = await blockedUsers(userId);
       const result = (chatsResult.data || []).map((chat: any) => {
         const members = allMembers.filter((x: any) => x.chat_id === chat.id);
         const others = members.filter((x: any) => x.user_id !== userId).map((x: any) => userMap.get(x.user_id)).filter(Boolean);
@@ -231,7 +238,8 @@ Deno.serve(async (req: Request) => {
           unread: unread.get(chat.id) || 0, muted: !!member?.is_muted, participants: others,
           lastMessage: last ? { text: last.body, senderId: last.sender_id, sentAt: new Date(last.sent_at).getTime(), status: last.status } : null,
           updatedAt: new Date(chat.last_message_at || chat.created_at).getTime() };
-      }).sort((a: any,b: any) => Number(b.updatedAt)-Number(a.updatedAt));
+      }).filter((chat: any) => chat.type !== "private" || !chat.participants.some((person: any) => blocked.has(person.id)))
+        .sort((a: any,b: any) => Number(b.updatedAt)-Number(a.updatedAt));
       return json(200, { ok: true, chats: result });
     }
 
