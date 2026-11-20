@@ -3,7 +3,7 @@
 const $=id=>document.getElementById(id);
 const toast=(message)=>{const el=$('toast');if(!el)return;el.textContent=message;el.classList.add('show');clearTimeout(toast.timer);toast.timer=setTimeout(()=>el.classList.remove('show'),2600)};
 const titles={home:'اینستای ویوو',messages:'پیام‌رسان',create:'انتشار محتوا',explore:'کشف و جست‌وجو',notifications:'اعلان‌ها',profile:'پروفایل من',settings:'تنظیمات'};
-let currentPage='home',selectedFile=null,currentUser=null,pendingOtp=null,storiesCache=[],currentChatId=null,currentChat=null,replyToMessageId=null,replyToMessageText='',chatsCache=[],contactPanelOpen=false,pressTimer=null,pressStart=null;
+let currentPage='home',selectedFile=null,currentUser=null,pendingOtp=null,storiesCache=[],currentChatId=null,currentChat=null,replyToMessageId=null,replyToMessageText='',chatsCache=[],contactPanelOpen=false,pressTimer=null,pressStart=null,editingBotId=null,botCache=[],lastBotToken='';
 function go(page){
  if(page==='reels'){setSocialTab('reels');page='home'}
  if(page==='contacts'){page='messages';contactPanelOpen=true}
@@ -132,6 +132,73 @@ function openContactProfileEditor(){
   $('contactAvatarUrl').value=result.preference?.avatar_url||'';
   $('contactProfileError').textContent='مشخصات اصلی: '+(result.original?.display_name||'مخاطب');
  }).catch(error=>{$('contactProfileError').textContent=error.message});
+}
+function openBotFather(){
+ if(!currentUser){authOpen();return}
+ $('botfatherOverlay').hidden=false;$('botfatherForm').hidden=true;$('botfatherBotList').hidden=true;$('botfatherToken').hidden=true;
+ $('botfatherFeedback').textContent='از دکمه‌های زیر پیام BotFather استفاده کن.';
+}
+function closeBotFather(){$('botfatherOverlay').hidden=true}
+function showBotFatherForm(bot=null){
+ editingBotId=bot?.id||null;
+ $('botfatherFormTitle').textContent=bot?'ویرایش مشخصات ربات':'ساخت ربات تازه';
+ $('botName').value=bot?.name||'';
+ $('botUsername').value=bot?.username||'';
+ $('botUsername').disabled=!!bot;
+ $('botAbout').value=bot?.about||'';
+ $('botDescription').value=bot?.description||'';
+ $('botAvatarUrl').value=bot?.avatar_url||'';
+ $('botCommands').value=(bot?.commands||[]).map(x=>x.command+' - '+x.description).join('\n');
+ $('botfatherFormError').textContent='';
+ $('botfatherForm').hidden=false;$('botfatherBotList').hidden=true;$('botfatherToken').hidden=true;
+}
+async function loadMyBots(){
+ $('botfatherFeedback').textContent='در حال دریافت ربات‌ها…';
+ try{
+  const result=await requestJson('/api/vivo/bots/list');botCache=result.bots||[];
+  const target=$('botfatherBots');target.replaceChildren();
+  $('botfatherCount').textContent=botCache.length+' ربات';
+  if(!botCache.length)target.append(node('p','auth-hint','هنوز رباتی نساخته‌ای. از دکمه «ساخت ربات جدید» شروع کن.'));
+  for(const bot of botCache){
+   const card=node('article','botfather-bot-card');
+   const avatar=node('span','botfather-bot-avatar',bot.name.slice(0,1));if(bot.avatar_url){const im=node('img','avatar-image');im.src=bot.avatar_url;im.alt='';im.loading='lazy';im.onerror=()=>im.remove();avatar.replaceChildren(im)}
+   const copy=node('div','botfather-bot-copy');copy.append(node('b','',bot.name),node('small','','@'+bot.username+' · '+(bot.is_active?'فعال':'غیرفعال')));
+   const actions=node('div','botfather-bot-actions');
+   const edit=node('button','','ویرایش');edit.dataset.action='botfather-edit';edit.dataset.botId=bot.id;
+   const token=node('button','','توکن تازه');token.dataset.action='botfather-regenerate';token.dataset.botId=bot.id;
+   const del=node('button','','حذف');del.dataset.action='botfather-delete';del.dataset.botId=bot.id;
+   actions.append(edit,token,del);card.append(avatar,copy,actions);target.append(card);
+  }
+  $('botfatherBotList').hidden=false;$('botfatherForm').hidden=true;$('botfatherToken').hidden=true;
+  $('botfatherFeedback').textContent=botCache.length?'فهرست ربات‌ها از سرور دریافت شد.':'هنوز رباتی در حساب تو ثبت نشده است.';
+ }catch(error){$('botfatherFeedback').textContent=error.message}
+}
+function parseBotCommands(){
+ return $('botCommands').value.split('\n').map(line=>line.trim()).filter(Boolean).map(line=>{
+  const parts=line.split(/\s+-\s+/,2);return {command:(parts[0]||'').replace(/^\//,''),description:parts[1]||''};
+ });
+}
+async function saveBotFatherBot(){
+ const payload={name:$('botName').value.trim(),username:$('botUsername').value.trim().toLowerCase(),about:$('botAbout').value.trim(),description:$('botDescription').value.trim(),avatarUrl:$('botAvatarUrl').value.trim(),commands:parseBotCommands()};
+ const button=document.querySelector('[data-action="botfather-save"]');button.disabled=true;
+ try{
+  let result;
+  if(editingBotId){result=await requestJson('/api/vivo/bots/update',{...payload,id:editingBotId});$('botfatherFeedback').textContent='مشخصات ربات به‌روزرسانی شد.'}
+  else{result=await requestJson('/api/vivo/bots/create',payload);lastBotToken=result.token||'';$('botfatherTokenValue').textContent=lastBotToken;$('botfatherToken').hidden=!lastBotToken;$('botfatherFeedback').textContent=result.warning||'ربات ساخته شد.'}
+  $('botfatherForm').hidden=true;$('botfatherBotList').hidden=true;
+  if(editingBotId){await loadMyBots()}else{botCache.unshift(result.bot);$('botfatherBotList').hidden=true}
+ }catch(error){$('botfatherFormError').textContent=error.message}
+ finally{button.disabled=false}
+}
+async function regenerateBotToken(id){
+ if(!window.confirm('توکن فعلی فوراً باطل و یک توکن تازه ساخته می‌شود. ادامه می‌دهی؟'))return;
+ try{const result=await requestJson('/api/vivo/bots/regenerate-token',{id});lastBotToken=result.token||'';$('botfatherTokenValue').textContent=lastBotToken;$('botfatherToken').hidden=false;$('botfatherForm').hidden=true;$('botfatherBotList').hidden=true;$('botfatherFeedback').textContent=result.warning||'توکن تازه ساخته شد.'}
+ catch(error){$('botfatherFeedback').textContent=error.message}
+}
+async function deleteBotFatherBot(id){
+ if(!window.confirm('این ربات و تنظیمات مدیریتی آن حذف شود؟'))return;
+ try{await requestJson('/api/vivo/bots/delete',{id});$('botfatherFeedback').textContent='ربات حذف شد.';await loadMyBots()}
+ catch(error){$('botfatherFeedback').textContent=error.message}
 }
 async function saveContactProfile(reset=false){
  if(!currentChatId)return;
@@ -440,6 +507,17 @@ document.addEventListener('click',async event=>{
  if(action==='chat-back'){document.querySelector('.messages-shell').classList.remove('has-chat');$('chatWindow').hidden=true;$('chatPlaceholder').hidden=false;currentChatId=null;return}
  if(action==='refresh-chat'){loadChatMessages();return}
  if(action==='edit-contact-profile'){openContactProfileEditor();return}
+ if(action==='open-botfather'){openBotFather();return}
+ if(action==='close-botfather'){closeBotFather();return}
+ if(action==='botfather-create'){showBotFatherForm();return}
+ if(action==='botfather-list'){loadMyBots();return}
+ if(action==='botfather-help'){$('botfatherFeedback').textContent='برای ساخت ربات، نام و شناسه یکتا وارد کن. توکن فقط یک‌بار نمایش داده می‌شود. فرمان‌ها را هرکدام در یک خط و به شکل start - شروع بنویس. نوسازی توکن، توکن قبلی را باطل می‌کند.';return}
+ if(action==='botfather-cancel-form'){$('botfatherForm').hidden=true;$('botfatherFeedback').textContent='فرم بسته شد.';return}
+ if(action==='botfather-save'){saveBotFatherBot();return}
+ if(action==='botfather-edit'){const bot=botCache.find(x=>x.id===actionButton.dataset.botId);if(bot)showBotFatherForm(bot);return}
+ if(action==='botfather-regenerate'){regenerateBotToken(actionButton.dataset.botId);return}
+ if(action==='botfather-delete'){deleteBotFatherBot(actionButton.dataset.botId);return}
+ if(action==='botfather-copy-token'){if(!lastBotToken)return;try{await navigator.clipboard.writeText(lastBotToken);$('botfatherFeedback').textContent='توکن کپی شد؛ آن را در جای امن نگه دار.'}catch{$('botfatherFeedback').textContent='کپی خودکار در این مرورگر ممکن نیست؛ توکن را به‌صورت دستی کپی کن.'}return}
  if(action==='close-contact-profile'){$('contactProfileEditor').hidden=true;return}
  if(action==='save-contact-profile'){saveContactProfile(false);return}
  if(action==='reset-contact-profile'){saveContactProfile(true);return}
@@ -457,6 +535,7 @@ document.addEventListener('click',async event=>{
 $('authClose').addEventListener('click',authClose);
 $('chatComposer').addEventListener('click',event=>{if(event.target===$('chatComposer')){$('chatComposer').classList.remove('open');$('chatComposer').hidden=true}});
 $('contactProfileEditor').addEventListener('click',event=>{if(event.target===$('contactProfileEditor'))$('contactProfileEditor').hidden=true});
+$('botfatherOverlay').addEventListener('click',event=>{if(event.target===$('botfatherOverlay'))closeBotFather()});
 $('chatMessageInput').addEventListener('keydown',event=>{if(event.key==='Enter'&&!event.shiftKey){event.preventDefault();sendChatMessage()}});
 $('storyComposer').addEventListener('click',event=>{if(event.target===$('storyComposer')){$('storyComposer').classList.remove('open');$('storyComposer').hidden=true}});
 $('authOverlay').addEventListener('click',event=>{if(event.target===$('authOverlay'))authClose()});
