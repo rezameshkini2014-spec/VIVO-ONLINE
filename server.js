@@ -42,6 +42,12 @@ async function api(req,res,url) {
     if (!parts.length || parts.some(x=>x===".."||x===".")) return responseAdapter(res).status(404).json({ok:false,error:"مسیر پیدا نشد."});
     handler=require("./api/vivo/[...path].js");
     query.path=parts;
+  } else if (pathname.startsWith("/api/otp/")) {
+    const parts=pathname.slice("/api/otp/".length).split("/").filter(Boolean);
+    if (parts.length!==1 || !/^[a-z0-9_-]+$/i.test(parts[0])) return responseAdapter(res).status(404).json({ok:false,error:"مسیر پیدا نشد."});
+    const target=path.resolve(root,"api","otp",parts[0]+".js");
+    if (!target.startsWith(path.resolve(root,"api","otp")+path.sep) || !fs.existsSync(target)) return responseAdapter(res).status(404).json({ok:false,error:"مسیر پیدا نشد."});
+    handler=require(target);
   } else return responseAdapter(res).status(404).json({ok:false,error:"مسیر API پیدا نشد."});
   const parsed=new URLSearchParams(url.search);
   for (const [key,value] of parsed) query[key]=value;

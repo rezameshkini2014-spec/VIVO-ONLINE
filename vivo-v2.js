@@ -2,16 +2,22 @@
 'use strict';
 const $=id=>document.getElementById(id);
 const toast=(message)=>{const el=$('toast');if(!el)return;el.textContent=message;el.classList.add('show');clearTimeout(toast.timer);toast.timer=setTimeout(()=>el.classList.remove('show'),2600)};
-const titles={home:'خانه',messages:'پیام‌ها',create:'انتشار محتوا',reels:'ویدئوها',explore:'کشف و جست‌وجو',notifications:'اعلان‌ها',profile:'پروفایل من',settings:'تنظیمات'};
-let currentPage='home',selectedFile=null,currentUser=null,pendingOtp=null,storiesCache=[],currentChatId=null,replyToMessageId=null,chatsCache=[];
+const titles={home:'اینستای ویوو',messages:'پیام‌رسان',create:'انتشار محتوا',explore:'کشف و جست‌وجو',notifications:'اعلان‌ها',profile:'پروفایل من',settings:'تنظیمات'};
+let currentPage='home',selectedFile=null,currentUser=null,pendingOtp=null,storiesCache=[],currentChatId=null,currentChat=null,replyToMessageId=null,replyToMessageText='',chatsCache=[],contactPanelOpen=false,pressTimer=null,pressStart=null,editingBotId=null,botCache=[],lastBotToken='';
 function go(page){
+ if(page==='reels'){setSocialTab('reels');page='home'}
+ if(page==='contacts'){page='messages';contactPanelOpen=true}
+ if(page!=='messages')contactPanelOpen=false;
  if(!titles[page])return;
  currentPage=page;
+ document.querySelector('.vivo-app')?.classList.toggle('messenger-focus',page==='messages');
+ $('contactsInline')?.toggleAttribute('hidden',!contactPanelOpen);
+ $('conversationListContent')?.toggleAttribute('hidden',contactPanelOpen);
  document.querySelectorAll('.page').forEach(el=>el.classList.toggle('active',el.dataset.view===page));
  document.querySelectorAll('[data-page]').forEach(el=>el.classList.toggle('active',el.dataset.page===page));
  $('pageTitle').textContent=titles[page];
  if(page==='create')$('postText').focus({preventScroll:true});
- if(currentUser){if(page==='home'){loadFeed();loadStories()}if(page==='messages')loadChats();if(page==='explore')$('exploreSearch').focus({preventScroll:true});if(page==='notifications')loadNotifications();if(page==='profile')loadProfile()}
+ if(currentUser){if(page==='home'){loadFeed();loadStories()}if(page==='messages'){loadChats();if(contactPanelOpen)loadContacts()}if(page==='explore')$('exploreSearch').focus({preventScroll:true});if(page==='notifications')loadNotifications();if(page==='profile')loadProfile()}
  window.scrollTo({top:0,behavior:'smooth'});
 }
 async function requestJson(url,body){
@@ -20,6 +26,11 @@ async function requestJson(url,body){
  if(!response.ok||data.ok===false)throw new Error(data.error||'درخواست انجام نشد.');
  return data;
 }
+function setSocialTab(tab){
+ const reels=tab==='reels';$('postsPanel').hidden=reels;$('reelsInlinePanel').hidden=!reels;
+ document.querySelectorAll('.social-tab').forEach(button=>button.classList.toggle('active',button.dataset.tab===(reels?'reels':'posts')));
+}
+function toggleContactsInline(){contactPanelOpen=!contactPanelOpen;$('contactsInline').hidden=!contactPanelOpen;$('conversationListContent').hidden=contactPanelOpen;if(contactPanelOpen)loadContacts()}
 function normalizeDigits(value){return String(value||'').replace(/[۰-۹]/g,d=>String('۰۱۲۳۴۵۶۷۸۹'.indexOf(d))).replace(/[٠-٩]/g,d=>String('٠١٢٣٤٥٦٧٨٩'.indexOf(d)))}
 function normalizePhone(value){return normalizeDigits(value).replace(/[\s()-]/g,'').replace(/^\+?98/,'0')}
 function usernameValid(value){return /^[a-z][a-z0-9_]{3,29}$/.test(value)}
@@ -84,8 +95,8 @@ function updateUser(user){
  if(profileButton){const spans=profileButton.querySelectorAll('span');if(spans[1])spans[1].textContent=name}
  const title=document.querySelector('.profile-identity h2'),handle=document.querySelector('.profile-identity span'),bio=document.querySelector('.profile-identity p');
  if(title)title.textContent=name;if(handle)handle.textContent=username?'@'+username:'نام کاربری ثبت نشده';if(bio)bio.textContent=currentUser.bio||'پروفایل ویوو تو؛ می‌توانی بعداً توضیحاتت را تکمیل کنی.';
- document.querySelectorAll('.avatar-self').forEach(el=>{el.textContent=name.trim().slice(0,1)||'و'});
- const profileAvatar=document.querySelector('.profile-avatar');if(profileAvatar)profileAvatar.textContent=name.trim().slice(0,1)||'و';
+ document.querySelectorAll('.avatar-self').forEach(el=>applyAvatar(el,currentUser));
+ const profileAvatar=document.querySelector('.profile-avatar');if(profileAvatar)applyAvatar(profileAvatar,currentUser);
 }
 async function checkSession(){
  try{const result=await requestJson('/api/vivo/profile');if(result.user){updateUser(result.user);await loadHomeData()}}
@@ -102,6 +113,106 @@ function formatTime(value){
 function node(tag,className,text){
  const el=document.createElement(tag);if(className)el.className=className;if(text!==undefined)el.textContent=text;return el;
 }
+function applyAvatar(el,user){
+ if(!el)return;
+ el.replaceChildren();
+ const fallback=(user?.display_name||user?.username||'V').trim().slice(0,1)||'V';
+ const url=typeof user?.avatar_url==='string'&&/^https:\/\//i.test(user.avatar_url)?user.avatar_url:'';
+ if(url){
+  const img=node('img','avatar-image');img.src=url;img.alt='';img.loading='lazy';img.referrerPolicy='no-referrer';
+  img.addEventListener('error',()=>{img.remove();el.textContent=fallback},{once:true});el.append(img);
+ }else el.textContent=fallback;
+}
+function avatarNode(user,className='avatar'){const el=node('span',className);applyAvatar(el,user);return el}
+function openContactProfileEditor(){
+ if(!currentChat||currentChat.type!=='private'){toast('شخصی‌سازی نام و تصویر فقط برای گفت‌وگوی خصوصی فعال است.');return}
+ $('contactProfileError').textContent='در حال دریافت مشخصات…';$('contactProfileEditor').hidden=false;
+ requestJson('/api/vivo/chat/contact-preferences?chatId='+encodeURIComponent(currentChatId)).then(result=>{
+  $('contactNickname').value=result.preference?.nickname||'';
+  $('contactAvatarUrl').value=result.preference?.avatar_url||'';
+  $('contactProfileError').textContent='مشخصات اصلی: '+(result.original?.display_name||'مخاطب');
+ }).catch(error=>{$('contactProfileError').textContent=error.message});
+}
+function openBotFather(){
+ if(!currentUser){authOpen();return}
+ $('botfatherOverlay').hidden=false;$('botfatherForm').hidden=true;$('botfatherBotList').hidden=true;$('botfatherToken').hidden=true;
+ $('botfatherFeedback').textContent='از دکمه‌های زیر پیام BotFather استفاده کن.';
+}
+function closeBotFather(){$('botfatherOverlay').hidden=true}
+function showBotFatherForm(bot=null){
+ editingBotId=bot?.id||null;
+ $('botfatherFormTitle').textContent=bot?'ویرایش مشخصات ربات':'ساخت ربات تازه';
+ $('botName').value=bot?.name||'';
+ $('botUsername').value=bot?.username||'';
+ $('botUsername').disabled=!!bot;
+ $('botAbout').value=bot?.about||'';
+ $('botDescription').value=bot?.description||'';
+ $('botAvatarUrl').value=bot?.avatar_url||'';
+ $('botCommands').value=(bot?.commands||[]).map(x=>x.command+' - '+x.description).join('\n');
+ $('botfatherFormError').textContent='';
+ $('botfatherForm').hidden=false;$('botfatherBotList').hidden=true;$('botfatherToken').hidden=true;
+}
+async function loadMyBots(){
+ $('botfatherFeedback').textContent='در حال دریافت ربات‌ها…';
+ try{
+  const result=await requestJson('/api/vivo/bots/list');botCache=result.bots||[];
+  const target=$('botfatherBots');target.replaceChildren();
+  $('botfatherCount').textContent=botCache.length+' ربات';
+  if(!botCache.length)target.append(node('p','auth-hint','هنوز رباتی نساخته‌ای. از دکمه «ساخت ربات جدید» شروع کن.'));
+  for(const bot of botCache){
+   const card=node('article','botfather-bot-card');
+   const avatar=node('span','botfather-bot-avatar',bot.name.slice(0,1));if(bot.avatar_url){const im=node('img','avatar-image');im.src=bot.avatar_url;im.alt='';im.loading='lazy';im.onerror=()=>im.remove();avatar.replaceChildren(im)}
+   const copy=node('div','botfather-bot-copy');copy.append(node('b','',bot.name),node('small','','@'+bot.username+' · '+(bot.is_active?'فعال':'غیرفعال')));
+   const actions=node('div','botfather-bot-actions');
+   const edit=node('button','','ویرایش');edit.dataset.action='botfather-edit';edit.dataset.botId=bot.id;
+   const token=node('button','','توکن تازه');token.dataset.action='botfather-regenerate';token.dataset.botId=bot.id;
+   const del=node('button','','حذف');del.dataset.action='botfather-delete';del.dataset.botId=bot.id;
+   actions.append(edit,token,del);card.append(avatar,copy,actions);target.append(card);
+  }
+  $('botfatherBotList').hidden=false;$('botfatherForm').hidden=true;$('botfatherToken').hidden=true;
+  $('botfatherFeedback').textContent=botCache.length?'فهرست ربات‌ها از سرور دریافت شد.':'هنوز رباتی در حساب تو ثبت نشده است.';
+ }catch(error){$('botfatherFeedback').textContent=error.message}
+}
+function parseBotCommands(){
+ return $('botCommands').value.split('\n').map(line=>line.trim()).filter(Boolean).map(line=>{
+  const parts=line.split(/\s+-\s+/,2);return {command:(parts[0]||'').replace(/^\//,''),description:parts[1]||''};
+ });
+}
+async function saveBotFatherBot(){
+ const payload={name:$('botName').value.trim(),username:$('botUsername').value.trim().toLowerCase(),about:$('botAbout').value.trim(),description:$('botDescription').value.trim(),avatarUrl:$('botAvatarUrl').value.trim(),commands:parseBotCommands()};
+ const button=document.querySelector('[data-action="botfather-save"]');button.disabled=true;
+ try{
+  let result;
+  if(editingBotId){result=await requestJson('/api/vivo/bots/update',{...payload,id:editingBotId});$('botfatherFeedback').textContent='مشخصات ربات به‌روزرسانی شد.'}
+  else{result=await requestJson('/api/vivo/bots/create',payload);lastBotToken=result.token||'';$('botfatherTokenValue').textContent=lastBotToken;$('botfatherToken').hidden=!lastBotToken;$('botfatherFeedback').textContent=result.warning||'ربات ساخته شد.'}
+  $('botfatherForm').hidden=true;$('botfatherBotList').hidden=true;
+  if(editingBotId){await loadMyBots()}else{botCache.unshift(result.bot);$('botfatherBotList').hidden=true}
+ }catch(error){$('botfatherFormError').textContent=error.message}
+ finally{button.disabled=false}
+}
+async function regenerateBotToken(id){
+ if(!window.confirm('توکن فعلی فوراً باطل و یک توکن تازه ساخته می‌شود. ادامه می‌دهی؟'))return;
+ try{const result=await requestJson('/api/vivo/bots/regenerate-token',{id});lastBotToken=result.token||'';$('botfatherTokenValue').textContent=lastBotToken;$('botfatherToken').hidden=false;$('botfatherForm').hidden=true;$('botfatherBotList').hidden=true;$('botfatherFeedback').textContent=result.warning||'توکن تازه ساخته شد.'}
+ catch(error){$('botfatherFeedback').textContent=error.message}
+}
+async function deleteBotFatherBot(id){
+ if(!window.confirm('این ربات و تنظیمات مدیریتی آن حذف شود؟'))return;
+ try{await requestJson('/api/vivo/bots/delete',{id});$('botfatherFeedback').textContent='ربات حذف شد.';await loadMyBots()}
+ catch(error){$('botfatherFeedback').textContent=error.message}
+}
+async function saveContactProfile(reset=false){
+ if(!currentChatId)return;
+ const button=document.querySelector('[data-action="save-contact-profile"]');if(button)button.disabled=true;
+ try{
+  await requestJson('/api/vivo/chat/contact-preferences',{chatId:currentChatId,nickname:reset?'':$('contactNickname').value.trim(),avatarUrl:reset?'':$('contactAvatarUrl').value.trim()});
+  $('contactProfileEditor').hidden=true;await loadChats();
+  const updated=chatsCache.find(x=>x.id===currentChatId);if(updated)currentChat=updated;
+  if(currentChat){$('chatTitle').textContent=currentChat.name||'گفت‌وگو';applyAvatar($('chatHeaderAvatar'),currentChat.participants?.[0])}
+  await loadChatMessages();toast(reset?'مشخصات اصلی مخاطب بازگردانده شد.':'نام و تصویر مخاطب فقط در حساب تو ذخیره شد.');
+ }catch(error){$('contactProfileError').textContent=error.message}
+ finally{if(button)button.disabled=false}
+}
+
 function renderPosts(posts,target,empty){
  target.replaceChildren();
  empty.hidden=posts.length>0;
@@ -195,9 +306,48 @@ async function searchUsers(){
    const card=node('article','result-card');card.append(node('span','avatar',user.display_name?.slice(0,1)||'و'));
    const info=node('div','result-info');info.append(node('b','',user.display_name||'کاربر'),node('small','',user.username?'@'+user.username:''),node('p','',user.bio||''));
    card.append(info);
-   if(user.id!==currentUser.id){const follow=node('button','secondary-button',user.is_private?'درخواست دنبال‌کردن':'دنبال‌کردن');follow.dataset.action='follow';follow.dataset.username=user.username;card.append(follow)}
+   if(user.id!==currentUser.id){const follow=node('button','secondary-button','افزودن مخاطب');follow.dataset.action='follow';follow.dataset.username=user.username;card.append(follow)}
    target.append(card);
   }
+ }catch(error){toast(error.message)}
+}
+async function loadContacts(){
+ if(!currentUser){authOpen();return}
+ try{
+  const [requests,contacts]=await Promise.all([requestJson('/api/vivo/contacts/requests'),requestJson('/api/vivo/contacts/list')]);
+  const reqList=$('contactRequestsList'),conList=$('contactsList');reqList.replaceChildren();conList.replaceChildren();
+  const items=requests.requests||[],people=contacts.contacts||[];
+  $('contactRequestsEmpty').hidden=items.length>0;$('contactsEmpty').hidden=people.length>0;
+  for(const item of items){
+   const row=node('article','notification-card');row.append(node('span','avatar',item.user?.display_name?.slice(0,1)||'V'));
+   const copy=node('div','notification-copy');copy.append(node('p','',item.user?.display_name||'کاربر VIVO'),node('small','', '@'+(item.user?.username||'')));row.append(copy);
+   if(item.direction==='incoming'&&item.status==='pending'){const accept=node('button','secondary-button','پذیرفتن');accept.dataset.action='contact-respond';accept.dataset.requestId=item.id;accept.dataset.response='accept';row.append(accept);const reject=node('button','text-button','رد');reject.dataset.action='contact-respond';reject.dataset.requestId=item.id;reject.dataset.response='reject';row.append(reject)}
+   else copy.append(node('small','',item.status==='accepted'?'ارتباط برقرار است':'در انتظار پاسخ'));
+   reqList.append(row);
+  }
+  for(const person of people){
+   const row=node('article','result-card');row.append(node('span','avatar',person.display_name?.slice(0,1)||'V'));
+   const info=node('div','result-info');info.append(node('b','',person.display_name||'کاربر'),node('small','', '@'+person.username),node('p','',person.bio||''));row.append(info);
+   const chat=node('button','secondary-button','ارسال پیام');chat.dataset.action='contact-message';chat.dataset.username=person.username;row.append(chat);
+   const remove=node('button','text-button','حذف مخاطب');remove.dataset.action='contact-remove';remove.dataset.userId=person.id;row.append(remove);conList.append(row);
+  }
+ }catch(error){toast(error.message)}
+}
+async function searchContact(){
+ if(!currentUser){authOpen();return}
+ const username=$('contactUsernameSearch').value.trim().toLowerCase();
+ if(!usernameValid(username)){toast('نام کاربری معتبر وارد کن؛ ۴ تا ۳۰ نویسه انگلیسی.');return}
+ try{
+  const result=await requestJson('/api/vivo/contacts/search?username='+encodeURIComponent(username));
+  const target=$('contactSearchResult');target.replaceChildren();
+  if(!result.user){target.append(node('p','rail-empty','کاربری با این نام کاربری پیدا نشد.'));return}
+  const user=result.user,relation=result.relation,row=node('article','result-card');row.append(node('span','avatar',user.display_name?.slice(0,1)||'V'));
+  const info=node('div','result-info');info.append(node('b','',user.display_name||'کاربر'),node('small','', '@'+user.username),node('p','',user.bio||''));row.append(info);
+  if(relation?.status==='accepted'){const status=node('span','tiny-pill','مخاطب شما');row.append(status);const chat=node('button','secondary-button','ارسال پیام');chat.dataset.action='contact-message';chat.dataset.username=user.username;row.append(chat)}
+  else if(relation?.direction==='incoming'&&relation.status==='pending'){const accept=node('button','primary-button','پذیرفتن درخواست');accept.dataset.action='contact-respond';accept.dataset.requestId=relation.id;accept.dataset.response='accept';row.append(accept)}
+  else if(relation?.status==='pending'){row.append(node('span','tiny-pill','در انتظار پاسخ'))}
+  else{const add=node('button','primary-button','افزودن مخاطب');add.dataset.action='contact-add';add.dataset.username=user.username;row.append(add)}
+  target.append(row);
  }catch(error){toast(error.message)}
 }
 async function loadNotifications(){
@@ -235,7 +385,7 @@ async function loadChats(){
   for(const chat of chatsCache){
    const row=node('button','conversation-row'+(chat.id===currentChatId?' active':''));row.dataset.action='open-chat';row.dataset.chatId=chat.id;
    const participant=chat.participants?.[0];
-   row.append(node('span','avatar',participant?.display_name?.slice(0,1)||chat.name?.slice(0,1)||'V'));
+   row.append(avatarNode(participant||{display_name:chat.name},'avatar'));
    const copy=node('span','conversation-row-copy');copy.append(node('b','',chat.name||'گفت‌وگو'),node('small','',chat.lastMessage?.text|| (chat.type==='group'?'گروه ویوو':'گفت‌وگوی خصوصی')));
    const meta=node('span','conversation-row-meta');meta.append(node('small','',chat.lastMessage?formatTime(chat.lastMessage.sentAt):''));if(chat.unread)meta.append(node('span','unread-badge',String(chat.unread)));
    row.append(copy,meta);list.append(row);
@@ -244,10 +394,10 @@ async function loadChats(){
 }
 async function openChat(chatId){
  const chat=chatsCache.find(x=>x.id===chatId);if(!chat)return;
- currentChatId=chatId;replyToMessageId=null;
+ currentChatId=chatId;currentChat=chat;replyToMessageId=null;replyToMessageText='';contactPanelOpen=false;$('contactsInline').hidden=true;$('conversationListContent').hidden=false;
  document.querySelector('.messages-shell').classList.add('has-chat');
  $('chatPlaceholder').hidden=true;$('chatWindow').hidden=false;
- $('chatTitle').textContent=chat.name;$('chatSubtitle').textContent=chat.type==='group'?'گروه · '+(chat.participants?.length||0)+' عضو':'گفت‌وگوی خصوصی';
+ $('chatTitle').textContent=chat.name;$('chatSubtitle').textContent=chat.type==='group'?'گروه · '+(chat.participants?.length||0)+' عضو':'گفت‌وگوی خصوصی';applyAvatar($('chatHeaderAvatar'),chat.participants?.[0]||{display_name:chat.name});const editContactButton=document.querySelector('[data-action="edit-contact-profile"]');if(editContactButton)editContactButton.hidden=chat.type!=='private';
  $('chatMessageInput').placeholder='پیامت را بنویس…';
  await loadChatMessages();
  document.querySelectorAll('.conversation-row').forEach(row=>row.classList.toggle('active',row.dataset.chatId===chatId));
@@ -257,11 +407,17 @@ async function loadChatMessages(){
  try{
   const result=await requestJson('/api/vivo/chat/messages?chatId='+encodeURIComponent(currentChatId));
   const list=$('chatMessages');list.replaceChildren();
-  for(const message of result.messages||[]){
-   const bubble=node('article','message-bubble'+(message.fromMe?' mine':''));
-   if(!message.fromMe)bubble.append(node('span','message-sender',message.sender?.display_name||'کاربر'));
+  const messageRows=result.messages||[];
+  for(const message of messageRows){
+   const bubble=node('article','message-bubble'+(message.fromMe?' mine':''));bubble.dataset.messageId=message.id;
+   if(!message.fromMe){const senderLine=node('div','message-sender-line');senderLine.append(avatarNode(message.sender,'message-sender-avatar'),node('span','message-sender',message.sender?.display_name||'کاربر'));bubble.append(senderLine)}
+   if(message.replyTo){const parent=messageRows.find(item=>item.id===message.replyTo);if(parent)bubble.append(node('div','message-reply',parent.text||'پیام'))}
    bubble.append(node('p','',message.text||'پیوست'));
    bubble.append(node('time','',formatTime(message.sentAt)+(message.editedAt?' · ویرایش‌شده':'')));
+   if(Array.isArray(message.reactions)&&message.reactions.length){
+    const grouped=new Map();for(const item of message.reactions){const key=item.reaction;grouped.set(key,(grouped.get(key)||0)+1)}
+    const strip=node('div','message-reactions');for(const [emoji,count] of grouped){const chip=node('span','message-reaction',emoji+' '+count);strip.append(chip)}bubble.append(strip);
+   }
    const controls=node('div','message-controls');
    const reply=node('button','text-button','پاسخ');reply.dataset.action='reply-message';reply.dataset.messageId=message.id;controls.append(reply);
    const react=node('button','text-button','👍');react.dataset.action='react-message';react.dataset.messageId=message.id;controls.append(react);
@@ -278,7 +434,7 @@ async function sendChatMessage(){
  if(!currentChatId)return;
  const input=$('chatMessageInput'),text=input.value.trim();if(!text)return;
  const button=document.querySelector('[data-action="send-chat-message"]');button.disabled=true;
- try{await requestJson('/api/vivo/chat/send',{chatId:currentChatId,text,replyTo:replyToMessageId});input.value='';replyToMessageId=null;input.placeholder='پیامت را بنویس…';await loadChatMessages()}
+ try{await requestJson('/api/vivo/chat/send',{chatId:currentChatId,text,replyTo:replyToMessageId});input.value='';replyToMessageId=null;replyToMessageText='';$('chatReplyPreview').hidden=true;$('chatReplyText').textContent='';input.placeholder='پیامت را بنویس…';await loadChatMessages()}
  catch(error){toast(error.message)}
  finally{button.disabled=false}
 }
@@ -325,8 +481,16 @@ document.addEventListener('click',async event=>{
   try{await requestJson('/api/vivo/social/comment',{postId,text});input.value='';await loadComments(postId);await loadFeed()}catch(error){toast(error.message)}return;
  }
  if(action==='follow'){
-  try{const result=await requestJson('/api/vivo/social/follow',{username:actionButton.dataset.username});actionButton.textContent=result.status==='pending'?'درخواست ارسال شد':'دنبال می‌کنی';actionButton.disabled=true}catch(error){toast(error.message)}return;
+  try{const result=await requestJson('/api/vivo/contacts/request',{username:actionButton.dataset.username});actionButton.textContent=result.status==='accepted'?'مخاطب شما':'درخواست ارسال شد';actionButton.disabled=true}catch(error){toast(error.message)}return;
  }
+ if(action==='toggle-contacts'){toggleContactsInline();return}
+ if(action==='social-tab'){setSocialTab(actionButton.dataset.tab);return}
+ if(action==='contact-search'){searchContact();return}
+ if(action==='contacts-refresh'){loadContacts();return}
+ if(action==='contact-add'){try{const result=await requestJson('/api/vivo/contacts/request',{username:actionButton.dataset.username});toast(result.status==='accepted'?'ارتباط برقرار شد.':'درخواست ارتباط ارسال شد.');await searchContact();await loadContacts()}catch(error){toast(error.message)}return}
+ if(action==='contact-respond'){try{await requestJson('/api/vivo/contacts/respond',{requestId:actionButton.dataset.requestId,action:actionButton.dataset.response});toast(actionButton.dataset.response==='accept'?'درخواست پذیرفته شد.':'درخواست رد شد.');await loadContacts();await searchContact()}catch(error){toast(error.message)}return}
+ if(action==='contact-remove'){try{await requestJson('/api/vivo/contacts/remove',{userId:actionButton.dataset.userId});toast('مخاطب حذف شد.');await loadContacts()}catch(error){toast(error.message)}return}
+ if(action==='contact-message'){try{const result=await requestJson('/api/vivo/chat/create',{type:'private',username:actionButton.dataset.username});go('messages');await loadChats();await openChat(result.chat.id)}catch(error){toast(error.message)}return}
  if(action==='mark-notification'){
   try{await requestJson('/api/vivo/social/notifications/read',{id:actionButton.dataset.notificationId});await loadNotifications()}catch(error){toast(error.message)}return;
  }
@@ -334,7 +498,35 @@ document.addEventListener('click',async event=>{
  if(action==='story'){if(!currentUser){authOpen();return}$('storyComposer').hidden=false;$('storyComposer').classList.add('open');$('storyText').focus();return}
  if(action==='close-story-composer'){$('storyComposer').classList.remove('open');$('storyComposer').hidden=true;return}
  if(action==='publish-story'){publishStory();return}
- if(action==='new-chat'){toast('پیام‌رسان چندکاربره هنوز در حال پیاده‌سازی است.');return}
+ if(action==='new-chat'){$('chatComposer').hidden=false;$('chatComposer').classList.add('open');$('chatTargetUsername').focus();return}
+ if(action==='close-chat-composer'){$('chatComposer').classList.remove('open');$('chatComposer').hidden=true;return}
+ if(action==='create-private-chat'){createPrivateChat();return}
+ if(action==='create-group-chat'){createGroupChat();return}
+ if(action==='open-chat'){openChat(actionButton.dataset.chatId);return}
+ if(action==='send-chat-message'){sendChatMessage();return}
+ if(action==='chat-back'){document.querySelector('.messages-shell').classList.remove('has-chat');$('chatWindow').hidden=true;$('chatPlaceholder').hidden=false;currentChatId=null;return}
+ if(action==='refresh-chat'){loadChatMessages();return}
+ if(action==='edit-contact-profile'){openContactProfileEditor();return}
+ if(action==='open-botfather'){openBotFather();return}
+ if(action==='close-botfather'){closeBotFather();return}
+ if(action==='botfather-create'){showBotFatherForm();return}
+ if(action==='botfather-list'){loadMyBots();return}
+ if(action==='botfather-help'){$('botfatherFeedback').textContent='برای ساخت ربات، نام و شناسه یکتا وارد کن. توکن فقط یک‌بار نمایش داده می‌شود. فرمان‌ها را هرکدام در یک خط و به شکل start - شروع بنویس. نوسازی توکن، توکن قبلی را باطل می‌کند.';return}
+ if(action==='botfather-cancel-form'){$('botfatherForm').hidden=true;$('botfatherFeedback').textContent='فرم بسته شد.';return}
+ if(action==='botfather-save'){saveBotFatherBot();return}
+ if(action==='botfather-edit'){const bot=botCache.find(x=>x.id===actionButton.dataset.botId);if(bot)showBotFatherForm(bot);return}
+ if(action==='botfather-regenerate'){regenerateBotToken(actionButton.dataset.botId);return}
+ if(action==='botfather-delete'){deleteBotFatherBot(actionButton.dataset.botId);return}
+ if(action==='botfather-copy-token'){if(!lastBotToken)return;try{await navigator.clipboard.writeText(lastBotToken);$('botfatherFeedback').textContent='توکن کپی شد؛ آن را در جای امن نگه دار.'}catch{$('botfatherFeedback').textContent='کپی خودکار در این مرورگر ممکن نیست؛ توکن را به‌صورت دستی کپی کن.'}return}
+ if(action==='close-contact-profile'){$('contactProfileEditor').hidden=true;return}
+ if(action==='save-contact-profile'){saveContactProfile(false);return}
+ if(action==='reset-contact-profile'){saveContactProfile(true);return}
+ if(action==='mute-chat'){try{await requestJson('/api/vivo/chat/mute',{chatId:currentChatId,muted:true});toast('اعلان‌های این گفتگو بی‌صدا شد.')}catch(error){toast(error.message)}return}
+ if(action==='reply-message'){const bubble=actionButton.closest('.message-bubble');replyToMessageId=actionButton.dataset.messageId;replyToMessageText=bubble?.querySelector('p')?.textContent||'پیام';$('chatReplyText').textContent='پاسخ به: '+replyToMessageText.slice(0,90);$('chatReplyPreview').hidden=false;$('chatMessageInput').focus();return}
+ if(action==='cancel-reply'){replyToMessageId=null;replyToMessageText='';$('chatReplyPreview').hidden=true;return}
+ if(action==='react-message'){try{await requestJson('/api/vivo/chat/react',{messageId:actionButton.dataset.messageId,reaction:actionButton.dataset.reaction||'👍'});toast('واکنش ثبت شد.');await loadChatMessages()}catch(error){toast(error.message)}return}
+ if(action==='edit-message'){const bubble=actionButton.closest('.message-bubble'),oldText=bubble?.querySelector('p')?.textContent||'';const text=window.prompt('متن ویرایش‌شده را وارد کن:',oldText);if(text===null||!text.trim())return;try{await requestJson('/api/vivo/chat/edit',{messageId:actionButton.dataset.messageId,text:text.trim()});await loadChatMessages()}catch(error){toast(error.message)}return}
+ if(action==='delete-message'){if(!window.confirm('این پیام حذف شود؟'))return;try{await requestJson('/api/vivo/chat/delete',{messageId:actionButton.dataset.messageId});await loadChatMessages()}catch(error){toast(error.message)}return}
  if(action==='search'){searchUsers();return}
  if(action==='feed-filter'){toast('فیلترهای فید در مرحله بعد اضافه می‌شوند.');return}
  if(action==='edit-profile'||action==='account'){if(!currentUser)authOpen();else{go('profile');toast('ویرایش کامل پروفایل در مرحله بعد فعال می‌شود.')}return}
@@ -342,6 +534,8 @@ document.addEventListener('click',async event=>{
 });
 $('authClose').addEventListener('click',authClose);
 $('chatComposer').addEventListener('click',event=>{if(event.target===$('chatComposer')){$('chatComposer').classList.remove('open');$('chatComposer').hidden=true}});
+$('contactProfileEditor').addEventListener('click',event=>{if(event.target===$('contactProfileEditor'))$('contactProfileEditor').hidden=true});
+$('botfatherOverlay').addEventListener('click',event=>{if(event.target===$('botfatherOverlay'))closeBotFather()});
 $('chatMessageInput').addEventListener('keydown',event=>{if(event.key==='Enter'&&!event.shiftKey){event.preventDefault();sendChatMessage()}});
 $('storyComposer').addEventListener('click',event=>{if(event.target===$('storyComposer')){$('storyComposer').classList.remove('open');$('storyComposer').hidden=true}});
 $('authOverlay').addEventListener('click',event=>{if(event.target===$('authOverlay'))authClose()});
@@ -350,11 +544,16 @@ $('backToPhone').addEventListener('click',()=>{setAuthError('');showPhoneStep()}
 $('authPhone').addEventListener('input',event=>{event.target.value=normalizeDigits(event.target.value).replace(/[^\d+]/g,'').slice(0,14)});
 $('authUsername').addEventListener('input',event=>{event.target.value=event.target.value.toLowerCase().replace(/[^a-z0-9_]/g,'').slice(0,30)});
 $('authCode').addEventListener('input',event=>{event.target.value=normalizeDigits(event.target.value).replace(/\D/g,'').slice(0,6)});
-document.addEventListener('keydown',event=>{if(event.key==='Escape')authClose();if(event.key==='Enter'&&$('authOverlay').classList.contains('open')){if(!$('codeStep').hidden)verifyOtp();else sendOtp()}});
+document.addEventListener('keydown',event=>{if(event.key==='Escape'){authClose();if($('chatComposer').classList.contains('open')){$('chatComposer').classList.remove('open');$('chatComposer').hidden=true}}if(event.key==='Enter'&&$('authOverlay').classList.contains('open')){if(!$('codeStep').hidden)verifyOtp();else sendOtp()}});
+$('chatSearch').addEventListener('input',event=>{const q=event.target.value.trim().toLowerCase();document.querySelectorAll('.conversation-row').forEach(row=>{row.hidden=!row.textContent.toLowerCase().includes(q)})});
+$('chatMessages').addEventListener('pointerdown',event=>{const bubble=event.target.closest('.message-bubble');if(!bubble||event.target.closest('button'))return;pressStart={id:bubble.dataset.messageId,x:event.clientX,y:event.clientY,bubble,moved:false};clearTimeout(pressTimer);pressTimer=setTimeout(()=>{if(pressStart&&!pressStart.moved){let picker=bubble.querySelector('.reaction-picker');if(!picker){picker=node('div','reaction-picker');for(const emoji of ['❤️','👍','😂','😮','😢','🔥']){const b=node('button','',emoji);b.type='button';b.dataset.action='react-message';b.dataset.messageId=bubble.dataset.messageId;b.dataset.reaction=emoji;picker.append(b)}bubble.append(picker)}}},550)});
+$('chatMessages').addEventListener('pointermove',event=>{if(!pressStart)return;if(Math.abs(event.clientX-pressStart.x)>10||Math.abs(event.clientY-pressStart.y)>10){pressStart.moved=true;clearTimeout(pressTimer)}});
+$('chatMessages').addEventListener('pointerup',event=>{if(!pressStart)return;clearTimeout(pressTimer);const start=pressStart;pressStart=null;if(event.clientX-start.x< -55){replyToMessageId=start.id;replyToMessageText=start.bubble.querySelector('p')?.textContent||'پیام';$('chatReplyText').textContent='پاسخ به: '+replyToMessageText.slice(0,90);$('chatReplyPreview').hidden=false;$('chatMessageInput').focus()}});
+$('chatMessages').addEventListener('pointercancel',()=>{clearTimeout(pressTimer);pressStart=null});
 $('postFile').addEventListener('change',event=>{showFile(event.target.files&&event.target.files[0]);$('publishButton').disabled=!currentUser||!$('postText').value.trim()||!!selectedFile});
 $('globalSearch').addEventListener('keydown',event=>{if(event.key==='Enter'){go('explore');$('exploreSearch').value=event.currentTarget.value;searchUsers()}});
 $('exploreSearch').addEventListener('keydown',event=>{if(event.key==='Enter')searchUsers()});
 $('postText').addEventListener('input',event=>{const status=$('composerStatus');status.textContent=(event.target.value.trim()||selectedFile)?'پیش‌نویس فقط در همین صفحه نگه داشته شده است؛ هنوز در سرور ذخیره نشده.':'انتشار عمومی هنوز فعال نشده است؛ هیچ محتوایی بدون ذخیره‌سازی واقعی منتشر نمی‌شود.';$('publishButton').disabled=!currentUser||!event.target.value.trim()||!!selectedFile});
 try{const saved=JSON.parse(sessionStorage.getItem('vivo_v2_pending_otp')||'null');if(saved&&saved.expiresAt>Date.now()){pendingOtp=saved;$('authName').value=saved.name||'';$('authUsername').value=saved.username||'';$('authPhone').value=saved.phone||''}}catch{}
-go('home');checkSession();
+setSocialTab('posts');go('home');checkSession();
 })();
