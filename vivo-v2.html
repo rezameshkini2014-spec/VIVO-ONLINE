@@ -22,11 +22,11 @@
     </a>
     <div class="side-search"><span class="search-icon">⌕</span><input id="globalSearch" type="search" placeholder="جست‌وجو در ویوو" aria-label="جست‌وجو"></div>
     <nav class="main-nav" aria-label="ناوبری اصلی">
-      <button class="nav-item active" data-page="home"><span class="nav-icon">⌂</span><span>خانه</span></button>
+      <button class="nav-item active" data-page="home"><span class="nav-icon">⌂</span><span>اینستای ویوو</span></button>
       <button class="nav-item" data-page="messages"><span class="nav-icon">▤</span><span>پیام‌ها</span><span class="nav-count" id="unreadCount" hidden>۰</span></button>
-      <button class="nav-item" data-page="contacts"><span class="nav-icon">♧</span><span>مخاطبان</span></button>
+      
       <button class="nav-item" data-page="create"><span class="nav-icon">＋</span><span>انتشار محتوا</span></button>
-      <button class="nav-item" data-page="reels"><span class="nav-icon">▷</span><span>ویدئوها</span></button>
+      
       <button class="nav-item" data-page="explore"><span class="nav-icon">⌕</span><span>کشف و جست‌وجو</span></button>
       <button class="nav-item" data-page="notifications"><span class="nav-icon">♧</span><span>اعلان‌ها</span></button>
       <button class="nav-item" data-page="profile"><span class="nav-icon">◉</span><span>پروفایل من</span></button>
@@ -40,7 +40,7 @@
   <main class="main-area">
     <header class="topbar">
       <div class="mobile-brand"><span class="brand-mark">V</span><b>VIVO</b></div>
-      <div class="page-heading"><span class="eyebrow">VIVO / SOCIAL</span><h1 id="pageTitle">خانه</h1></div>
+      <div class="page-heading"><span class="eyebrow">VIVO / SOCIAL</span><h1 id="pageTitle">اینستای ویوو</h1></div>
       <div class="top-actions">
         <button class="icon-button" data-page="explore" aria-label="جست‌وجو" title="جست‌وجو">⌕</button>
         <button class="icon-button notification-button" data-page="notifications" aria-label="اعلان‌ها" title="اعلان‌ها">♧<i></i></button>
@@ -63,8 +63,16 @@
       </section>
       <div class="feed-layout">
         <section class="feed-column">
-          <div class="section-heading feed-heading"><div><h2>جدیدترین پست‌ها</h2><p>محتوای تازه از جامعه ویوو</p></div><button class="filter-button" data-action="feed-filter">همه پست‌ها <span>⌄</span></button></div>
-          <div class="empty-card feed-empty"><div class="empty-illustration"><span>✧</span><b>V</b><i>＋</i></div><h3>هنوز پستی منتشر نشده است</h3><p>فضای فید با انتشار محتوای واقعی کاربران کامل می‌شود. برای شروع، اولین پست خودت را بساز.</p><button class="primary-button" data-page="create">ساخت پست جدید</button><div id="postsList" class="posts-list"></div>
+          <div class="section-heading feed-heading"><div><h2>اینستای ویوو</h2><p>پست‌ها و ویدئوهای کوتاه در یک فضای یکپارچه</p></div></div>
+          <div class="social-tabs" role="tablist" aria-label="بخش‌های اینستای ویوو"><button class="social-tab active" type="button" data-action="social-tab" data-tab="posts">پست‌ها</button><button class="social-tab" type="button" data-action="social-tab" data-tab="reels">ریلز</button></div>
+          <div id="postsPanel" class="social-panel">
+            <div class="empty-card feed-empty"><div class="empty-illustration"><span>✧</span><b>V</b><i>＋</i></div><h3>هنوز پستی منتشر نشده است</h3><p>با انتشار پست‌های واقعی کاربران، این فضا تکمیل می‌شود.</p><button class="primary-button" data-page="create">ساخت پست جدید</button></div>
+            <div id="postsList" class="posts-list"></div>
+          </div>
+          <div id="reelsInlinePanel" class="social-panel" hidden>
+            <div class="reels-inline-head"><div><h3>ریلز اینستای ویوو</h3><p>ویدئوهای عمودی کوتاه در کنار پست‌ها</p></div><button class="secondary-button" data-page="create">＋ ساخت ویدئو</button></div>
+            <div class="empty-card wide-empty"><div class="reels-symbol">▷</div><h3>هنوز ریلزی منتشر نشده است</h3><p>ریلزها بخشی از اینستای ویوو هستند و پس از فعال‌شدن بارگذاری امن ویدئو در همین صفحه نمایش داده می‌شوند.</p></div>
+          </div>
         </section>
         <aside class="right-rail">
           <div class="rail-card profile-promo"><div class="rail-profile-top"><span class="avatar avatar-self large">و</span><div><b>به VIVO خوش آمدی</b><small>پروفایل خودت را تکمیل کن</small></div></div><button class="secondary-button full" data-page="profile">مشاهده پروفایل</button></div>
@@ -77,11 +85,25 @@
     <section class="page" id="page-messages" data-view="messages">
       <div class="messages-shell">
         <aside class="conversation-list">
-          <div class="section-heading"><div><h2>پیام‌ها</h2><p>گفت‌وگوهای خصوصی و گروهی</p></div><button class="round-action" data-action="new-chat" aria-label="گفت‌وگوی جدید">＋</button></div>
-          <label class="conversation-search"><span>⌕</span><input id="chatSearch" type="search" placeholder="جست‌وجوی گفتگو"></label>
-          <div class="conversation-empty" id="conversationEmpty"><span class="empty-chat-icon">▤</span><b>گفت‌وگویی وجود ندارد</b><p>پس از ورود و شروع گفت‌وگو، فهرست پیام‌ها اینجا نمایش داده می‌شود.</p><button class="secondary-button" data-action="new-chat">شروع گفت‌وگوی جدید</button></div><div class="chat-list" id="chatList"></div>
+          <div class="section-heading"><div><h2>پیام‌رسان VIVO</h2><p>همهٔ گفتگوها، مخاطبان و ربات‌ها در یک جا</p></div><button class="round-action" data-action="new-chat" aria-label="گفت‌وگوی جدید">＋</button></div>
+          <div class="messenger-shortcuts"><button type="button" class="messenger-shortcut" data-action="toggle-contacts">♧ مخاطبان</button><button type="button" class="messenger-shortcut" data-action="new-chat">＋ گفت‌وگوی تازه</button></div>
+          <div id="contactsInline" class="contacts-inline" hidden>
+            <div class="contacts-inline-heading"><b>مخاطبان</b><button type="button" class="text-button" data-action="toggle-contacts">بازگشت به گفتگوها</button></div>
+            <label class="field-label" for="contactUsernameSearch">جست‌وجو با نام کاربری VIVO</label>
+            <div class="explore-search contacts-search"><span>@</span><input id="contactUsernameSearch" type="text" maxlength="30" autocomplete="off" placeholder="username"><button class="primary-button" data-action="contact-search">جست‌وجو</button></div>
+            <p class="auth-hint">فقط شناسهٔ دقیق؛ بدون همگام‌سازی دفترچه تلفن و بدون جست‌وجوی شماره یا ایمیل.</p>
+            <div id="contactSearchResult" class="results-list"></div>
+            <div class="contacts-inline-heading"><b>درخواست‌های ارتباط</b><button class="text-button" data-action="contacts-refresh">به‌روزرسانی</button></div>
+            <div id="contactRequestsList" class="notification-list"></div><div id="contactRequestsEmpty" class="rail-empty">درخواستی وجود ندارد.</div>
+            <div class="contacts-inline-heading"><b>مخاطبان من</b></div>
+            <div id="contactsList" class="results-list"></div><div id="contactsEmpty" class="rail-empty">هنوز مخاطبی اضافه نشده است.</div>
+          </div>
+          <div id="conversationListContent">
+            <label class="conversation-search"><span>⌕</span><input id="chatSearch" type="search" placeholder="جست‌وجوی گفتگو"></label>
+            <div class="conversation-empty" id="conversationEmpty"><span class="empty-chat-icon">▤</span><b>گفت‌وگویی وجود ندارد</b><p>گفتگوهای خصوصی، گروهی و ربات‌ها اینجا قرار می‌گیرند.</p><button class="secondary-button" data-action="new-chat">شروع گفت‌وگوی جدید</button></div><div class="chat-list" id="chatList"></div>
+          </div>
         </aside>
-        <section class="conversation-panel"><div class="conversation-placeholder" id="chatPlaceholder"><div class="message-art">✉</div><h2>گفت‌وگوی خود را انتخاب کن</h2><p>پیام‌های خصوصی و گروهی در یک فضای یکپارچه.</p><span class="connection-note">برای شروع گفت‌وگو، ابتدا درخواست ارتباط VIVO را بپذیرید.</span></div><div class="chat-window" id="chatWindow" hidden><header class="chat-header"><button class="chat-back" data-action="chat-back">‹</button><div class="chat-header-info"><b id="chatTitle">گفت‌وگو</b><small id="chatSubtitle">پیام‌رسان VIVO</small></div><button class="icon-button" data-action="refresh-chat" title="به‌روزرسانی">↻</button><button class="icon-button" data-action="mute-chat" title="بی‌صداکردن">♧</button></header><div class="chat-messages" id="chatMessages"></div><div class="chat-compose"><input id="chatMessageInput" type="text" maxlength="5000" placeholder="پیامت را بنویس…"><button class="primary-button" data-action="send-chat-message">ارسال</button></div></div></section>
+        <section class="conversation-panel"><div class="conversation-placeholder" id="chatPlaceholder"><div class="message-art">✉</div><h2>گفت‌وگوی خود را انتخاب کن</h2><p>پیام‌های خصوصی و گروهی در یک فضای یکپارچه.</p><span class="connection-note">برای شروع گفت‌وگو، ابتدا درخواست ارتباط VIVO را بپذیرید.</span></div><div class="chat-window" id="chatWindow" hidden><header class="chat-header"><button class="chat-back" data-action="chat-back">‹</button><div class="chat-header-info"><b id="chatTitle">گفت‌وگو</b><small id="chatSubtitle">پیام‌رسان VIVO</small></div><button class="icon-button" data-action="refresh-chat" title="به‌روزرسانی">↻</button><button class="icon-button" data-action="mute-chat" title="بی‌صداکردن">♧</button></header><div class="chat-messages" id="chatMessages"></div><div class="chat-compose"><div class="chat-reply-preview" id="chatReplyPreview" hidden><span id="chatReplyText"></span><button type="button" data-action="cancel-reply" aria-label="لغو پاسخ">×</button></div><div class="chat-compose-row"><input id="chatMessageInput" type="text" maxlength="5000" placeholder="پیامت را بنویس…"><button class="primary-button" data-action="send-chat-message">ارسال</button></div></div></div></section>
       </div>
     </section>
 
@@ -100,37 +122,10 @@
       </div>
     </section>
 
-    <section class="page" id="page-reels" data-view="reels">
-      <div class="section-heading"><div><h2>ویدئوهای کوتاه</h2><p>تماشای ویدئوهای عمودی در VIVO</p></div><button class="primary-button" data-page="create">＋ افزودن ویدئو</button></div>
-      <div class="empty-card wide-empty"><div class="reels-symbol">▷</div><h3>هنوز ویدئویی برای نمایش وجود ندارد</h3><p>پس از فعال‌شدن بارگذاری و پردازش ویدئو، ریلزهای منتشرشده در این بخش قرار می‌گیرند.</p><button class="secondary-button" data-page="create">آماده‌سازی محتوای ویدئویی</button></div>
-    </section>
-
     <section class="page" id="page-explore" data-view="explore">
       <div class="section-heading"><div><h2>کشف و جست‌وجو</h2><p>کاربران، موضوعات و محتوای تازه را پیدا کن.</p></div></div>
       <div class="explore-search"><span>⌕</span><input id="exploreSearch" type="search" placeholder="نام کاربری، هشتگ یا موضوع را جست‌وجو کن"><button class="primary-button" data-action="search">جست‌وجو</button></div>
       <div class="empty-card wide-empty" id="exploreEmpty"><div class="explore-symbol">✧</div><h3>دنیای تازه‌ای برای کشف</h3><p>نام کاربری یا موضوعی را جست‌وجو کن.</p></div><div id="searchResults" class="results-list"></div>
-    </section>
-
-    <section class="page" id="page-contacts" data-view="contacts">
-      <div class="content-narrow">
-        <div class="section-heading"><div><h2>مخاطبان VIVO</h2><p>افراد را فقط با نام کاربری دقیق پیدا کن؛ دفترچه تلفن دستگاه خوانده یا همگام‌سازی نمی‌شود.</p></div></div>
-        <div class="composer-card">
-          <label class="field-label" for="contactUsernameSearch">شناسه یا نام کاربری VIVO</label>
-          <div class="explore-search"><span>@</span><input id="contactUsernameSearch" type="text" maxlength="30" autocomplete="off" placeholder="مثلاً username_123"><button class="primary-button" data-action="contact-search">جست‌وجو</button></div>
-          <p class="auth-hint">جست‌وجو فقط بر اساس نام کاربری دقیق انجام می‌شود؛ شماره تلفن و ایمیل جست‌وجو یا نمایش داده نمی‌شوند.</p>
-          <div id="contactSearchResult" class="results-list"></div>
-        </div>
-        <div class="composer-card">
-          <div class="section-heading"><div><h3>درخواست‌های ارتباط</h3><p>درخواست‌های دریافتی و ارسالی</p></div><button class="text-button" data-action="contacts-refresh">به‌روزرسانی</button></div>
-          <div id="contactRequestsList" class="notification-list"></div>
-          <div id="contactRequestsEmpty" class="rail-empty">درخواستی وجود ندارد.</div>
-        </div>
-        <div class="composer-card">
-          <div class="section-heading"><div><h3>مخاطبان من</h3><p>ارتباط‌هایی که دو طرف پذیرفته‌اند</p></div></div>
-          <div id="contactsList" class="results-list"></div>
-          <div id="contactsEmpty" class="rail-empty">هنوز مخاطبی اضافه نشده است.</div>
-        </div>
-      </div>
     </section>
 
     <section class="page" id="page-notifications" data-view="notifications">
@@ -165,7 +160,7 @@
   </main>
 
   <nav class="mobile-nav" aria-label="ناوبری موبایل">
-    <button class="active" data-page="home"><span>⌂</span><small>خانه</small></button>
+    <button class="active" data-page="home"><span>⌂</span><small>اینستا</small></button>
     <button data-page="explore"><span>⌕</span><small>کشف</small></button>
     <button class="mobile-create" data-page="create"><span>＋</span><small>انتشار</small></button>
     <button data-page="messages"><span>▤</span><small>پیام‌ها</small></button>
