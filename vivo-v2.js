@@ -7,6 +7,7 @@ let currentPage='home',selectedFile=null,currentUser=null,pendingOtp=null,storie
 function go(page){
  if(page==='reels'){setSocialTab('reels');page='home'}
  if(page==='contacts'){page='messages';contactPanelOpen=true}
+ if(page!=='messages')contactPanelOpen=false;
  if(!titles[page])return;
  currentPage=page;
  document.querySelector('.vivo-app')?.classList.toggle('messenger-focus',page==='messages');
@@ -313,6 +314,10 @@ async function loadChatMessages(){
    if(message.replyTo){const parent=messageRows.find(item=>item.id===message.replyTo);if(parent)bubble.append(node('div','message-reply',parent.text||'پیام'))}
    bubble.append(node('p','',message.text||'پیوست'));
    bubble.append(node('time','',formatTime(message.sentAt)+(message.editedAt?' · ویرایش‌شده':'')));
+   if(Array.isArray(message.reactions)&&message.reactions.length){
+    const grouped=new Map();for(const item of message.reactions){const key=item.reaction;grouped.set(key,(grouped.get(key)||0)+1)}
+    const strip=node('div','message-reactions');for(const [emoji,count] of grouped){const chip=node('span','message-reaction',emoji+' '+count);strip.append(chip)}bubble.append(strip);
+   }
    const controls=node('div','message-controls');
    const reply=node('button','text-button','پاسخ');reply.dataset.action='reply-message';reply.dataset.messageId=message.id;controls.append(reply);
    const react=node('button','text-button','👍');react.dataset.action='react-message';react.dataset.messageId=message.id;controls.append(react);
