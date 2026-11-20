@@ -1,44 +1,80 @@
 const http = require("node:http");
 const fs = require("node:fs");
 const path = require("node:path");
-const ROOT = __dirname;
-const API_ORIGIN = "https://vivo-messenger-2150agmf1-reza-personal.vercel.app";
-const MIME = {".html":"text/html; charset=utf-8",".js":"application/javascript; charset=utf-8",".css":"text/css; charset=utf-8",".json":"application/json; charset=utf-8",".webmanifest":"application/manifest+json",".svg":"image/svg+xml",".png":"image/png",".jpg":"image/jpeg",".jpeg":"image/jpeg",".webp":"image/webp",".ico":"image/x-icon",".txt":"text/plain; charset=utf-8"};
-function send(res,status,message){res.writeHead(status,{"content-type":"text/plain; charset=utf-8","cache-control":"no-store"});res.end(message);}
-async function proxyApi(req,res,url){
- if(!url.pathname.startsWith("/api/otp/"))return send(res,404,"Not found");
- const headers={"accept":req.headers.accept||"application/json"};
- if(req.headers["content-type"])headers["content-type"]=req.headers["content-type"];
- if(req.headers["x-api-key"])headers["x-api-key"]=req.headers["x-api-key"];
- let body;
- if(req.method!=="GET"&&req.method!=="HEAD"){
-  const chunks=[];let size=0;
-  for await(const chunk of req){size+=chunk.length;if(size>1048576)return send(res,413,"Request too large");chunks.push(chunk);}
-  body=Buffer.concat(chunks);
- }
- try{
-  const upstream=await fetch(new URL(url.pathname+url.search,API_ORIGIN),{method:req.method,headers,body,redirect:"manual"});
-  const out={};for(const key of ["content-type","cache-control","retry-after"]){const value=upstream.headers.get(key);if(value)out[key]=value;}
-  res.writeHead(upstream.status,out);
-  if(req.method==="HEAD"||!upstream.body)return res.end();
-  res.end(Buffer.from(await upstream.arrayBuffer()));
- }catch(error){console.error("VIVO API proxy error:",error);res.writeHead(502,{"content-type":"application/json; charset=utf-8","cache-control":"no-store"});res.end(JSON.stringify({ok:false,error:"ارتباط با سرویس احراز هویت برقرار نشد."}));}
+
+const root = __dirname;
+const mime = {
+  ".html":"text/html; charset=utf-8",".css":"text/css; charset=utf-8",
+  ".js":"application/javascript; charset=utf-8",".json":"application/json; charset=utf-8",
+  ".webmanifest":"application/manifest+json",".svg":"image/svg+xml",
+  ".png":"image/png",".jpg":"image/jpeg",".jpeg":"image/jpeg",
+  ".webp":"image/webp",".ico":"image/x-icon",".woff2":"font/woff2",
+  ".mp4":"video/mp4",".webm":"video/webm"
+};
+
+function responseAdapter(res) {
+  res.status = code => { res.statusCode = code; return res; };
+  res.json = data => { if (!res.headersSent) res.setHeader("Content-Type","application/json; charset=utf-8"); res.end(JSON.stringify(data)); return res; };
+  res.send = data => { res.end(data); return res; };
+  return res;
 }
-http.createServer(async(req,res)=>{
- const url=new URL(req.url,"http://localhost");
- if(url.pathname.startsWith("/api/"))return proxyApi(req,res,url);
- if(req.method!=="GET"&&req.method!=="HEAD")return send(res,405,"Method not allowed");
- let pathname;try{pathname=decodeURIComponent(url.pathname);}catch{return send(res,400,"Bad request");}
- if(pathname.includes("\\0")||pathname.split("/").includes(".."))return send(res,400,"Bad request");
- const relative=pathname==="/ "?"index.html":(pathname==="/"?"index.html":pathname.replace(/^\/+/,""));
- const file=path.resolve(ROOT,relative);
- if(!file.startsWith(ROOT+path.sep)&&file!==path.join(ROOT,"index.html"))return send(res,403,"Forbidden");
- fs.stat(file,(error,stat)=>{
-  if(error||!stat.isFile())return send(res,404,"Not found");
-  const headers={"content-type":MIME[path.extname(file).toLowerCase()]||"application/octet-stream"};
-  if(path.basename(file)==="sw.js"){headers["service-worker-allowed"]="/";headers["cache-control"]="no-cache";}
-  else if(path.basename(file)==="index.html")headers["cache-control"]="no-cache";
-  else headers["cache-control"]="public, max-age=300";
-  res.writeHead(200,headers);if(req.method==="HEAD")return res.end();fs.createReadStream(file).pipe(res);
- });
-}).listen(Number(process.env.PORT||3000),"0.0.0.0",()=>console.log("VIVO web service ready"));
+async function readBody(req) {
+  const chunks=[]; let size=0;
+  for await (const chunk of req) {
+    size += chunk.length;
+    if (size > 2 * 1024 * 1024) throw new Error("درخواست بیش از اندازه بزرگ است.");
+    chunks.push(chunk);
+  }
+  if (!chunks.length) return {};
+  const raw=Buffer.concat(chunks).toString("utf8");
+  if ((req.headers["content-type"]||"").includes("application/json")) {
+    try { return JSON.parse(raw); } catch { throw new Error("ساختار JSON معتبر نیست."); }
+  }
+  return raw;
+}
+async function api(req,res,url) {
+  const pathname=url.pathname;
+  let handler, query={};
+  if (pathname === "/api/vivo/session") handler=require("./api/vivo/session.js");
+  else if (pathname === "/api/vivo/logout") handler=require("./api/vivo/logout.js");
+  else if (pathname.startsWith("/api/vivo/")) {
+    const parts=pathname.slice("/api/vivo/".length).split("/").filter(Boolean);
+    if (!parts.length || parts.some(x=>x===".."||x===".")) return responseAdapter(res).status(404).json({ok:false,error:"مسیر پیدا نشد."});
+    handler=require("./api/vivo/[...path].js");
+    query.path=parts;
+  } else return responseAdapter(res).status(404).json({ok:false,error:"مسیر API پیدا نشد."});
+  const parsed=new URLSearchParams(url.search);
+  for (const [key,value] of parsed) query[key]=value;
+  req.query=query;
+  req.body=await readBody(req);
+  return handler(req,responseAdapter(res));
+}
+function staticFile(req,res,url) {
+  let pathname=decodeURIComponent(url.pathname);
+  if (pathname === "/") pathname="/vivo-v2.html";
+  const file=path.resolve(root,"."+pathname);
+  if (!file.startsWith(root+path.sep) || !fs.existsSync(file) || !fs.statSync(file).isFile()) {
+    res.writeHead(404,{"Content-Type":"text/plain; charset=utf-8"}); return res.end("Not found");
+  }
+  const ext=path.extname(file).toLowerCase();
+  res.writeHead(200,{"Content-Type":mime[ext]||"application/octet-stream","X-Content-Type-Options":"nosniff","Cache-Control":ext===".html"?"no-cache":"public, max-age=3600"});
+  fs.createReadStream(file).pipe(res);
+}
+const server=http.createServer(async(req,res)=>{
+  const url=new URL(req.url,"http://localhost");
+  try {
+    if (url.pathname.startsWith("/api/")) {
+      if (!["GET","POST"].includes(req.method)) return responseAdapter(res).status(405).json({ok:false,error:"Method not allowed"});
+      await api(req,res,url);
+    } else if (req.method==="GET" || req.method==="HEAD") {
+      if(req.method==="HEAD"){res.writeHead(200);return res.end();}
+      staticFile(req,res,url);
+    } else {res.writeHead(405);res.end("Method not allowed");}
+  } catch(error) {
+    console.error("VIVO request error:",error);
+    if(!res.headersSent) responseAdapter(res).status(error.message.includes("بزرگ")?413:400).json({ok:false,error:error.message||"خطای داخلی سرور"});
+    else res.destroy();
+  }
+});
+const port=Number(process.env.PORT||3000);
+server.listen(port,"0.0.0.0",()=>console.log("VIVO Render server listening on "+port));
