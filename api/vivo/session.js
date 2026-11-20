@@ -11,7 +11,8 @@ module.exports = async (req, res) => {
   if (req.method !== "POST") return res.status(405).json({ ok: false, error: "Method not allowed" });
   const phone = normalizePhone(req.body?.phone);
   const name = String(req.body?.name || "").trim().slice(0, 50);
-  if (!phone || name.length < 2) return res.status(400).json({ ok: false, error: "شماره موبایل یا نام نمایشی معتبر نیست." });
+  const username = String(req.body?.username || "").trim().toLowerCase();
+  if (!phone || name.length < 2 || !/^[a-z][a-z0-9_]{3,29}$/.test(username)) return res.status(400).json({ ok: false, error: "شماره موبایل، نام نمایشی یا نام کاربری معتبر نیست." });
 
   const base = process.env.VIVO_SUPABASE_URL;
   const publishableKey = process.env.VIVO_SUPABASE_PUBLISHABLE_KEY;
@@ -28,7 +29,7 @@ module.exports = async (req, res) => {
         "apikey": publishableKey,
         "x-vivo-internal-secret": internalSecret
       },
-      body: JSON.stringify({ phone, name })
+      body: JSON.stringify({ phone, name, username })
     });
     const data = await response.json().catch(() => ({}));
     if (!response.ok || !data.ok || !data.sessionToken || !data.user) {
