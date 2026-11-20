@@ -928,7 +928,73 @@ button:focus-visible,input:focus-visible,textarea:focus-visible{outline:3px soli
 #vivoSocial .ig-nav[data-ig-page="messages"]{font-weight:800}
 #vivoBotHub{z-index:60}
 #vivoBotHub .vb-panel{max-height:92dvh;overflow:auto}
-</style></head>
+</style>
+<style id="vivo-messenger-refresh-20261120">
+:root{--bg:#eaf3f5;--panel:#ffffff;--panel2:#f3f8fa;--line:#d4e3e8;--text:#20353d;--muted:#71868e;--blue:#438fca;--cyan:#35bfa5;--violet:#7e8ee8;--shadow:0 16px 48px #24495818}
+html,body{background:#edf4f6;color:#20353d}
+#app{background:#edf4f6;min-height:100dvh;padding-bottom:82px}
+#app>.top{display:none!important}
+#app .layout{min-height:calc(100dvh - 82px);background:transparent}
+#app .sidebar{background:#f8fbfc;border-left:1px solid #d8e5e9}
+#app .main{background:#edf4f6;padding:18px}
+#app .welcome{display:none!important}
+#app .sidehead h2{color:#233b43}
+#app .eyebrow{color:#579a91}
+#app .live-mark{color:#54877f}
+#app .search,#app .field,#app .composer textarea{background:#fff;color:#20353d;border:1px solid #d4e2e7}
+#app .tab{background:#eef4f6;color:#607780;border-color:#dbe6e9}
+#app .tab.active{background:#d9f2eb;color:#147c68;border-color:#8ed6c2}
+#app .chatrow{color:#243b43}
+#app .chatrow:hover,#app .chatrow.active{background:#e3f3f0;border-color:#a9d9cc}
+#app .chatmeta small,#app .chatstamp{color:#7a9097}
+#app .avatar{background:linear-gradient(140deg,#65cdb7,#6c9edb 60%,#9a9ce5);color:#fff;border:2px solid #fff;box-shadow:0 5px 16px #4c8f8b20}
+#app .roomhead{border-color:#d9e5e9}
+#app .roominfo strong{color:#203941}
+#app .roominfo small{color:#789097}
+#app .messages{background:linear-gradient(180deg,#f5fafb,#edf4f6);border-radius:18px;padding:18px 14px}
+#app .bubble{background:#fff;color:#29424a;border:1px solid #d9e6e9;box-shadow:0 4px 13px #33545b0b}
+#app .bubble.mine{background:linear-gradient(135deg,#d7f5eb,#dceefa);color:#1e4945;border-color:#b7e3d6}
+#app .bubble.theirs{background:#fff;color:#29424a;border-color:#d9e6e9}
+#app .bubble time{color:#789097}
+#app .bubble .reply{background:#eaf3f5;border-right-color:#45bba1;color:#4c6970}
+#app .composerwrap{border-color:#d8e5e9}
+#app .composer textarea{background:#fff;color:#20353d}
+#app .send{background:linear-gradient(135deg,#38b99c,#559bd0);color:white}
+#app .iconbtn,#app .btn{background:#fff;color:#35535c;border-color:#d5e3e7}
+#app .btn.primary{background:linear-gradient(120deg,#39b99c,#579cce);color:#fff}
+#app .modal .dialog,#app .menupanel{background:#fff;color:#20353d;border-color:#d5e3e7}
+#app .menuitem{background:#f3f8f9;color:#29434b;border-color:#dce7e9}
+#app .mobilebar{display:flex!important;position:fixed;right:0;left:0;bottom:0;height:76px;padding:7px 8px calc(7px + env(safe-area-inset-bottom));background:#ffffffed;border-top:1px solid #d6e4e7;backdrop-filter:blur(18px);justify-content:space-around;align-items:center;z-index:45;box-shadow:0 -8px 26px #284b5510}
+#app .mobilebar button{flex:1;min-width:0;min-height:52px;border:0;background:transparent;color:#71858b;border-radius:15px;font-size:10px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px}
+#app .mobilebar button b{font-size:20px;line-height:1.3}
+#app .mobilebar button:active,#app .mobilebar button:focus-visible{background:#e3f4ef;color:#16836d}
+#app .mobilebar button:first-child{color:#16836d}
+#app .toast{background:#244d4b;border-color:#74cdb7;color:white}
+#app .day{color:#80979d}
+#app .empty{color:#789097}
+#app .room{height:100%;min-height:0}
+@media(max-width:760px){
+ #app{padding-bottom:calc(76px + env(safe-area-inset-bottom))}
+ #app .layout{min-height:calc(100dvh - 76px - env(safe-area-inset-bottom));height:calc(100dvh - 76px - env(safe-area-inset-bottom))}
+ #app .sidebar{min-height:0;height:100%;overflow:auto;padding:14px 12px 20px}
+ #app .main{height:100%;min-height:0;padding:10px 11px 12px}
+ #app .layout.roomopen .main{height:100%}
+ #app .room{height:100%;min-height:0}
+ #app .messages{min-height:0;flex:1}
+ #app .composerwrap{padding-bottom:3px}
+ #app .mobilebar{height:calc(76px + env(safe-area-inset-bottom))}
+ #app .mobileback{display:inline-grid}
+ #app .roomhead{padding:5px 0 11px}
+ #app .bubble{max-width:88%}
+}
+@media(min-width:761px){
+ #app .layout{min-height:calc(100dvh - 82px)}
+ #app .sidebar{padding-bottom:20px}
+ #app .mobilebar{max-width:1500px;margin:auto;border-radius:18px 18px 0 0}
+}
+#vivoSocial .ig-post-comments,#vivoSocial .ig-add-comment{display:none!important}
+</style>
+</head>
 <body>
 <section id="authScreen" class="authscreen">
  <div class="authcard">
@@ -1289,4 +1355,13 @@ $('botsBtn')?.addEventListener('click',open);$('mobileBotsBtn')?.addEventListene
 $('vbCreate')?.addEventListener('click',()=>{const name=$('vbName').value.trim(),username=$('vbUsername').value.trim().toLowerCase(),description=$('vbDescription').value.trim();if(name.length<2)return notify('نام ربات باید دست‌کم دو نویسه باشد.');if(!/^[a-z][a-z0-9_]{3,29}$/.test(username))return notify('شناسه باید ۴ تا ۳۰ نویسه، با حرف انگلیسی شروع‌شده و فقط شامل حروف، عدد و زیرخط باشد.');if(bots.some(b=>b.username===username))return notify('این شناسه در پیش‌نویس‌های همین دستگاه تکراری است.');let t;try{t=token()}catch(e){return notify(e.message)}bots.unshift({id:Date.now().toString(36)+Math.random().toString(36).slice(2,7),name,username,description,token:t,createdAt:Date.now()});if(!save()){bots.shift();return notify('فضای ذخیره‌سازی دستگاه کافی نیست.')}$('vbName').value='';$('vbUsername').value='';$('vbDescription').value='';render();notify('پیش‌نویس ربات ساخته شد؛ کلید آن عملیاتی نیست.')});
 $('vbBotsList')?.addEventListener('click',async e=>{const b=e.target.closest('button');if(!b)return;const id=b.dataset.vbCopy||b.dataset.vbRotate||b.dataset.vbDelete,bot=bots.find(x=>x.id===id);if(!bot)return;if(b.dataset.vbCopy){try{await navigator.clipboard.writeText(bot.token);notify('کلید محلی کپی شد.')}catch{notify('کپی خودکار ممکن نیست؛ کلید را دستی انتخاب کن.')}return}if(b.dataset.vbRotate){if(!confirm('کلید محلی قبلی جایگزین شود؟'))return;try{bot.token=token()}catch(e){return notify(e.message)}if(!save())return notify('ذخیره کلید جدید ناموفق بود.');render();notify('کلید محلی جدید ساخته شد؛ کلید قبلی دیگر در این دستگاه نگهداری نمی‌شود.');return}if(b.dataset.vbDelete){if(!confirm('این پیش‌نویس از همین دستگاه حذف شود؟'))return;bots=bots.filter(x=>x.id!==id);save();render()}});
 })();
-</script></body></html>
+</script>
+<script id="vivo-messenger-navigation-fix">
+(()=>{const $=id=>document.getElementById(id);
+function showChats(){const layout=$('layout');if(!layout)return;layout.classList.remove('roomopen');$('room')?.classList.add('hidden');$('welcome')?.classList.add('hidden');if($('app'))$('app').classList.remove('hidden');}
+$('navChats')?.addEventListener('click',e=>{e.preventDefault();showChats()});
+$('backChats')?.addEventListener('click',e=>{e.preventDefault();showChats()});
+window.vivoMessengerOpen=function(){ $('vivoSocial')?.classList.remove('open');$('app')?.classList.remove('hidden');showChats();if(typeof renderList==='function')renderList();window.scrollTo?.(0,0)};
+})();
+</script>
+</body></html>
