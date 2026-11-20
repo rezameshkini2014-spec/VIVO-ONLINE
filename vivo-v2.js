@@ -33,42 +33,10 @@ function showPhoneStep(){$('phoneStep').hidden=false;$('codeStep').hidden=true;$
 function showCodeStep(){$('phoneStep').hidden=true;$('codeStep').hidden=false;$('authTitle').textContent='تأیید دستگاه';$('authDescription').textContent='کد شش‌رقمی را از اعلان همین دستگاه وارد کن. این کد مالکیت سیم‌کارت را اثبات نمی‌کند.';$('otpHelp').textContent='کد برای '+(pendingOtp?.phone||'شماره واردشده')+' ارسال شده و پس از پایان اعتبار قابل استفاده نیست.';$('authCode').focus()}
 function base64UrlToBytes(value){const normalized=value.replace(/-/g,'+').replace(/_/g,'/');const padded=normalized+'='.repeat((4-normalized.length%4)%4);const raw=atob(padded);return Uint8Array.from(raw,c=>c.charCodeAt(0))}
 async function sendOtp(){
- const phone=normalizePhone($('authPhone').value),name=$('authName').value.trim(),username=$('authUsername').value.trim().toLowerCase();
- if(!/^09\d{9}$/.test(phone))return setAuthError('شماره موبایل معتبر ایران وارد کن.');
- if(name.length<2)return setAuthError('نام نمایشی باید دست‌کم دو نویسه باشد.');
- if(!usernameValid(username))return setAuthError('نام کاربری باید ۴ تا ۳۰ نویسه و با حرف انگلیسی شروع شود.');
- if(!('serviceWorker'in navigator)||!('PushManager'in window)||!('Notification'in window))return setAuthError('این مرورگر از اعلان لازم برای دریافت کد پشتیبانی نمی‌کند.');
- $('sendOtp').disabled=true;$('sendOtp').textContent='در حال ارسال…';setAuthError('');
- try{
-  const config=await requestJson('/api/otp/config');
-  const registration=await navigator.serviceWorker.register('/sw.js');
-  await navigator.serviceWorker.ready;
-  let permission=Notification.permission;
-  if(permission!=='granted')permission=await Notification.requestPermission();
-  if(permission!=='granted')throw new Error('برای دریافت کد ورود، اجازه اعلان همین دستگاه لازم است.');
-  let subscription=await registration.pushManager.getSubscription();
-  if(!subscription)subscription=await registration.pushManager.subscribe({userVisibleOnly:true,applicationServerKey:base64UrlToBytes(config.vapidPublicKey)});
-  await requestJson('/api/otp/subscribe',{phone,subscription:subscription.toJSON()});
-  const result=await requestJson('/api/otp/send',{phone});
-  pendingOtp={phone,name,username,requestId:result.requestId,expiresAt:Date.now()+Math.min(Number(result.expiresIn)||120,120)*1000};
-  sessionStorage.setItem('vivo_v2_pending_otp',JSON.stringify(pendingOtp));$('authCode').value='';showCodeStep();
- }catch(error){setAuthError(error.message||'ارسال کد انجام نشد.')}
- finally{$('sendOtp').disabled=false;$('sendOtp').textContent='دریافت کد تأیید'}
+ setAuthError('ورود و ثبت‌نام تا اتصال روش احراز هویت واقعی و امن غیرفعال است.');
 }
 async function verifyOtp(){
- const code=normalizeDigits($('authCode').value).replace(/\D/g,'').slice(0,6);
- if(!pendingOtp||pendingOtp.expiresAt<=Date.now())return setAuthError('مهلت این کد تمام شده است؛ درخواست تازه ثبت کن.');
- if(!/^\d{6}$/.test(code))return setAuthError('کد باید دقیقاً شش رقم باشد.');
- $('verifyOtp').disabled=true;$('verifyOtp').textContent='در حال بررسی…';setAuthError('');
- try{
-  const issued=await requestJson('/api/vivo/session',{phone:pendingOtp.phone,name:pendingOtp.name,username:pendingOtp.username,requestId:pendingOtp.requestId,code});
-  currentUser=issued.user;
-  const profile=await requestJson('/api/vivo/profile');if(profile.user)currentUser=profile.user;
-  sessionStorage.removeItem('vivo_v2_pending_otp');pendingOtp=null;
-  updateUser(currentUser);authClose();toast('کد دستگاه پذیرفته شد و نشست حساب ایجاد شد.');
-  await loadHomeData();
- }catch(error){setAuthError(error.message||'تأیید حساب انجام نشد.')}
- finally{$('verifyOtp').disabled=false;$('verifyOtp').textContent='تأیید و ورود'}
+ setAuthError('ورود و ثبت‌نام تا اتصال روش احراز هویت واقعی و امن غیرفعال است.');
 }
 function updateUser(user){
  currentUser=user||null;
