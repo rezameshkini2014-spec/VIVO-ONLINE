@@ -171,6 +171,17 @@
       <p class="auth-legal">با ادامه، قوانین استفاده و حریم خصوصی VIVO را می‌پذیری.</p>
     </section>
   </div>
+  <div class="story-composer-overlay" id="storyComposer" hidden>
+    <section class="story-composer-card" role="dialog" aria-modal="true" aria-labelledby="storyComposerTitle">
+      <button class="auth-close" data-action="close-story-composer" aria-label="بستن">×</button>
+      <span class="auth-kicker">لحظه‌ای از امروز</span><h2 id="storyComposerTitle">ساخت استوری متنی</h2>
+      <textarea id="storyText" class="text-field" rows="5" maxlength="500" placeholder="چه چیزی می‌خواهی برای ۲۴ ساعت به اشتراک بگذاری؟"></textarea>
+      <label class="field-label" for="storyAudience">مخاطبان استوری</label>
+      <select id="storyAudience" class="text-field"><option value="followers" selected>دنبال‌کنندگان</option><option value="public">همه کاربران</option><option value="private">فقط خودم</option></select>
+      <button class="primary-button auth-submit" data-action="publish-story">انتشار استوری</button>
+      <p class="auth-hint">استوری متنی پس از ذخیره موفق، ۲۴ ساعت در دسترس خواهد بود.</p>
+    </section>
+  </div>
   <div class="toast" id="toast" role="status" aria-live="polite"></div>
 </div>
 <script src="/vivo-v2.js" defer></script>
