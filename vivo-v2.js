@@ -3,7 +3,7 @@
 const $=id=>document.getElementById(id);
 const toast=(message)=>{const el=$('toast');if(!el)return;el.textContent=message;el.classList.add('show');clearTimeout(toast.timer);toast.timer=setTimeout(()=>el.classList.remove('show'),2600)};
 const titles={home:'خانه',messages:'پیام‌ها',create:'انتشار محتوا',reels:'ویدئوها',explore:'کشف و جست‌وجو',notifications:'اعلان‌ها',profile:'پروفایل من',settings:'تنظیمات'};
-let currentPage='home',selectedFile=null,currentUser=null,pendingOtp=null;
+let currentPage='home',selectedFile=null,currentUser=null,pendingOtp=null,storiesCache=[];
 function go(page){
  if(!titles[page])return;
  currentPage=page;
@@ -11,6 +11,7 @@ function go(page){
  document.querySelectorAll('[data-page]').forEach(el=>el.classList.toggle('active',el.dataset.page===page));
  $('pageTitle').textContent=titles[page];
  if(page==='create')$('postText').focus({preventScroll:true});
+ if(currentUser){if(page==='home'){loadFeed();loadStories()}if(page==='explore')$('exploreSearch').focus({preventScroll:true});if(page==='notifications')loadNotifications();if(page==='profile')loadProfile()}
  window.scrollTo({top:0,behavior:'smooth'});
 }
 async function requestJson(url,body){
@@ -25,8 +26,7 @@ function usernameValid(value){return /^[a-z][a-z0-9_]{3,29}$/.test(value)}
 function setAuthError(message){$('authError').textContent=message||''}
 function authOpen(){
  $('authOverlay').classList.add('open');$('authOverlay').setAttribute('aria-hidden','false');setAuthError('');
- if(pendingOtp&&pendingOtp.expiresAt>Date.now())showCodeStep();
- else showPhoneStep();
+ if(pendingOtp&&pendingOtp.expiresAt>Date.now())showCodeStep();else showPhoneStep();
 }
 function authClose(){$('authOverlay').classList.remove('open');$('authOverlay').setAttribute('aria-hidden','true')}
 function showPhoneStep(){$('phoneStep').hidden=false;$('codeStep').hidden=true;$('authTitle').textContent='ساخت حساب یا ورود';$('authDescription').textContent='شماره موبایل خود را تأیید کن تا حساب ابری ویوو برایت فعال شود.'}
@@ -51,8 +51,7 @@ async function sendOtp(){
   await requestJson('/api/otp/subscribe',{phone,subscription:subscription.toJSON()});
   const result=await requestJson('/api/otp/send',{phone});
   pendingOtp={phone,name,username,requestId:result.requestId,expiresAt:Date.now()+Math.min(Number(result.expiresIn)||120,120)*1000};
-  sessionStorage.setItem('vivo_v2_pending_otp',JSON.stringify(pendingOtp));
-  $('authCode').value='';showCodeStep();
+  sessionStorage.setItem('vivo_v2_pending_otp',JSON.stringify(pendingOtp));$('authCode').value='';showCodeStep();
  }catch(error){setAuthError(error.message||'ارسال کد انجام نشد.')}
  finally{$('sendOtp').disabled=false;$('sendOtp').textContent='دریافت کد تأیید'}
 }
@@ -65,9 +64,10 @@ async function verifyOtp(){
   await requestJson('/api/otp/verify',{phone:pendingOtp.phone,requestId:pendingOtp.requestId,code});
   const issued=await requestJson('/api/vivo/session',{phone:pendingOtp.phone,name:pendingOtp.name,username:pendingOtp.username});
   currentUser=issued.user;
-  try{const profile=await requestJson('/api/vivo/profile');if(profile.user)currentUser=profile.user}catch(error){throw error}
+  const profile=await requestJson('/api/vivo/profile');if(profile.user)currentUser=profile.user;
   sessionStorage.removeItem('vivo_v2_pending_otp');pendingOtp=null;
-  updateUser(currentUser);authClose();toast('حساب ویوو با موفقیت تأیید و متصل شد.');
+  updateUser(currentUser);authClose();toast('شماره تأیید شد و حساب ابری ویوو متصل شد.');
+  await loadHomeData();
  }catch(error){setAuthError(error.message||'تأیید حساب انجام نشد.')}
  finally{$('verifyOtp').disabled=false;$('verifyOtp').textContent='تأیید و ورود'}
 }
@@ -75,6 +75,7 @@ function updateUser(user){
  currentUser=user||null;
  const login=$('loginButton');
  if(login){login.textContent=currentUser?'خروج':'ورود / ثبت‌نام';login.dataset.action=currentUser?'logout':'login'}
+ const publish=$('publishButton');if(publish)publish.disabled=!currentUser||!$('postText').value.trim()||!!selectedFile;
  if(!currentUser)return;
  const name=currentUser.display_name||'کاربر ویوو',username=currentUser.username||'';
  const mini=document.querySelector('.account-mini');
@@ -87,56 +88,195 @@ function updateUser(user){
  const profileAvatar=document.querySelector('.profile-avatar');if(profileAvatar)profileAvatar.textContent=name.trim().slice(0,1)||'و';
 }
 async function checkSession(){
- try{const result=await requestJson('/api/vivo/profile');if(result.user)updateUser(result.user)}
+ try{const result=await requestJson('/api/vivo/profile');if(result.user){updateUser(result.user);await loadHomeData()}}
  catch{updateUser(null)}
 }
 async function logout(){
- try{await requestJson('/api/vivo/logout',{})}catch(error){setAuthError(error.message)}
+ try{await requestJson('/api/vivo/logout',{})}catch(error){toast(error.message)}
  updateUser(null);toast('از حساب ویوو خارج شدی.');
 }
-function showFile(file){
- selectedFile=file;
- const preview=$('filePreview');preview.hidden=!file;preview.replaceChildren();
- if(!file)return;
- const label=document.createElement('div');label.textContent=file.name+' · '+Math.ceil(file.size/1024)+' کیلوبایت';preview.append(label);
- if(file.type.startsWith('image/')||file.type.startsWith('video/')){
-  const url=URL.createObjectURL(file),media=document.createElement(file.type.startsWith('image/')?'img':'video');
-  media.src=url;if(media.tagName==='VIDEO'){media.controls=true;media.playsInline=true}
-  preview.append(media);
+function formatTime(value){
+ const d=new Date(value);if(Number.isNaN(d.getTime()))return '';
+ return new Intl.DateTimeFormat('fa-IR',{dateStyle:'short',timeStyle:'short'}).format(d);
+}
+function node(tag,className,text){
+ const el=document.createElement(tag);if(className)el.className=className;if(text!==undefined)el.textContent=text;return el;
+}
+function renderPosts(posts,target,empty){
+ target.replaceChildren();
+ empty.hidden=posts.length>0;
+ for(const post of posts){
+  const card=node('article','post-card');card.dataset.postId=post.id;
+  const head=node('div','post-head');
+  const avatar=node('span','avatar',post.author?.display_name?.slice(0,1)||'و');
+  const author=node('div','post-author');
+  author.append(node('b','',post.author?.display_name||'کاربر ویوو'),node('small','',post.author?.username?'@'+post.author.username:'عضو ویوو'));
+  head.append(avatar,author,node('time','post-time',formatTime(post.createdAt)));card.append(head);
+  if(post.body)card.append(node('p','post-body',post.body));
+  if(post.media?.length)card.append(node('div','post-media-note','نمایش رسانه پس از اتصال لینک امن فایل فعال می‌شود.'));
+  const actions=node('div','post-actions');
+  const like=node('button','post-action'+(post.liked?' liked':''),(post.liked?'♥ ':'♡ ')+String(post.likes||0));like.dataset.action='like';like.dataset.postId=post.id;
+  const comments=node('button','post-action','نظرها · '+String(post.comments||0));comments.dataset.action='toggle-comments';comments.dataset.postId=post.id;
+  actions.append(like,comments);card.append(actions);
+  const panel=node('div','post-comments');panel.id='comments-'+post.id;
+  const list=node('div','comments-list');list.id='comments-list-'+post.id;
+  const compose=node('div','comment-compose');
+  const input=node('input');input.type='text';input.maxLength=1000;input.placeholder='دیدگاه خود را بنویس…';input.id='comment-input-'+post.id;
+  const send=node('button','','ارسال');send.dataset.action='send-comment';send.dataset.postId=post.id;
+  compose.append(input,send);panel.append(list,compose);card.append(panel);target.append(card);
  }
 }
-document.addEventListener('click',event=>{
+async function loadFeed(){
+ if(!currentUser)return;
+ try{
+  const result=await requestJson('/api/vivo/social/feed');
+  renderPosts(result.posts||[],$('postsList'),document.querySelector('.feed-empty'));
+ }catch(error){toast(error.message)}
+}
+async function loadComments(postId){
+ const result=await requestJson('/api/vivo/social/comments?postId='+encodeURIComponent(postId));
+ const list=$('comments-list-'+postId);if(!list)return;list.replaceChildren();
+ for(const comment of result.comments||[]){
+  const row=node('div','comment-row');const avatar=node('span','avatar',comment.author?.display_name?.slice(0,1)||'و');
+  const copy=node('div');copy.append(node('b','',comment.author?.display_name||'کاربر ویوو'),node('p','',comment.body));row.append(avatar,copy);list.append(row);
+ }
+ if(!result.comments?.length)list.append(node('small','auth-hint','هنوز دیدگاهی ثبت نشده است.'));
+}
+async function loadStories(){
+ if(!currentUser)return;
+ try{
+  const result=await requestJson('/api/vivo/social/stories');storiesCache=result.stories||[];
+  const track=document.querySelector('.stories-track');track.querySelectorAll('.real-story').forEach(el=>el.remove());
+  const note=track.querySelector('.story-empty-note');if(note)note.hidden=storiesCache.length>0;
+  track.classList.toggle('has-stories',storiesCache.length>0);
+  for(const story of storiesCache){
+   const item=node('button','story-item real-story');item.dataset.action='open-story';item.dataset.storyId=story.id;
+   const ring=node('span','story-ring');ring.append(node('span','avatar',story.author?.display_name?.slice(0,1)||'و'));
+   item.append(ring,node('b','',story.author?.display_name||'کاربر'),node('small','',story.body||'استوری تازه'));track.append(item);
+  }
+ }catch(error){toast(error.message)}
+}
+function openStory(storyId){
+ const story=storiesCache.find(x=>x.id===storyId);if(!story)return;
+ let viewer=$('storyViewer');
+ if(!viewer){viewer=node('div','story-viewer');viewer.id='storyViewer';viewer.innerHTML='<div class="story-viewer-card"><button class="story-viewer-close" id="storyViewerClose">×</button><div class="story-viewer-progress"></div><div class="story-viewer-author" id="storyViewerAuthor"></div><div class="story-viewer-body" id="storyViewerBody"></div><div class="story-viewer-time" id="storyViewerTime"></div></div>';document.body.append(viewer);$('storyViewerClose').addEventListener('click',()=>viewer.classList.remove('open'))}
+ $('storyViewerAuthor').textContent=story.author?.display_name||'کاربر ویوو';
+ $('storyViewerBody').textContent=story.body||'';
+ $('storyViewerTime').textContent=formatTime(story.createdAt);
+ viewer.classList.add('open');
+ requestJson('/api/vivo/social/stories/view',{storyId}).catch(()=>{});
+}
+async function publishPost(){
+ if(!currentUser){authOpen();return}
+ const text=$('postText').value.trim();
+ if(!text&&!selectedFile){toast('متن پست را وارد کن.');return}
+ if(selectedFile){toast('بارگذاری رسانه هنوز به فضای ذخیره‌سازی امن متصل نشده؛ فعلاً پست متنی منتشر کن.');return}
+ const button=$('publishButton');button.disabled=true;button.textContent='در حال انتشار…';
+ try{
+  await requestJson('/api/vivo/social/posts',{text,media:[],audience:$('postAudience').value});
+  $('postText').value='';button.textContent='انتشار پست';button.disabled=true;
+  $('composerStatus').textContent='پست در پایگاه داده ویوو ثبت شد.';
+  toast('پست در حساب ابری ذخیره شد.');go('home');await loadFeed();
+ }catch(error){toast(error.message)}
+ finally{button.textContent='انتشار پست';button.disabled=!currentUser||!$('postText').value.trim()||!!selectedFile}
+}
+async function searchUsers(){
+ const q=$('exploreSearch').value.trim();if(q.length<2){toast('برای جست‌وجو دست‌کم دو نویسه وارد کن.');return}
+ if(!currentUser){authOpen();return}
+ try{
+  const result=await requestJson('/api/vivo/social/search?q='+encodeURIComponent(q));
+  const target=$('searchResults');target.replaceChildren();$('exploreEmpty').hidden=(result.users||[]).length>0;
+  for(const user of result.users||[]){
+   const card=node('article','result-card');card.append(node('span','avatar',user.display_name?.slice(0,1)||'و'));
+   const info=node('div','result-info');info.append(node('b','',user.display_name||'کاربر'),node('small','',user.username?'@'+user.username:''),node('p','',user.bio||''));
+   card.append(info);
+   if(user.id!==currentUser.id){const follow=node('button','secondary-button',user.is_private?'درخواست دنبال‌کردن':'دنبال‌کردن');follow.dataset.action='follow';follow.dataset.username=user.username;card.append(follow)}
+   target.append(card);
+  }
+ }catch(error){toast(error.message)}
+}
+async function loadNotifications(){
+ if(!currentUser)return;
+ try{
+  const result=await requestJson('/api/vivo/social/notifications');const list=$('notificationList');list.replaceChildren();
+  const items=result.notifications||[];$('notificationsEmpty').hidden=items.length>0;
+  const labels={follow:'درخواست یا دنبال‌کننده جدید',like:'پستت را پسندید',comment:'برای پستت دیدگاه نوشت',reply:'به گفت‌وگوی تو پاسخ داد',mention:'تو را نام برد',story_reaction:'به استوری تو واکنش نشان داد',group_invite:'دعوت گروهی',message:'پیام جدید',system:'پیام سیستمی'};
+  for(const item of items){
+   const card=node('article','notification-card'+(item.read_at?'':' unread'));
+   card.append(node('span','avatar',item.actor?.display_name?.slice(0,1)||'V'));
+   const copy=node('div','notification-copy');copy.append(node('p','',(item.actor?.display_name||'VIVO')+' '+(labels[item.kind]||'فعالیت تازه')),node('small','',formatTime(item.created_at)));
+   card.append(copy);
+   if(!item.read_at){const mark=node('button','text-button','خواندم');mark.dataset.action='mark-notification';mark.dataset.notificationId=item.id;card.append(mark)}
+   list.append(card);
+  }
+ }catch(error){toast(error.message)}
+}
+async function loadProfile(){
+ if(!currentUser?.username)return;
+ try{
+  const result=await requestJson('/api/vivo/social/profile/'+encodeURIComponent(currentUser.username));
+  const p=result.profile;
+  const stats=document.querySelectorAll('.profile-stats b');if(stats[0])stats[0].textContent=String(p.postsCount);if(stats[1])stats[1].textContent=String(p.followersCount);if(stats[2])stats[2].textContent=String(p.followingCount);
+  renderPosts(result.posts||[],$('profilePosts'),$('profileEmpty'));
+ }catch(error){toast(error.message)}
+}
+async function loadHomeData(){await Promise.all([loadFeed(),loadStories(),loadNotifications(),loadProfile()])}
+function showFile(file){
+ selectedFile=file;const preview=$('filePreview');preview.hidden=!file;preview.replaceChildren();
+ if(!file)return;
+ const label=node('div','',file.name+' · '+Math.ceil(file.size/1024)+' کیلوبایت');preview.append(label);
+ if(file.type.startsWith('image/')||file.type.startsWith('video/')){
+  const url=URL.createObjectURL(file),media=document.createElement(file.type.startsWith('image/')?'img':'video');
+  media.src=url;if(media.tagName==='VIDEO'){media.controls=true;media.playsInline=true}preview.append(media);
+ }
+}
+document.addEventListener('click',async event=>{
  const pageButton=event.target.closest('[data-page]');
  if(pageButton){event.preventDefault();go(pageButton.dataset.page);return}
- const actionButton=event.target.closest('[data-action]');
- if(!actionButton)return;
- const action=actionButton.dataset.action;
+ const actionButton=event.target.closest('[data-action]');if(!actionButton)return;
+ const action=actionButton.dataset.action,postId=actionButton.dataset.postId;
  if(action==='login'){authOpen();return}
  if(action==='logout'){logout();return}
  if(action==='choose-file'){$('postFile').click();return}
- if(action==='publish'){toast('انتشار تا اتصال و آزمون ذخیره‌سازی ابری غیرفعال است.');return}
- if(action==='story'){toast('ساخت و مشاهده استوری پس از اتصال فضای ذخیره‌سازی رسانه فعال می‌شود.');return}
- if(action==='new-chat'){toast('گفت‌وگوی جدید پس از تکمیل سرویس پیام‌رسان فعال می‌شود.');return}
- if(action==='search'){const q=$('exploreSearch').value.trim();if(q)toast('جست‌وجوی ابری هنوز متصل نشده است.');else $('exploreSearch').focus();return}
- if(action==='feed-filter'){toast('فیلتر فید پس از دریافت محتوای واقعی فعال می‌شود.');return}
+ if(action==='publish'){publishPost();return}
+ if(action==='like'){
+  if(!currentUser){authOpen();return}
+  try{await requestJson('/api/vivo/social/like',{postId});await loadFeed();if(currentPage==='profile')await loadProfile()}catch(error){toast(error.message)}return;
+ }
+ if(action==='toggle-comments'){
+  const panel=$('comments-'+postId);if(!panel)return;panel.classList.toggle('open');
+  if(panel.classList.contains('open'))loadComments(postId).catch(error=>toast(error.message));return;
+ }
+ if(action==='send-comment'){
+  const input=$('comment-input-'+postId),text=input.value.trim();if(!text)return;
+  try{await requestJson('/api/vivo/social/comment',{postId,text});input.value='';await loadComments(postId);await loadFeed()}catch(error){toast(error.message)}return;
+ }
+ if(action==='follow'){
+  try{const result=await requestJson('/api/vivo/social/follow',{username:actionButton.dataset.username});actionButton.textContent=result.status==='pending'?'درخواست ارسال شد':'دنبال می‌کنی';actionButton.disabled=true}catch(error){toast(error.message)}return;
+ }
+ if(action==='mark-notification'){
+  try{await requestJson('/api/vivo/social/notifications/read',{id:actionButton.dataset.notificationId});await loadNotifications()}catch(error){toast(error.message)}return;
+ }
+ if(action==='open-story'){openStory(actionButton.dataset.storyId);return}
+ if(action==='story'){toast('انتشار استوری تصویری و ویدئویی در مرحله اتصال فضای ذخیره‌سازی است.');return}
+ if(action==='new-chat'){toast('پیام‌رسان چندکاربره هنوز در حال پیاده‌سازی است.');return}
+ if(action==='search'){searchUsers();return}
+ if(action==='feed-filter'){toast('فیلترهای فید در مرحله بعد اضافه می‌شوند.');return}
  if(action==='edit-profile'||action==='account'){if(!currentUser)authOpen();else{go('profile');toast('ویرایش کامل پروفایل در مرحله بعد فعال می‌شود.')}return}
  if(action==='security'||action==='privacy'||action==='notifications'||action==='notification-settings'||action==='appearance'||action==='support'){toast('این تنظیم پس از اتصال سرویس مربوطه فعال می‌شود.');return}
 });
 $('authClose').addEventListener('click',authClose);
 $('authOverlay').addEventListener('click',event=>{if(event.target===$('authOverlay'))authClose()});
-$('sendOtp').addEventListener('click',sendOtp);
-$('resendOtp').addEventListener('click',sendOtp);
-$('verifyOtp').addEventListener('click',verifyOtp);
+$('sendOtp').addEventListener('click',sendOtp);$('resendOtp').addEventListener('click',sendOtp);$('verifyOtp').addEventListener('click',verifyOtp);
 $('backToPhone').addEventListener('click',()=>{setAuthError('');showPhoneStep()});
 $('authPhone').addEventListener('input',event=>{event.target.value=normalizeDigits(event.target.value).replace(/[^\d+]/g,'').slice(0,14)});
 $('authUsername').addEventListener('input',event=>{event.target.value=event.target.value.toLowerCase().replace(/[^a-z0-9_]/g,'').slice(0,30)});
 $('authCode').addEventListener('input',event=>{event.target.value=normalizeDigits(event.target.value).replace(/\D/g,'').slice(0,6)});
 document.addEventListener('keydown',event=>{if(event.key==='Escape')authClose();if(event.key==='Enter'&&$('authOverlay').classList.contains('open')){if(!$('codeStep').hidden)verifyOtp();else sendOtp()}});
-$('postFile').addEventListener('change',event=>showFile(event.target.files&&event.target.files[0]));
-$('globalSearch').addEventListener('keydown',event=>{if(event.key==='Enter'){go('explore');$('exploreSearch').value=event.currentTarget.value;toast('جست‌وجوی ابری هنوز متصل نشده است.')}});
-$('chatSearch').addEventListener('input',()=>{});
-$('exploreSearch').addEventListener('keydown',event=>{if(event.key==='Enter'){const q=event.currentTarget.value.trim();if(q)toast('جست‌وجوی ابری هنوز متصل نشده است.')}});
-$('postText').addEventListener('input',event=>{const status=$('composerStatus');status.textContent=(event.target.value.trim()||selectedFile)?'پیش‌نویس فقط در همین صفحه نگه داشته شده است؛ هنوز در سرور ذخیره نشده.':'انتشار عمومی هنوز فعال نشده است؛ هیچ محتوایی بدون ذخیره‌سازی واقعی منتشر نمی‌شود.'});
+$('postFile').addEventListener('change',event=>{showFile(event.target.files&&event.target.files[0]);$('publishButton').disabled=!currentUser||!$('postText').value.trim()||!!selectedFile});
+$('globalSearch').addEventListener('keydown',event=>{if(event.key==='Enter'){go('explore');$('exploreSearch').value=event.currentTarget.value;searchUsers()}});
+$('exploreSearch').addEventListener('keydown',event=>{if(event.key==='Enter')searchUsers()});
+$('postText').addEventListener('input',event=>{const status=$('composerStatus');status.textContent=(event.target.value.trim()||selectedFile)?'پیش‌نویس فقط در همین صفحه نگه داشته شده است؛ هنوز در سرور ذخیره نشده.':'انتشار عمومی هنوز فعال نشده است؛ هیچ محتوایی بدون ذخیره‌سازی واقعی منتشر نمی‌شود.';$('publishButton').disabled=!currentUser||!event.target.value.trim()||!!selectedFile});
 try{const saved=JSON.parse(sessionStorage.getItem('vivo_v2_pending_otp')||'null');if(saved&&saved.expiresAt>Date.now()){pendingOtp=saved;$('authName').value=saved.name||'';$('authUsername').value=saved.username||'';$('authPhone').value=saved.phone||''}}catch{}
 go('home');checkSession();
 })();
