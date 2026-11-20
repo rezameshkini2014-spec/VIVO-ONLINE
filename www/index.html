@@ -922,7 +922,8 @@ button:focus-visible,input:focus-visible,textarea:focus-visible{outline:3px soli
 #botsBtn,#mobileBotsBtn{display:flex!important}
 #vivoBotHub .vb-overlay{z-index:40}
 @media(max-width:760px){#room{height:calc(100dvh - 78px);min-height:calc(100dvh - 78px)}.messages{padding:14px 10px}.bubble{max-width:86%}}
-.bot-inline-buttons{display:flex;flex-wrap:wrap;gap:7px;margin-top:12px}.bot-inline-buttons button{border:1px solid #d8d3ff;background:#f5f3ff;color:#574bc8;padding:8px 11px;border-radius:11px;font:inherit;font-size:11px;cursor:pointer}<style id="vivo-messenger-route">
+.bot-inline-buttons{display:flex;flex-wrap:wrap;gap:7px;margin-top:12px}.bot-inline-buttons button{border:1px solid #d8d3ff;background:#f5f3ff;color:#574bc8;padding:8px 11px;border-radius:11px;font:inherit;font-size:11px;cursor:pointer}</style>
+<style id="vivo-messenger-route">
 /* Route the social messenger tab to the dedicated VIVO Messenger */
 #vivoSocial .ig-mobile-nav button[data-ig-page="messages"]{color:#6558e8}
 #vivoSocial .ig-nav[data-ig-page="messages"]{font-weight:800}
@@ -1211,7 +1212,26 @@ html,body{background:#151719!important;color:#f3f4f4}
  #app .chatrow{min-height:84px!important}
  #app .chatrow .avatar{width:52px!important;height:52px!important}
 }
-</style></head>
+</style>
+<style id="vivo-quality-fixes-20261120">
+/* Keep BotFather controls readable and consistent with the original dark messenger */
+#app .bot-inline-buttons{display:flex;flex-wrap:wrap;gap:8px;margin:12px 0 2px;direction:rtl}
+#app .bot-inline-buttons button{min-height:38px;padding:8px 13px;border:1px solid #36544f!important;border-radius:12px!important;background:linear-gradient(145deg,#203b37,#1a2b2b)!important;color:#dff8ef!important;font:inherit;font-size:12px!important;font-weight:600;cursor:pointer;transition:background .16s,border-color .16s,transform .16s}
+#app .bot-inline-buttons button:hover{background:#285247!important;border-color:#58b99b!important;transform:translateY(-1px)}
+#app .bot-inline-buttons button:focus-visible,#app .mobilebar button:focus-visible,#app .top button:focus-visible{outline:2px solid #42c9a5;outline-offset:3px}
+#app .chatrow[data-bot="true"] .avatar{color:#fff!important;box-shadow:0 0 0 2px #263e3b}
+#vivoBotHub{z-index:2100!important}
+#vivoBotHub .vb-panel{max-height:min(92dvh,900px);overflow:auto;overscroll-behavior:contain}
+#vivoBotHub .vb-notice{line-height:1.9}
+#vivoBotHub .vb-create input,#vivoBotHub .vb-create textarea{width:100%;max-width:100%;box-sizing:border-box}
+@media(max-width:760px){
+ #vivoBotHub{padding:10px!important;align-items:flex-end!important}
+ #vivoBotHub .vb-panel{width:100%!important;max-height:94dvh!important;border-radius:22px 22px 12px 12px!important}
+ #vivoBotHub .vb-grid{grid-template-columns:1fr!important}
+ #app .bot-inline-buttons button{min-height:40px;font-size:12px!important}
+}
+</style>
+</head>
 <body>
 <section id="authScreen" class="authscreen">
  <div class="authcard">
@@ -1293,8 +1313,11 @@ html,body{background:#151719!important;color:#f3f4f4}
 <input type="file" id="fileInput" class="hidden" multiple>
 <script>
 const $=id=>document.getElementById(id), esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
-const KEY='vivo_messenger_release_1';let db=JSON.parse(localStorage.getItem(KEY)||'{"user":null,"chats":[],"active":null}'),filter='all',reply=null,installPrompt=null;
-function save(){localStorage.setItem(KEY,JSON.stringify(db))}
+const KEY='vivo_messenger_release_1';
+let db;
+try{const stored=JSON.parse(localStorage.getItem(KEY)||'{}');db={user:stored.user||null,chats:Array.isArray(stored.chats)?stored.chats:[],active:stored.active||null}}catch(error){console.error('VIVO local data recovery:',error);db={user:null,chats:[],active:null}}
+let filter='all',reply=null,installPrompt=null;
+function save(){try{localStorage.setItem(KEY,JSON.stringify(db));return true}catch(error){console.error('VIVO storage error:',error);if($('toast'))toast('ذخیره‌سازی دستگاه در دسترس نیست؛ فضای خالی دستگاه را بررسی کنید.');return false}}
 function toast(t){$('toast').textContent=t;$('toast').classList.remove('hidden');setTimeout(()=>$('toast').classList.add('hidden'),2600)}
 function showError(t){$('authError').textContent=t||''}
 function phoneNorm(v){const digits=String(v||'').replace(/[۰-۹]/g,d=>String('۰۱۲۳۴۵۶۷۸۹'.indexOf(d))).replace(/[٠-٩]/g,d=>String('٠١٢٣٤٥٦٧٨٩'.indexOf(d)));const compact=digits.replace(/[\s()-]/g,'');return compact.replace(/^\+?98/,'0')}
