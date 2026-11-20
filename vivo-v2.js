@@ -61,8 +61,7 @@ async function verifyOtp(){
  if(!/^\d{6}$/.test(code))return setAuthError('کد باید دقیقاً شش رقم باشد.');
  $('verifyOtp').disabled=true;$('verifyOtp').textContent='در حال بررسی…';setAuthError('');
  try{
-  await requestJson('/api/otp/verify',{phone:pendingOtp.phone,requestId:pendingOtp.requestId,code});
-  const issued=await requestJson('/api/vivo/session',{phone:pendingOtp.phone,name:pendingOtp.name,username:pendingOtp.username});
+  const issued=await requestJson('/api/vivo/session',{phone:pendingOtp.phone,name:pendingOtp.name,username:pendingOtp.username,requestId:pendingOtp.requestId,code});
   currentUser=issued.user;
   const profile=await requestJson('/api/vivo/profile');if(profile.user)currentUser=profile.user;
   sessionStorage.removeItem('vivo_v2_pending_otp');pendingOtp=null;
