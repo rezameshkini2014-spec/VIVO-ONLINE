@@ -341,13 +341,13 @@ window.vivoClearLocalData=function(){if(!confirm('همه گفتگوها و پی�
 $('settingsBtn').onclick=()=>vivoSettingsOpen();$('navSettings').onclick=()=>vivoSettingsOpen();applyVivoPrefs();window.addEventListener('keydown',e=>{if((e.ctrlKey||e.metaKey)&&e.key===','){e.preventDefault();vivoSettingsOpen()}});
 
 
-<script id="vivo-social-js">
+
 (()=>{
 const KEY='vivo_social_local_v1';let state={posts:[],stories:[],following:[],liked:[],saved:[],comments:{}};
 try{state={...state,...JSON.parse(localStorage.getItem(KEY)||'{}')}}catch{}
 const $=id=>document.getElementById(id),esc=v=>String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const persist=()=>localStorage.setItem(KEY,JSON.stringify(state));
-const user=()=>{try{return JSON.parse(localStorage.getItem('vivo_db_v5')||'{}').user||{}}catch{return window.db?.user||{}}};
+const user=()=>db?.user||{};
 const me=()=>user().name||'کاربر ویوو',handle=()=>user().username||'vivo_user';
 const media=(p)=>p.media?'<img class="vs-media" src="'+p.media+'" alt="رسانه پست">':'';
 function page(k){document.querySelectorAll('#vsSocialTabs [data-page]').forEach(b=>b.classList.toggle('active',b.dataset.page===k));const root=$('vsSocialContent');if(k==='feed')root.innerHTML=stories()+composer()+feed(state.posts);else if(k==='explore')root.innerHTML='<h2>اکسپلور</h2><p class="vs-label">پست‌های منتشرشده در این دستگاه</p>'+feed([...state.posts].reverse());else if(k==='reels')root.innerHTML='<h2>ویدئوها</h2><div class="vs-empty">برای نمایش ویدئوها، هنگام انتشار پست یک ویدئو انتخاب کن. در این نسخه ویدئوها از فایل انتخابی همین دستگاه نمایش داده می‌شوند.</div>'+feed(state.posts.filter(p=>p.type==='video'));else if(k==='saved')root.innerHTML='<h2>ذخیره‌شده‌ها</h2>'+feed(state.posts.filter(p=>state.saved.includes(p.id)));else profile();root.querySelectorAll('[data-page]').forEach(b=>b.onclick=()=>page(b.dataset.page))}
@@ -364,7 +364,7 @@ window.vivoSocialComment=id=>{const t=prompt('نظر خود را بنویس:');i
 window.vivoSocialShare=id=>{const p=state.posts.find(x=>x.id===id);if(p&&navigator.share)navigator.share({title:'VIVO Social',text:p.text||'یک پست در ویوو'}).catch(()=>{});else if(p&&navigator.clipboard)navigator.clipboard.writeText(p.text||'پست ویوو').then(()=>alert('متن پست کپی شد.'))};
 document.addEventListener('click',e=>{const b=e.target.closest('#vsSocialTabs [data-page]');if(b)page(b.dataset.page)});
 })();
-</script>
+
 if('serviceWorker'in navigator)navigator.serviceWorker.register('/sw.js').catch(()=>{});
 if(db.user){enterApp()}
 </script></body></html>
