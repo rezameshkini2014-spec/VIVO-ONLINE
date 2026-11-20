@@ -1,0 +1,62 @@
+name: VIVO Quality Gate
+
+on:
+  push:
+    branches:
+      - mission/vivo-001-security
+  pull_request:
+    branches:
+      - rebuild/vivo-v2
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: vivo-quality-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  static-checks:
+    name: Static checks and server smoke test
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Install dependencies
+        run: npm install --ignore-scripts
+
+      - name: Check JavaScript syntax
+        shell: bash
+        run: |
+          set -euo pipefail
+          find . -path './node_modules' -prune -o -type f -name '*.js' -print0 | while IFS= read -r -d '' file; do
+            node --check "$file"
+          done
+
+      - name: Validate JSON configuration
+        run: |
+          node -e "for (const f of ['package.json','capacitor.config.json','vercel.json','manifest.webmanifest']) JSON.parse(require('fs').readFileSync(f,'utf8'));"
+
+      - name: Smoke test HTTP server
+        shell: bash
+        run: |
+          set -euo pipefail
+          PORT=3217 node server.js > /tmp/vivo-server.log 2>&1 &
+          server_pid=$!
+          trap 'kill "$server_pid" 2>/dev/null || true' EXIT
+          for i in $(seq 1 20); do
+            if curl --fail --silent http://127.0.0.1:3217/ > /tmp/vivo-home.html; then break; fi
+            sleep 1
+          done
+          grep -q 'VIVO' /tmp/vivo-home.html
+          test "$(curl --silent --output /dev/null --write-out '%{http_code}' http://127.0.0.1:3217/api/vivo/chat/list)" = "401"
+          test "$(curl --silent --output /dev/null --write-out '%{http_code}' http://127.0.0.1:3217/api/not-a-route)" = "404"
+          cat /tmp/vivo-server.log
