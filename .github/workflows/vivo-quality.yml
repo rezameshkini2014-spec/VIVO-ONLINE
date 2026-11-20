@@ -57,6 +57,13 @@ jobs:
             sleep 1
           done
           grep -q 'VIVO' /tmp/vivo-home.html
+          for asset in vivo-v2.html vivo-v2.js vivo-v2.css vivo-v2-auth.css vivo-v2-social.css vivo-v2-chat.css manifest.webmanifest sw.js; do
+            test "$(curl --silent --output /dev/null --write-out '%{http_code}' "http://127.0.0.1:3217/$asset")" = "200"
+          done
+          for private_path in server.js package.json supabase/functions/vivo-api/index.ts .github/workflows/vivo-quality.yml; do
+            test "$(curl --path-as-is --silent --output /dev/null --write-out '%{http_code}' "http://127.0.0.1:3217/$private_path")" = "404"
+          done
+          test "$(curl --path-as-is --silent --output /dev/null --write-out '%{http_code}' http://127.0.0.1:3217/%2e%2e/server.js)" = "404"
           test "$(curl --silent --output /dev/null --write-out '%{http_code}' http://127.0.0.1:3217/api/vivo/chat/list)" = "401"
           test "$(curl --silent --output /dev/null --write-out '%{http_code}' http://127.0.0.1:3217/api/vivo/session -H 'content-type: application/json' -d '{"phone":"09123456789","name":"Test User","username":"test_user","requestId":"test","code":"123456"}')" = "503"
           for endpoint in send subscribe verify; do
