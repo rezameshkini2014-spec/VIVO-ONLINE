@@ -3,7 +3,7 @@
 const $=id=>document.getElementById(id);
 const toast=(message)=>{const el=$('toast');if(!el)return;el.textContent=message;el.classList.add('show');clearTimeout(toast.timer);toast.timer=setTimeout(()=>el.classList.remove('show'),2600)};
 const titles={home:'اینستای ویوو',messages:'پیام‌رسان',create:'انتشار محتوا',explore:'کشف و جست‌وجو',notifications:'اعلان‌ها',profile:'پروفایل من',settings:'تنظیمات'};
-let currentPage='home',selectedFile=null,currentUser=null,pendingOtp=null,storiesCache=[],currentChatId=null,replyToMessageId=null,replyToMessageText='',chatsCache=[],contactPanelOpen=false,pressTimer=null,pressStart=null;
+let currentPage='home',selectedFile=null,currentUser=null,pendingOtp=null,storiesCache=[],currentChatId=null,currentChat=null,replyToMessageId=null,replyToMessageText='',chatsCache=[],contactPanelOpen=false,pressTimer=null,pressStart=null;
 function go(page){
  if(page==='reels'){setSocialTab('reels');page='home'}
  if(page==='contacts'){page='messages';contactPanelOpen=true}
@@ -95,8 +95,8 @@ function updateUser(user){
  if(profileButton){const spans=profileButton.querySelectorAll('span');if(spans[1])spans[1].textContent=name}
  const title=document.querySelector('.profile-identity h2'),handle=document.querySelector('.profile-identity span'),bio=document.querySelector('.profile-identity p');
  if(title)title.textContent=name;if(handle)handle.textContent=username?'@'+username:'نام کاربری ثبت نشده';if(bio)bio.textContent=currentUser.bio||'پروفایل ویوو تو؛ می‌توانی بعداً توضیحاتت را تکمیل کنی.';
- document.querySelectorAll('.avatar-self').forEach(el=>{el.textContent=name.trim().slice(0,1)||'و'});
- const profileAvatar=document.querySelector('.profile-avatar');if(profileAvatar)profileAvatar.textContent=name.trim().slice(0,1)||'و';
+ document.querySelectorAll('.avatar-self').forEach(el=>applyAvatar(el,currentUser));
+ const profileAvatar=document.querySelector('.profile-avatar');if(profileAvatar)applyAvatar(profileAvatar,currentUser);
 }
 async function checkSession(){
  try{const result=await requestJson('/api/vivo/profile');if(result.user){updateUser(result.user);await loadHomeData()}}
@@ -113,6 +113,39 @@ function formatTime(value){
 function node(tag,className,text){
  const el=document.createElement(tag);if(className)el.className=className;if(text!==undefined)el.textContent=text;return el;
 }
+function applyAvatar(el,user){
+ if(!el)return;
+ el.replaceChildren();
+ const fallback=(user?.display_name||user?.username||'V').trim().slice(0,1)||'V';
+ const url=typeof user?.avatar_url==='string'&&/^https:\/\//i.test(user.avatar_url)?user.avatar_url:'';
+ if(url){
+  const img=node('img','avatar-image');img.src=url;img.alt='';img.loading='lazy';img.referrerPolicy='no-referrer';
+  img.addEventListener('error',()=>{img.remove();el.textContent=fallback},{once:true});el.append(img);
+ }else el.textContent=fallback;
+}
+function avatarNode(user,className='avatar'){const el=node('span',className);applyAvatar(el,user);return el}
+function openContactProfileEditor(){
+ if(!currentChat||currentChat.type!=='private'){toast('شخصی‌سازی نام و تصویر فقط برای گفت‌وگوی خصوصی فعال است.');return}
+ $('contactProfileError').textContent='در حال دریافت مشخصات…';$('contactProfileEditor').hidden=false;
+ requestJson('/api/vivo/chat/contact-preferences?chatId='+encodeURIComponent(currentChatId)).then(result=>{
+  $('contactNickname').value=result.preference?.nickname||'';
+  $('contactAvatarUrl').value=result.preference?.avatar_url||'';
+  $('contactProfileError').textContent='مشخصات اصلی: '+(result.original?.display_name||'مخاطب');
+ }).catch(error=>{$('contactProfileError').textContent=error.message});
+}
+async function saveContactProfile(reset=false){
+ if(!currentChatId)return;
+ const button=document.querySelector('[data-action="save-contact-profile"]');if(button)button.disabled=true;
+ try{
+  await requestJson('/api/vivo/chat/contact-preferences',{chatId:currentChatId,nickname:reset?'':$('contactNickname').value.trim(),avatarUrl:reset?'':$('contactAvatarUrl').value.trim()});
+  $('contactProfileEditor').hidden=true;await loadChats();
+  const updated=chatsCache.find(x=>x.id===currentChatId);if(updated)currentChat=updated;
+  if(currentChat){$('chatTitle').textContent=currentChat.name||'گفت‌وگو';applyAvatar($('chatHeaderAvatar'),currentChat.participants?.[0])}
+  await loadChatMessages();toast(reset?'مشخصات اصلی مخاطب بازگردانده شد.':'نام و تصویر مخاطب فقط در حساب تو ذخیره شد.');
+ }catch(error){$('contactProfileError').textContent=error.message}
+ finally{if(button)button.disabled=false}
+}
+
 function renderPosts(posts,target,empty){
  target.replaceChildren();
  empty.hidden=posts.length>0;
@@ -285,7 +318,7 @@ async function loadChats(){
   for(const chat of chatsCache){
    const row=node('button','conversation-row'+(chat.id===currentChatId?' active':''));row.dataset.action='open-chat';row.dataset.chatId=chat.id;
    const participant=chat.participants?.[0];
-   row.append(node('span','avatar',participant?.display_name?.slice(0,1)||chat.name?.slice(0,1)||'V'));
+   row.append(avatarNode(participant||{display_name:chat.name},'avatar'));
    const copy=node('span','conversation-row-copy');copy.append(node('b','',chat.name||'گفت‌وگو'),node('small','',chat.lastMessage?.text|| (chat.type==='group'?'گروه ویوو':'گفت‌وگوی خصوصی')));
    const meta=node('span','conversation-row-meta');meta.append(node('small','',chat.lastMessage?formatTime(chat.lastMessage.sentAt):''));if(chat.unread)meta.append(node('span','unread-badge',String(chat.unread)));
    row.append(copy,meta);list.append(row);
@@ -294,10 +327,10 @@ async function loadChats(){
 }
 async function openChat(chatId){
  const chat=chatsCache.find(x=>x.id===chatId);if(!chat)return;
- currentChatId=chatId;replyToMessageId=null;replyToMessageText='';contactPanelOpen=false;$('contactsInline').hidden=true;$('conversationListContent').hidden=false;
+ currentChatId=chatId;currentChat=chat;replyToMessageId=null;replyToMessageText='';contactPanelOpen=false;$('contactsInline').hidden=true;$('conversationListContent').hidden=false;
  document.querySelector('.messages-shell').classList.add('has-chat');
  $('chatPlaceholder').hidden=true;$('chatWindow').hidden=false;
- $('chatTitle').textContent=chat.name;$('chatSubtitle').textContent=chat.type==='group'?'گروه · '+(chat.participants?.length||0)+' عضو':'گفت‌وگوی خصوصی';
+ $('chatTitle').textContent=chat.name;$('chatSubtitle').textContent=chat.type==='group'?'گروه · '+(chat.participants?.length||0)+' عضو':'گفت‌وگوی خصوصی';applyAvatar($('chatHeaderAvatar'),chat.participants?.[0]||{display_name:chat.name});const editContactButton=document.querySelector('[data-action="edit-contact-profile"]');if(editContactButton)editContactButton.hidden=chat.type!=='private';
  $('chatMessageInput').placeholder='پیامت را بنویس…';
  await loadChatMessages();
  document.querySelectorAll('.conversation-row').forEach(row=>row.classList.toggle('active',row.dataset.chatId===chatId));
@@ -310,7 +343,7 @@ async function loadChatMessages(){
   const messageRows=result.messages||[];
   for(const message of messageRows){
    const bubble=node('article','message-bubble'+(message.fromMe?' mine':''));bubble.dataset.messageId=message.id;
-   if(!message.fromMe)bubble.append(node('span','message-sender',message.sender?.display_name||'کاربر'));
+   if(!message.fromMe){const senderLine=node('div','message-sender-line');senderLine.append(avatarNode(message.sender,'message-sender-avatar'),node('span','message-sender',message.sender?.display_name||'کاربر'));bubble.append(senderLine)}
    if(message.replyTo){const parent=messageRows.find(item=>item.id===message.replyTo);if(parent)bubble.append(node('div','message-reply',parent.text||'پیام'))}
    bubble.append(node('p','',message.text||'پیوست'));
    bubble.append(node('time','',formatTime(message.sentAt)+(message.editedAt?' · ویرایش‌شده':'')));
@@ -406,6 +439,10 @@ document.addEventListener('click',async event=>{
  if(action==='send-chat-message'){sendChatMessage();return}
  if(action==='chat-back'){document.querySelector('.messages-shell').classList.remove('has-chat');$('chatWindow').hidden=true;$('chatPlaceholder').hidden=false;currentChatId=null;return}
  if(action==='refresh-chat'){loadChatMessages();return}
+ if(action==='edit-contact-profile'){openContactProfileEditor();return}
+ if(action==='close-contact-profile'){$('contactProfileEditor').hidden=true;return}
+ if(action==='save-contact-profile'){saveContactProfile(false);return}
+ if(action==='reset-contact-profile'){saveContactProfile(true);return}
  if(action==='mute-chat'){try{await requestJson('/api/vivo/chat/mute',{chatId:currentChatId,muted:true});toast('اعلان‌های این گفتگو بی‌صدا شد.')}catch(error){toast(error.message)}return}
  if(action==='reply-message'){const bubble=actionButton.closest('.message-bubble');replyToMessageId=actionButton.dataset.messageId;replyToMessageText=bubble?.querySelector('p')?.textContent||'پیام';$('chatReplyText').textContent='پاسخ به: '+replyToMessageText.slice(0,90);$('chatReplyPreview').hidden=false;$('chatMessageInput').focus();return}
  if(action==='cancel-reply'){replyToMessageId=null;replyToMessageText='';$('chatReplyPreview').hidden=true;return}
@@ -419,6 +456,7 @@ document.addEventListener('click',async event=>{
 });
 $('authClose').addEventListener('click',authClose);
 $('chatComposer').addEventListener('click',event=>{if(event.target===$('chatComposer')){$('chatComposer').classList.remove('open');$('chatComposer').hidden=true}});
+$('contactProfileEditor').addEventListener('click',event=>{if(event.target===$('contactProfileEditor'))$('contactProfileEditor').hidden=true});
 $('chatMessageInput').addEventListener('keydown',event=>{if(event.key==='Enter'&&!event.shiftKey){event.preventDefault();sendChatMessage()}});
 $('storyComposer').addEventListener('click',event=>{if(event.target===$('storyComposer')){$('storyComposer').classList.remove('open');$('storyComposer').hidden=true}});
 $('authOverlay').addEventListener('click',event=>{if(event.target===$('authOverlay'))authClose()});
