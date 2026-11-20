@@ -3,6 +3,16 @@ const fs = require("node:fs");
 const path = require("node:path");
 
 const root = __dirname;
+const publicFiles = new Set([
+  "/vivo-v2.html",
+  "/vivo-v2.js",
+  "/vivo-v2.css",
+  "/vivo-v2-auth.css",
+  "/vivo-v2-social.css",
+  "/vivo-v2-chat.css",
+  "/manifest.webmanifest",
+  "/sw.js"
+]);
 const mime = {
   ".html":"text/html; charset=utf-8",".css":"text/css; charset=utf-8",
   ".js":"application/javascript; charset=utf-8",".json":"application/json; charset=utf-8",
@@ -55,14 +65,29 @@ async function api(req,res,url) {
   return handler(req,responseAdapter(res));
 }
 function staticFile(req,res,url) {
-  let pathname=decodeURIComponent(url.pathname);
+  let pathname;
+  try { pathname=decodeURIComponent(url.pathname); }
+  catch { res.writeHead(400,{"Content-Type":"text/plain; charset=utf-8"}); return res.end("Bad request"); }
   if (pathname === "/") pathname="/vivo-v2.html";
-  const file=path.resolve(root,"."+pathname);
+  if (!publicFiles.has(pathname)) {
+    res.writeHead(404,{"Content-Type":"text/plain; charset=utf-8","X-Content-Type-Options":"nosniff"});
+    return res.end("Not found");
+  }
+  const file=path.join(root,pathname.slice(1));
   if (!file.startsWith(root+path.sep) || !fs.existsSync(file) || !fs.statSync(file).isFile()) {
-    res.writeHead(404,{"Content-Type":"text/plain; charset=utf-8"}); return res.end("Not found");
+    res.writeHead(404,{"Content-Type":"text/plain; charset=utf-8","X-Content-Type-Options":"nosniff"});
+    return res.end("Not found");
   }
   const ext=path.extname(file).toLowerCase();
-  res.writeHead(200,{"Content-Type":mime[ext]||"application/octet-stream","X-Content-Type-Options":"nosniff","Cache-Control":ext===".html"?"no-cache":"public, max-age=3600"});
+  res.writeHead(200,{
+    "Content-Type":mime[ext]||"application/octet-stream",
+    "X-Content-Type-Options":"nosniff",
+    "X-Frame-Options":"SAMEORIGIN",
+    "Referrer-Policy":"strict-origin-when-cross-origin",
+    "Cross-Origin-Resource-Policy":"same-origin",
+    "Cache-Control":ext===".html"?"no-cache":"public, max-age=3600"
+  });
+  if (req.method==="HEAD") return res.end();
   fs.createReadStream(file).pipe(res);
 }
 const server=http.createServer(async(req,res)=>{
@@ -72,7 +97,6 @@ const server=http.createServer(async(req,res)=>{
       if (!["GET","POST"].includes(req.method)) return responseAdapter(res).status(405).json({ok:false,error:"Method not allowed"});
       await api(req,res,url);
     } else if (req.method==="GET" || req.method==="HEAD") {
-      if(req.method==="HEAD"){res.writeHead(200);return res.end();}
       staticFile(req,res,url);
     } else {res.writeHead(405);res.end("Method not allowed");}
   } catch(error) {
