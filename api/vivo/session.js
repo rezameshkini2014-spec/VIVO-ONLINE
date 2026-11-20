@@ -8,14 +8,11 @@ function normalizePhone(value) {
 
 module.exports = async (req, res) => {
   res.setHeader("Cache-Control", "no-store");
-  if (process.env.VIVO_REAL_PHONE_VERIFICATION_ENABLED !== "true") {
-    return res.status(503).json({
-      ok: false,
-      error: "ورود و ثبت‌نام موقتاً غیرفعال است؛ کد اعلان دستگاه مالکیت شماره تلفن را اثبات نمی‌کند."
-    });
-  }
-  res.setHeader("Cache-Control", "no-store");
   if (req.method !== "POST") return res.status(405).json({ ok: false, error: "Method not allowed" });
+  return res.status(503).json({
+    ok: false,
+    error: "ورود و ثبت‌نام موقتاً غیرفعال است؛ کد اعلان دستگاه مالکیت شماره تلفن را اثبات نمی‌کند."
+  });
   const phone = normalizePhone(req.body?.phone);
   const name = String(req.body?.name || "").trim().slice(0, 50);
   const username = String(req.body?.username || "").trim().toLowerCase();
