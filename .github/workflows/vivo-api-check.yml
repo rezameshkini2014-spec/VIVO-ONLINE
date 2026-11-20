@@ -1,0 +1,23 @@
+name: VIVO API static validation
+
+on:
+  push:
+    branches:
+      - mission/vivo-overnight-20261121
+    paths:
+      - 'supabase/functions/vivo-api/**'
+      - '.github/workflows/vivo-api-check.yml'
+  pull_request:
+    paths:
+      - 'supabase/functions/vivo-api/**'
+
+jobs:
+  deno-check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: denoland/setup-deno@v2
+        with:
+          deno-version: v2.x
+      - name: Type-check VIVO Edge Function
+        run: deno check supabase/functions/vivo-api/index.ts
