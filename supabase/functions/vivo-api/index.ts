@@ -150,9 +150,7 @@ Deno.serve(async (req: Request) => {
       return json(200, { ok: true, service: "VIVO Cloud API", version: "1.0.0" });
     }
 
-    if (Deno.env.get("VIVO_AUTH_ENABLED") !== "true") {
-      return json(503, { ok: false, error: "احراز هویت ویوو تا تکمیل سامانه نشست امن غیرفعال است." });
-    }
+    return json(503, { ok: false, error: "احراز هویت ویوو تا تکمیل سامانه نشست امن غیرفعال است." });
 
     const userId = await authenticate(req, key);
     if (!userId) return json(401, { ok: false, error: "نشست معتبر نیست؛ دوباره وارد شوید." });
