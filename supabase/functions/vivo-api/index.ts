@@ -390,6 +390,10 @@ Deno.serve(async (req: Request) => {
       if (name.length < 2 || !/^[a-z][a-z0-9_]{3,29}$/.test(username)) {
         return json(400, { ok: false, error: "نام ربات و شناسه معتبر لازم است؛ شناسه باید ۴ تا ۳۰ نویسه انگلیسی باشد." });
       }
+      const { count: ownedBotCount, error: countError } = await supabase.from("vivo_bots")
+        .select("id", { count: "exact", head: true }).eq("owner_id", userId);
+      if (countError) return json(500, { ok: false, error: "بررسی ظرفیت ساخت ربات ناموفق بود." });
+      if ((ownedBotCount || 0) >= 20) return json(429, { ok: false, error: "در حال حاضر هر حساب می‌تواند حداکثر ۲۰ ربات بسازد." });
       const tokenBytes = crypto.getRandomValues(new Uint8Array(32));
       const token = "vivo_" + b64url(tokenBytes);
       const tokenHash = await digestHex(token);
