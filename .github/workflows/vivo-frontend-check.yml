@@ -2,18 +2,18 @@ name: VIVO frontend static validation
 
 on:
   push:
-    branches:
-      - feature/vivo-botfather-chat-polish
     paths:
       - 'vivo-v2.js'
       - 'vivo-v2.html'
-      - 'vivo-v2-chat.css'
+      - 'vivo-v2-*.css'
+      - 'vivo-v3-design.css'
       - '.github/workflows/vivo-frontend-check.yml'
   pull_request:
     paths:
       - 'vivo-v2.js'
       - 'vivo-v2.html'
-      - 'vivo-v2-chat.css'
+      - 'vivo-v2-*.css'
+      - 'vivo-v3-design.css'
 
 jobs:
   frontend-check:
@@ -25,8 +25,23 @@ jobs:
           node-version: 22
       - name: Check JavaScript syntax
         run: node --check vivo-v2.js
-      - name: Verify required UI anchors
+      - name: Verify complete V3 theme is connected
         run: |
+          grep -q 'href="/vivo-v3-design.css"' vivo-v2.html
+          grep -q 'id="authOverlay"' vivo-v2.html
+          grep -q 'id="page-home"' vivo-v2.html
+          grep -q 'id="page-messages"' vivo-v2.html
+          grep -q 'id="page-create"' vivo-v2.html
+          grep -q 'id="page-explore"' vivo-v2.html
+          grep -q 'id="page-profile"' vivo-v2.html
           grep -q 'id="botfatherOverlay"' vivo-v2.html
-          grep -q 'id="contactProfileEditor"' vivo-v2.html
-          grep -q 'id="chatHeaderAvatar"' vivo-v2.html
+      - name: Check CSS structure
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          css = Path("vivo-v3-design.css").read_text()
+          assert css.count("{") == css.count("}"), "CSS brace mismatch"
+          assert ":root" in css and "@media(max-width:700px)" in css
+          assert ".messages-shell" in css and ".auth-card" in css and ".mobile-nav" in css
+          print("VIVO V3 CSS structural checks passed")
+          PY
