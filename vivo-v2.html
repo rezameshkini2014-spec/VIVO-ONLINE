@@ -24,6 +24,7 @@
     <nav class="main-nav" aria-label="ناوبری اصلی">
       <button class="nav-item active" data-page="home"><span class="nav-icon">⌂</span><span>خانه</span></button>
       <button class="nav-item" data-page="messages"><span class="nav-icon">▤</span><span>پیام‌ها</span><span class="nav-count" id="unreadCount" hidden>۰</span></button>
+      <button class="nav-item" data-page="contacts"><span class="nav-icon">♧</span><span>مخاطبان</span></button>
       <button class="nav-item" data-page="create"><span class="nav-icon">＋</span><span>انتشار محتوا</span></button>
       <button class="nav-item" data-page="reels"><span class="nav-icon">▷</span><span>ویدئوها</span></button>
       <button class="nav-item" data-page="explore"><span class="nav-icon">⌕</span><span>کشف و جست‌وجو</span></button>
@@ -108,6 +109,28 @@
       <div class="section-heading"><div><h2>کشف و جست‌وجو</h2><p>کاربران، موضوعات و محتوای تازه را پیدا کن.</p></div></div>
       <div class="explore-search"><span>⌕</span><input id="exploreSearch" type="search" placeholder="نام کاربری، هشتگ یا موضوع را جست‌وجو کن"><button class="primary-button" data-action="search">جست‌وجو</button></div>
       <div class="empty-card wide-empty" id="exploreEmpty"><div class="explore-symbol">✧</div><h3>دنیای تازه‌ای برای کشف</h3><p>نام کاربری یا موضوعی را جست‌وجو کن.</p></div><div id="searchResults" class="results-list"></div>
+    </section>
+
+    <section class="page" id="page-contacts" data-view="contacts">
+      <div class="content-narrow">
+        <div class="section-heading"><div><h2>مخاطبان VIVO</h2><p>افراد را فقط با نام کاربری دقیق پیدا کن؛ دفترچه تلفن دستگاه خوانده یا همگام‌سازی نمی‌شود.</p></div></div>
+        <div class="composer-card">
+          <label class="field-label" for="contactUsernameSearch">شناسه یا نام کاربری VIVO</label>
+          <div class="explore-search"><span>@</span><input id="contactUsernameSearch" type="text" maxlength="30" autocomplete="off" placeholder="مثلاً username_123"><button class="primary-button" data-action="contact-search">جست‌وجو</button></div>
+          <p class="auth-hint">جست‌وجو فقط بر اساس نام کاربری دقیق انجام می‌شود؛ شماره تلفن و ایمیل جست‌وجو یا نمایش داده نمی‌شوند.</p>
+          <div id="contactSearchResult" class="results-list"></div>
+        </div>
+        <div class="composer-card">
+          <div class="section-heading"><div><h3>درخواست‌های ارتباط</h3><p>درخواست‌های دریافتی و ارسالی</p></div><button class="text-button" data-action="contacts-refresh">به‌روزرسانی</button></div>
+          <div id="contactRequestsList" class="notification-list"></div>
+          <div id="contactRequestsEmpty" class="rail-empty">درخواستی وجود ندارد.</div>
+        </div>
+        <div class="composer-card">
+          <div class="section-heading"><div><h3>مخاطبان من</h3><p>ارتباط‌هایی که دو طرف پذیرفته‌اند</p></div></div>
+          <div id="contactsList" class="results-list"></div>
+          <div id="contactsEmpty" class="rail-empty">هنوز مخاطبی اضافه نشده است.</div>
+        </div>
+      </div>
     </section>
 
     <section class="page" id="page-notifications" data-view="notifications">
