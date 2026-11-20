@@ -25,10 +25,6 @@ function fromB64url(value: string) {
   const binary = atob(padded);
   return Uint8Array.from(binary, c => c.charCodeAt(0));
 }
-function hexBytes(value: string) {
-  if (!/^[a-f0-9]{64}$/i.test(value)) throw new Error("Invalid internal configuration");
-  return Uint8Array.from(value.match(/.{2}/g)!, x => parseInt(x, 16));
-}
 async function getSessionKey() {
   const material = await crypto.subtle.importKey("raw", encoder.encode(SERVICE_KEY), "HKDF", false, ["deriveKey"]);
   return crypto.subtle.deriveKey(
@@ -38,21 +34,6 @@ async function getSessionKey() {
     false,
     ["sign", "verify"]
   );
-}
-async function digestHex(value: string) {
-  const digest = new Uint8Array(await crypto.subtle.digest("SHA-256", encoder.encode(value)));
-  return [...digest].map(x => x.toString(16).padStart(2, "0")).join("");
-}
-function constantEqual(a: string, b: string) {
-  if (a.length !== b.length) return false;
-  let result = 0;
-  for (let i = 0; i < a.length; i++) result |= a.charCodeAt(i) ^ b.charCodeAt(i);
-  return result === 0;
-}
-async function issueToken(userId: string, key: CryptoKey) {
-  const payload = b64url(encoder.encode(JSON.stringify({ sub: userId, iat: Date.now(), exp: Date.now() + 30 * 24 * 60 * 60 * 1000 })));
-  const signature = new Uint8Array(await crypto.subtle.sign("HMAC", key, encoder.encode(payload)));
-  return payload + "." + b64url(signature);
 }
 async function authenticate(req: Request, key: CryptoKey) {
   const header = req.headers.get("authorization") || "";
@@ -72,9 +53,6 @@ async function authenticate(req: Request, key: CryptoKey) {
   } catch {
     return null;
   }
-}
-function validPhone(value: unknown): value is string {
-  return typeof value === "string" && /^09\d{9}$/.test(value);
 }
 function dateValue(value: unknown) {
   const n = Number(value);
@@ -172,28 +150,8 @@ Deno.serve(async (req: Request) => {
       return json(200, { ok: true, service: "VIVO Cloud API", version: "1.0.0" });
     }
 
-    if (path === "/auth/issue" && req.method === "POST") {
-      const supplied = req.headers.get("x-vivo-internal-secret") || "";
-      const { data: config, error: configError } = await supabase.from("vivo_config").select("value").eq("key", "internal_secret_hash").single();
-      if (configError || !config?.value || !constantEqual(await digestHex(supplied), config.value)) {
-        return json(401, { ok: false, error: "Unauthorized internal request" });
-      }
-      const body = await req.json().catch(() => ({}));
-      const phone = body.phone;
-      const name = safeText(body.name, 50).trim();
-      const username = safeText(body.username, 30).trim().toLowerCase();
-      if (!validPhone(phone) || name.length < 2 || !/^[a-z][a-z0-9_]{3,29}$/.test(username)) {
-        return json(400, { ok: false, error: "شماره، نام نمایشی یا نام کاربری معتبر نیست." });
-      }
-      const { data: user, error } = await supabase.from("vivo_users")
-        .upsert({ phone, display_name: name, username, updated_at: new Date().toISOString() }, { onConflict: "phone" })
-        .select("id,phone,display_name,username,bio,avatar_url,created_at")
-        .single();
-      if (error || !user) {
-        if (error?.code === "23505") return json(409, { ok: false, error: "این نام کاربری قبلاً انتخاب شده است." });
-        return json(500, { ok: false, error: "ساخت حساب ابری انجام نشد." });
-      }
-      return json(200, { ok: true, user, sessionToken: await issueToken(user.id, key) });
+    if (Deno.env.get("VIVO_AUTH_ENABLED") !== "true") {
+      return json(503, { ok: false, error: "احراز هویت ویوو تا تکمیل سامانه نشست امن غیرفعال است." });
     }
 
     const userId = await authenticate(req, key);
