@@ -775,7 +775,7 @@ const set=(id,name,label)=>{const el=document.getElementById(id);if(!el)return;e
 [['installBtn','install','نصب برنامه'],['notifyBtn','notify','اعلان‌ها'],['settingsBtn','settings','تنظیمات'],['profileBtn','profile','حساب کاربری'],['socialOpenBtn','social','ویوو اجتماعی'],['backChats','back','بازگشت'],['roomSearch','search','جست‌وجو در گفتگو'],['roomMore','more','بیشتر'],['cancelReply','close','لغو پاسخ'],['attachBtn','attach','پیوست'],['sendBtn','send','ارسال پیام']].forEach(x=>set(...x));
 const nav=[['navChats','chats','گفتگوها'],['navAccount','account','حساب کاربری'],['navSettings','settings','تنظیمات']];
 nav.forEach(([id,ic,label])=>{const el=document.getElementById(id);if(el)el.innerHTML='<b>'+icon(ic,20)+'</b><span>'+label+'</span>'});
-document.querySelectorAll('#vsSocialTabs [data-page]').forEach(el=>{const map={feed:['feed','خانه'],explore:['explore','اکسپلور'],reels:['reels','ویدئوها'],saved:['saved','ذخیره‌شده‌ها'],profile:['profile','پروفایل']};const v=map[el.dataset.page];if(v)el.innerHTML=icon(v[0],17)+'<span>'+v[1]+'</span>'});
+
 })();
 </script>
 
