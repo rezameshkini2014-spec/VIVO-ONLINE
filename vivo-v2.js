@@ -2,16 +2,21 @@
 'use strict';
 const $=id=>document.getElementById(id);
 const toast=(message)=>{const el=$('toast');if(!el)return;el.textContent=message;el.classList.add('show');clearTimeout(toast.timer);toast.timer=setTimeout(()=>el.classList.remove('show'),2600)};
-const titles={home:'خانه',messages:'پیام‌ها',create:'انتشار محتوا',reels:'ویدئوها',explore:'کشف و جست‌وجو',contacts:'مخاطبان',notifications:'اعلان‌ها',profile:'پروفایل من',settings:'تنظیمات'};
-let currentPage='home',selectedFile=null,currentUser=null,pendingOtp=null,storiesCache=[],currentChatId=null,replyToMessageId=null,chatsCache=[];
+const titles={home:'اینستای ویوو',messages:'پیام‌رسان',create:'انتشار محتوا',explore:'کشف و جست‌وجو',notifications:'اعلان‌ها',profile:'پروفایل من',settings:'تنظیمات'};
+let currentPage='home',selectedFile=null,currentUser=null,pendingOtp=null,storiesCache=[],currentChatId=null,replyToMessageId=null,replyToMessageText='',chatsCache=[],contactPanelOpen=false,pressTimer=null,pressStart=null;
 function go(page){
+ if(page==='reels'){setSocialTab('reels');page='home'}
+ if(page==='contacts'){page='messages';contactPanelOpen=true}
  if(!titles[page])return;
  currentPage=page;
+ document.querySelector('.vivo-app')?.classList.toggle('messenger-focus',page==='messages');
+ $('contactsInline')?.toggleAttribute('hidden',!contactPanelOpen);
+ $('conversationListContent')?.toggleAttribute('hidden',contactPanelOpen);
  document.querySelectorAll('.page').forEach(el=>el.classList.toggle('active',el.dataset.view===page));
  document.querySelectorAll('[data-page]').forEach(el=>el.classList.toggle('active',el.dataset.page===page));
  $('pageTitle').textContent=titles[page];
  if(page==='create')$('postText').focus({preventScroll:true});
- if(currentUser){if(page==='home'){loadFeed();loadStories()}if(page==='messages')loadChats();if(page==='explore')$('exploreSearch').focus({preventScroll:true});if(page==='notifications')loadNotifications();if(page==='contacts')loadContacts();if(page==='profile')loadProfile()}
+ if(currentUser){if(page==='home'){loadFeed();loadStories()}if(page==='messages'){loadChats();if(contactPanelOpen)loadContacts()}if(page==='explore')$('exploreSearch').focus({preventScroll:true});if(page==='notifications')loadNotifications();if(page==='profile')loadProfile()}
  window.scrollTo({top:0,behavior:'smooth'});
 }
 async function requestJson(url,body){
@@ -20,6 +25,11 @@ async function requestJson(url,body){
  if(!response.ok||data.ok===false)throw new Error(data.error||'درخواست انجام نشد.');
  return data;
 }
+function setSocialTab(tab){
+ const reels=tab==='reels';$('postsPanel').hidden=reels;$('reelsInlinePanel').hidden=!reels;
+ document.querySelectorAll('.social-tab').forEach(button=>button.classList.toggle('active',button.dataset.tab===(reels?'reels':'posts')));
+}
+function toggleContactsInline(){contactPanelOpen=!contactPanelOpen;$('contactsInline').hidden=!contactPanelOpen;$('conversationListContent').hidden=contactPanelOpen;if(contactPanelOpen)loadContacts()}
 function normalizeDigits(value){return String(value||'').replace(/[۰-۹]/g,d=>String('۰۱۲۳۴۵۶۷۸۹'.indexOf(d))).replace(/[٠-٩]/g,d=>String('٠١٢٣٤٥٦٧٨٩'.indexOf(d)))}
 function normalizePhone(value){return normalizeDigits(value).replace(/[\s()-]/g,'').replace(/^\+?98/,'0')}
 function usernameValid(value){return /^[a-z][a-z0-9_]{3,29}$/.test(value)}
@@ -283,7 +293,7 @@ async function loadChats(){
 }
 async function openChat(chatId){
  const chat=chatsCache.find(x=>x.id===chatId);if(!chat)return;
- currentChatId=chatId;replyToMessageId=null;
+ currentChatId=chatId;replyToMessageId=null;replyToMessageText='';contactPanelOpen=false;$('contactsInline').hidden=true;$('conversationListContent').hidden=false;
  document.querySelector('.messages-shell').classList.add('has-chat');
  $('chatPlaceholder').hidden=true;$('chatWindow').hidden=false;
  $('chatTitle').textContent=chat.name;$('chatSubtitle').textContent=chat.type==='group'?'گروه · '+(chat.participants?.length||0)+' عضو':'گفت‌وگوی خصوصی';
@@ -296,9 +306,11 @@ async function loadChatMessages(){
  try{
   const result=await requestJson('/api/vivo/chat/messages?chatId='+encodeURIComponent(currentChatId));
   const list=$('chatMessages');list.replaceChildren();
-  for(const message of result.messages||[]){
-   const bubble=node('article','message-bubble'+(message.fromMe?' mine':''));
+  const messageRows=result.messages||[];
+  for(const message of messageRows){
+   const bubble=node('article','message-bubble'+(message.fromMe?' mine':''));bubble.dataset.messageId=message.id;
    if(!message.fromMe)bubble.append(node('span','message-sender',message.sender?.display_name||'کاربر'));
+   if(message.replyTo){const parent=messageRows.find(item=>item.id===message.replyTo);if(parent)bubble.append(node('div','message-reply',parent.text||'پیام'))}
    bubble.append(node('p','',message.text||'پیوست'));
    bubble.append(node('time','',formatTime(message.sentAt)+(message.editedAt?' · ویرایش‌شده':'')));
    const controls=node('div','message-controls');
@@ -317,7 +329,7 @@ async function sendChatMessage(){
  if(!currentChatId)return;
  const input=$('chatMessageInput'),text=input.value.trim();if(!text)return;
  const button=document.querySelector('[data-action="send-chat-message"]');button.disabled=true;
- try{await requestJson('/api/vivo/chat/send',{chatId:currentChatId,text,replyTo:replyToMessageId});input.value='';replyToMessageId=null;input.placeholder='پیامت را بنویس…';await loadChatMessages()}
+ try{await requestJson('/api/vivo/chat/send',{chatId:currentChatId,text,replyTo:replyToMessageId});input.value='';replyToMessageId=null;replyToMessageText='';$('chatReplyPreview').hidden=true;$('chatReplyText').textContent='';input.placeholder='پیامت را بنویس…';await loadChatMessages()}
  catch(error){toast(error.message)}
  finally{button.disabled=false}
 }
@@ -366,6 +378,8 @@ document.addEventListener('click',async event=>{
  if(action==='follow'){
   try{const result=await requestJson('/api/vivo/contacts/request',{username:actionButton.dataset.username});actionButton.textContent=result.status==='accepted'?'مخاطب شما':'درخواست ارسال شد';actionButton.disabled=true}catch(error){toast(error.message)}return;
  }
+ if(action==='toggle-contacts'){toggleContactsInline();return}
+ if(action==='social-tab'){setSocialTab(actionButton.dataset.tab);return}
  if(action==='contact-search'){searchContact();return}
  if(action==='contacts-refresh'){loadContacts();return}
  if(action==='contact-add'){try{const result=await requestJson('/api/vivo/contacts/request',{username:actionButton.dataset.username});toast(result.status==='accepted'?'ارتباط برقرار شد.':'درخواست ارتباط ارسال شد.');await searchContact();await loadContacts()}catch(error){toast(error.message)}return}
@@ -379,7 +393,20 @@ document.addEventListener('click',async event=>{
  if(action==='story'){if(!currentUser){authOpen();return}$('storyComposer').hidden=false;$('storyComposer').classList.add('open');$('storyText').focus();return}
  if(action==='close-story-composer'){$('storyComposer').classList.remove('open');$('storyComposer').hidden=true;return}
  if(action==='publish-story'){publishStory();return}
- if(action==='new-chat'){toast('پیام‌رسان چندکاربره هنوز در حال پیاده‌سازی است.');return}
+ if(action==='new-chat'){$('chatComposer').hidden=false;$('chatComposer').classList.add('open');$('chatTargetUsername').focus();return}
+ if(action==='close-chat-composer'){$('chatComposer').classList.remove('open');$('chatComposer').hidden=true;return}
+ if(action==='create-private-chat'){createPrivateChat();return}
+ if(action==='create-group-chat'){createGroupChat();return}
+ if(action==='open-chat'){openChat(actionButton.dataset.chatId);return}
+ if(action==='send-chat-message'){sendChatMessage();return}
+ if(action==='chat-back'){document.querySelector('.messages-shell').classList.remove('has-chat');$('chatWindow').hidden=true;$('chatPlaceholder').hidden=false;currentChatId=null;return}
+ if(action==='refresh-chat'){loadChatMessages();return}
+ if(action==='mute-chat'){try{await requestJson('/api/vivo/chat/mute',{chatId:currentChatId,muted:true});toast('اعلان‌های این گفتگو بی‌صدا شد.')}catch(error){toast(error.message)}return}
+ if(action==='reply-message'){const bubble=actionButton.closest('.message-bubble');replyToMessageId=actionButton.dataset.messageId;replyToMessageText=bubble?.querySelector('p')?.textContent||'پیام';$('chatReplyText').textContent='پاسخ به: '+replyToMessageText.slice(0,90);$('chatReplyPreview').hidden=false;$('chatMessageInput').focus();return}
+ if(action==='cancel-reply'){replyToMessageId=null;replyToMessageText='';$('chatReplyPreview').hidden=true;return}
+ if(action==='react-message'){try{await requestJson('/api/vivo/chat/react',{messageId:actionButton.dataset.messageId,reaction:actionButton.dataset.reaction||'👍'});toast('واکنش ثبت شد.');await loadChatMessages()}catch(error){toast(error.message)}return}
+ if(action==='edit-message'){const bubble=actionButton.closest('.message-bubble'),oldText=bubble?.querySelector('p')?.textContent||'';const text=window.prompt('متن ویرایش‌شده را وارد کن:',oldText);if(text===null||!text.trim())return;try{await requestJson('/api/vivo/chat/edit',{messageId:actionButton.dataset.messageId,text:text.trim()});await loadChatMessages()}catch(error){toast(error.message)}return}
+ if(action==='delete-message'){if(!window.confirm('این پیام حذف شود؟'))return;try{await requestJson('/api/vivo/chat/delete',{messageId:actionButton.dataset.messageId});await loadChatMessages()}catch(error){toast(error.message)}return}
  if(action==='search'){searchUsers();return}
  if(action==='feed-filter'){toast('فیلترهای فید در مرحله بعد اضافه می‌شوند.');return}
  if(action==='edit-profile'||action==='account'){if(!currentUser)authOpen();else{go('profile');toast('ویرایش کامل پروفایل در مرحله بعد فعال می‌شود.')}return}
@@ -395,11 +422,16 @@ $('backToPhone').addEventListener('click',()=>{setAuthError('');showPhoneStep()}
 $('authPhone').addEventListener('input',event=>{event.target.value=normalizeDigits(event.target.value).replace(/[^\d+]/g,'').slice(0,14)});
 $('authUsername').addEventListener('input',event=>{event.target.value=event.target.value.toLowerCase().replace(/[^a-z0-9_]/g,'').slice(0,30)});
 $('authCode').addEventListener('input',event=>{event.target.value=normalizeDigits(event.target.value).replace(/\D/g,'').slice(0,6)});
-document.addEventListener('keydown',event=>{if(event.key==='Escape')authClose();if(event.key==='Enter'&&$('authOverlay').classList.contains('open')){if(!$('codeStep').hidden)verifyOtp();else sendOtp()}});
+document.addEventListener('keydown',event=>{if(event.key==='Escape'){authClose();if($('chatComposer').classList.contains('open')){$('chatComposer').classList.remove('open');$('chatComposer').hidden=true}}if(event.key==='Enter'&&$('authOverlay').classList.contains('open')){if(!$('codeStep').hidden)verifyOtp();else sendOtp()}});
+$('chatSearch').addEventListener('input',event=>{const q=event.target.value.trim().toLowerCase();document.querySelectorAll('.conversation-row').forEach(row=>{row.hidden=!row.textContent.toLowerCase().includes(q)})});
+$('chatMessages').addEventListener('pointerdown',event=>{const bubble=event.target.closest('.message-bubble');if(!bubble||event.target.closest('button'))return;pressStart={id:bubble.dataset.messageId,x:event.clientX,y:event.clientY,bubble,moved:false};clearTimeout(pressTimer);pressTimer=setTimeout(()=>{if(pressStart&&!pressStart.moved){let picker=bubble.querySelector('.reaction-picker');if(!picker){picker=node('div','reaction-picker');for(const emoji of ['❤️','👍','😂','😮','😢','🔥']){const b=node('button','',emoji);b.type='button';b.dataset.action='react-message';b.dataset.messageId=bubble.dataset.messageId;b.dataset.reaction=emoji;picker.append(b)}bubble.append(picker)}}},550)});
+$('chatMessages').addEventListener('pointermove',event=>{if(!pressStart)return;if(Math.abs(event.clientX-pressStart.x)>10||Math.abs(event.clientY-pressStart.y)>10){pressStart.moved=true;clearTimeout(pressTimer)}});
+$('chatMessages').addEventListener('pointerup',event=>{if(!pressStart)return;clearTimeout(pressTimer);const start=pressStart;pressStart=null;if(event.clientX-start.x< -55){replyToMessageId=start.id;replyToMessageText=start.bubble.querySelector('p')?.textContent||'پیام';$('chatReplyText').textContent='پاسخ به: '+replyToMessageText.slice(0,90);$('chatReplyPreview').hidden=false;$('chatMessageInput').focus()}});
+$('chatMessages').addEventListener('pointercancel',()=>{clearTimeout(pressTimer);pressStart=null});
 $('postFile').addEventListener('change',event=>{showFile(event.target.files&&event.target.files[0]);$('publishButton').disabled=!currentUser||!$('postText').value.trim()||!!selectedFile});
 $('globalSearch').addEventListener('keydown',event=>{if(event.key==='Enter'){go('explore');$('exploreSearch').value=event.currentTarget.value;searchUsers()}});
 $('exploreSearch').addEventListener('keydown',event=>{if(event.key==='Enter')searchUsers()});
 $('postText').addEventListener('input',event=>{const status=$('composerStatus');status.textContent=(event.target.value.trim()||selectedFile)?'پیش‌نویس فقط در همین صفحه نگه داشته شده است؛ هنوز در سرور ذخیره نشده.':'انتشار عمومی هنوز فعال نشده است؛ هیچ محتوایی بدون ذخیره‌سازی واقعی منتشر نمی‌شود.';$('publishButton').disabled=!currentUser||!event.target.value.trim()||!!selectedFile});
 try{const saved=JSON.parse(sessionStorage.getItem('vivo_v2_pending_otp')||'null');if(saved&&saved.expiresAt>Date.now()){pendingOtp=saved;$('authName').value=saved.name||'';$('authUsername').value=saved.username||'';$('authPhone').value=saved.phone||''}}catch{}
-go('home');checkSession();
+setSocialTab('posts');go('home');checkSession();
 })();
