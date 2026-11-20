@@ -1089,6 +1089,35 @@ body[data-theme="light"] .ig-modal-card input,body[data-theme="light"] .ig-modal
 .vivo-message-actions button{width:37px;height:35px;border:0;border-radius:11px;background:#ffffff16;color:#fff;font-size:21px;display:grid;place-items:center}
 .vivo-message-actions button:active{background:#ffffff35;transform:scale(.96)}
 .vivo-forwarded-label{font-size:11px;line-height:1.5;color:#6cc9ba;font-weight:600;margin:0 0 7px;opacity:.92}
+</style><style id="vivo-contextual-controls-and-theme-v4">
+#vivoMessengerPlus,#vivoMessengerPlusMenu,#vivoThemeQuick{display:none!important}
+body.vivo-chat-home #vivoMessengerPlus,body.vivo-chat-home #vivoThemeQuick{display:grid!important}
+body.vivo-chat-home #vivoMessengerPlusMenu.open{display:block!important}
+#vivoThemeQuick{width:54px!important;height:54px!important;border-radius:19px!important;border:1px solid #ffffff60!important;background:linear-gradient(145deg,#ffffffed,#e9f2f8e8)!important;color:#334b60!important;box-shadow:0 12px 34px #142b3d30, inset 0 1px #fff!important;font-size:0!important;backdrop-filter:blur(22px) saturate(1.5)!important;-webkit-backdrop-filter:blur(22px) saturate(1.5)!important}
+#vivoThemeQuick:before{content:"";width:23px;height:23px;display:block;background:currentColor;mask:var(--vivo-theme-icon) center/contain no-repeat;-webkit-mask:var(--vivo-theme-icon) center/contain no-repeat}
+body[data-theme="dark"] #vivoThemeQuick{background:linear-gradient(145deg,#24394fef,#14263bed)!important;color:#ffe6a4!important;border-color:#ffffff22!important;box-shadow:0 12px 34px #0007,inset 0 1px #ffffff18!important}
+#vivoThemeQuick:active{transform:scale(.94)}
+#vivoThemeMenu{position:fixed;left:16px;bottom:calc(145px + env(safe-area-inset-bottom));z-index:1450;width:min(260px,calc(100vw - 32px));padding:10px;border:1px solid #dce6eb;border-radius:20px;background:#ffffffed;color:#20353d;box-shadow:0 20px 55px #142c3d35;backdrop-filter:blur(24px);display:none}
+#vivoThemeMenu.open{display:block;animation:vivoPlusIn .16s ease-out}
+#vivoThemeMenu .vivo-theme-title{font-size:12px;color:#819198;padding:7px 10px 10px}
+#vivoThemeMenu button{width:100%;border:0;background:transparent;color:inherit;display:flex;align-items:center;gap:12px;padding:12px 11px;border-radius:13px;font:inherit;text-align:right}
+#vivoThemeMenu button[aria-checked="true"]{background:#e9f5f2;color:#087d6a;font-weight:700}
+#vivoThemeMenu button i{width:32px;height:32px;display:grid;place-items:center;border-radius:11px;background:#edf2f5;font-style:normal}
+#vivoThemeMenu button span{flex:1;font-size:13px}
+body[data-theme="dark"] #vivoThemeMenu{background:#14253aee;color:#edf4fb;border-color:#344b63}
+body[data-theme="dark"] #vivoThemeMenu button[aria-checked="true"]{background:#17463f;color:#8fe3cc}
+body[data-theme="dark"] #vivoThemeMenu button i{background:#253b53}
+body[data-theme="dark"] .vpf-shell,body[data-theme="dark"] .vpf-sub{background:#0d1828!important;color:#edf4fb!important}
+body[data-theme="dark"] .vpf-top,body[data-theme="dark"] .vpf-grid button,body[data-theme="dark"] .vpf-pref{background:#14243a!important;color:#edf4fb!important;border-color:#2b405b!important}
+body[data-theme="dark"] .vpf-hero{background:linear-gradient(180deg,#142d3b,#0d1828 78%)!important}
+body[data-theme="dark"] .vpf-avatar{border-color:#0d1828!important}
+body[data-theme="dark"] .vpf-names [dir=ltr],body[data-theme="dark"] .vpf-names p,body[data-theme="dark"] .vpf-grid button small,body[data-theme="dark"] .vpf-sub p{color:#9db0c3!important}
+body[data-theme="dark"] .vpf-grid button i{background:#1c3d43!important;color:#73d6bb!important}
+body[data-theme="dark"] .vpf-footer{border-color:#2b405b!important;color:#9db0c3!important}
+body[data-theme="dark"] .vpf-sub header button{background:#20374f!important;color:#e9f3fc!important}
+body[data-theme="dark"] .vpf-actions button{background:#1a3045!important;color:#eaf4fb!important;border-color:#344b60!important}
+body[data-theme="dark"] .vpf-actions .vpf-primary{background:linear-gradient(120deg,#168b73,#287d9e)!important}
+@media(max-width:760px){#vivoThemeQuick{bottom:calc(82px + env(safe-area-inset-bottom))!important;left:12px!important;width:48px!important;height:48px!important}#vivoThemeMenu{bottom:calc(140px + env(safe-area-inset-bottom))}}
 </style></head>
 <body>
 <section id="authScreen" class="authscreen">
@@ -1483,16 +1512,20 @@ window.vivoMessengerOpen=function(){ $('vivoSocial')?.classList.remove('open');$
 })();
 </script>
 
-<script id="vivo-theme-controller-v2">
+<script id="vivo-theme-and-context-controller-v4">
 (()=> {
  const KEY='vivo_preferences_v2';
  const read=()=>{try{return JSON.parse(localStorage.getItem(KEY)||'{}')}catch{return {}}};
- const resolved=()=>{const p=read();return p.theme==='system'||!p.theme?(matchMedia('(prefers-color-scheme: light)').matches?'light':'dark'):p.theme};
- const paint=()=>{const t=resolved();document.body.dataset.theme=t;document.documentElement.style.colorScheme=t;const m=document.querySelector('meta[name="theme-color"]');if(m)m.content=t==='dark'?'#080e1b':'#f3f5f8';const b=document.getElementById('vivoThemeQuick');if(b){b.textContent=t==='dark'?'☀':'☾';b.setAttribute('aria-label',t==='dark'?'فعال‌کردن حالت روشن':'فعال‌کردن حالت تاریک');b.title=b.getAttribute('aria-label')}};
- if(!document.getElementById('vivoThemeQuick')){const b=document.createElement('button');b.id='vivoThemeQuick';b.type='button';b.setAttribute('aria-label','تغییر حالت نمایش');b.addEventListener('click',()=>{const t=resolved()==='dark'?'light':'dark';if(typeof window.vivoSetTheme==='function')window.vivoSetTheme(t);else{const p=read();p.theme=t;localStorage.setItem(KEY,JSON.stringify(p))}paint()});document.body.appendChild(b)}
- paint();
- try{matchMedia('(prefers-color-scheme: light)').addEventListener('change',()=>{if(read().theme==='system'||!read().theme)paint()})}catch{}
- window.addEventListener('storage',e=>{if(e.key===KEY)paint()});
+ const pref=()=>read().theme||'system';
+ const resolved=()=>pref()==='system'?(matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light'):pref();
+ const icon={dark:'☀',light:'☾',system:'◐'};
+ const apply=()=>{const t=resolved();document.body.dataset.theme=t;document.documentElement.style.colorScheme=t;const meta=document.querySelector('meta[name="theme-color"]');if(meta)meta.content=t==='dark'?'#0d1828':'#f4f7f9';const b=document.getElementById('vivoThemeQuick');if(b){b.style.setProperty('--vivo-theme-icon',t==='dark'?'url("data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 viewBox=%270 0 24 24%27 fill=%27none%27 stroke=%27black%27 stroke-width=%272%27 stroke-linecap=%27round%27%3E%3Ccircle cx=%2712%27 cy=%2712%27 r=%274%27/%3E%3Cpath d=%27M12 2v2m0 16v2M4.93 4.93l1.42 1.42m11.3 11.3 1.42 1.42M2 12h2m16 0h2M4.93 19.07l1.42-1.42m11.3-11.3 1.42-1.42%27/%3E%3C/svg%3E")':'url("data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 viewBox=%270 0 24 24%27 fill=%27none%27 stroke=%27black%27 stroke-width=%272%27 stroke-linecap=%27round%27 stroke-linejoin=%27round%27%3E%3Cpath d=%27M20.9 13A9 9 0 0 1 11 3.1 9 9 0 1 0 20.9 13Z%27/%3E%3C/svg%3E")');b.title='ظاهر و پوسته؛ حالت '+(pref()==='dark'?'تیره':pref()==='light'?'روشن':'هماهنگ با دستگاه');b.setAttribute('aria-label',b.title)}};
+ const save=t=>{const p=read();p.theme=t;localStorage.setItem(KEY,JSON.stringify(p));apply();menu?.querySelectorAll('[data-theme-choice]').forEach(x=>x.setAttribute('aria-checked',String(x.dataset.themeChoice===t)))};
+ let menu;
+ const ensure=()=>{let b=document.getElementById('vivoThemeQuick');if(b){b.onclick=e=>{e.stopPropagation();menu.classList.toggle('open')}}if(!menu){menu=document.createElement('div');menu.id='vivoThemeMenu';menu.innerHTML='<div class="vivo-theme-title">حالت نمایش ویوو</div><button data-theme-choice="light" role="menuitemradio"><i>☀</i><span>روشن</span><b>◦</b></button><button data-theme-choice="dark" role="menuitemradio"><i>☾</i><span>تیره</span><b>◦</b></button><button data-theme-choice="system" role="menuitemradio"><i>◐</i><span>هماهنگ با دستگاه</span><b>◦</b></button>';document.body.appendChild(menu);menu.querySelectorAll('[data-theme-choice]').forEach(x=>x.onclick=()=>{save(x.dataset.themeChoice);menu.classList.remove('open')})}apply();save(pref())};
+ const sync=()=>{const app=document.getElementById('app'),layout=app?.querySelector('.layout'),modal=document.getElementById('modal');const visible=!!app&&!app.classList.contains('hidden')&&getComputedStyle(app).display!=='none';const room=!!layout?.classList.contains('roomopen');const overlay=!!modal?.classList.contains('open');const home=visible&&!room&&!overlay;document.body.classList.toggle('vivo-chat-home',home);const plus=document.getElementById('vivoMessengerPlus');const plusMenu=document.getElementById('vivoMessengerPlusMenu');if(plus)plus.hidden=!home;if(plusMenu&&!home)plusMenu.classList.remove('open');const theme=document.getElementById('vivoThemeQuick');if(theme)theme.hidden=!visible||overlay};
+ const init=()=>{ensure();sync();new MutationObserver(sync).observe(document.body,{subtree:true,childList:true,attributes:true,attributeFilter:['class','style','hidden']});document.addEventListener('click',e=>{if(!e.target.closest('#vivoThemeQuick')&&!e.target.closest('#vivoThemeMenu'))menu?.classList.remove('open')});document.addEventListener('keydown',e=>{if(e.key==='Escape')menu?.classList.remove('open')});try{matchMedia('(prefers-color-scheme: dark)').addEventListener('change',()=>{if(pref()==='system')apply()})}catch{};window.addEventListener('storage',e=>{if(e.key===KEY)apply()})};
+ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',init,{once:true});else init();
 })();
 </script>
 
