@@ -628,6 +628,86 @@ html,body{background:radial-gradient(ellipse at 8% 0%,#284b8038,transparent 34%)
 .ig-mobile-head,.ig-mobile-nav{display:none}
 @media(max-width:1050px){.ig-feed-layout{grid-template-columns:minmax(0,630px);justify-content:center}.ig-suggestions{display:none}}
 @media(max-width:760px){#vivoSocial{background:#fff}.ig-side{display:none}.ig-main{margin:0;padding-bottom:58px}.ig-mobile-head{height:52px;display:flex;align-items:center;justify-content:space-between;padding:0 15px;border-bottom:1px solid #dbdbdb;background:#fff;position:sticky;top:0;z-index:8}.ig-mobile-head b{font:800 26px Georgia,serif}.ig-mobile-head button{border:0;background:none;font-size:24px;margin-left:12px}.ig-feed-layout{display:block;padding:0 0 30px}.ig-stories-wrap{border:0;border-radius:0;border-bottom:1px solid #efefef;padding:13px 10px;margin:0}.ig-stories{gap:13px}.ig-post{border:0;border-radius:0;margin-bottom:12px;border-bottom:1px solid #efefef}.ig-post-media{max-height:620px}.ig-post-head{padding-left:12px;padding-right:12px}.ig-mobile-nav{display:flex;position:fixed;bottom:0;left:0;right:0;height:54px;background:#fff;border-top:1px solid #dbdbdb;z-index:10;justify-content:space-around;align-items:center}.ig-mobile-nav button{border:0;background:none;font-size:26px;color:#262626}.ig-feed{padding-bottom:10px}.ig-profile-head{gap:18px;padding:22px 14px}.ig-profile-photo{width:86px;height:86px}.ig-profile-info h2{font-size:17px}.ig-profile-stats{gap:13px;font-size:12px}.ig-grid{gap:2px;margin-top:10px}.ig-viewer{padding:0}.ig-viewer-card{width:100vw;height:100dvh;border-radius:0;max-height:none}.ig-viewer-close{right:13px;top:9px;z-index:1301}.ig-create-box{border:0;padding:18px}.ig-page-title{padding:0 14px}}
+
+/* VIVO 2026: coherent visual system and mobile navigation */
+:root{--vivo-accent:#079b89;--vivo-accent-dark:#08766f;--vivo-ink:#14272d;--vivo-paper:#f3f7f7}
+#vivoSocial{font-family:Vazirmatn,Tahoma,sans-serif;background:#f2f6f6;color:#172b31}
+#vivoSocial .ig-app{min-height:100dvh;background:radial-gradient(ellipse at 12% 0%,#21b69b14,transparent 35%),#f3f7f7;color:#172b31}
+#vivoSocial .ig-side{background:#fff;border-right:1px solid #dce7e7;box-shadow:8px 0 32px #153b4210;padding:25px 15px}
+#vivoSocial .ig-wordmark{font-family:Vazirmatn,Tahoma,sans-serif;font-weight:900;letter-spacing:1px;color:#087f77}
+#vivoSocial .ig-nav{border-radius:14px;margin:3px 0;color:#536b70;transition:background .18s,color .18s,transform .18s}
+#vivoSocial .ig-nav:hover{background:#eaf5f3;color:#087f77;transform:translateX(-2px)}
+#vivoSocial .ig-nav.active{background:#e6f5f1;color:#087f77;font-weight:800}
+#vivoSocial .ig-main{background:#f3f7f7}
+#vivoSocial .ig-feed-layout{max-width:1160px;grid-template-columns:minmax(0,650px) 300px;gap:34px;padding:30px 26px 70px}
+#vivoSocial .ig-stories-wrap{background:#fff;border:1px solid #e0e9e9;border-radius:20px;padding:17px 14px;margin-bottom:20px;box-shadow:0 7px 25px #173c4209}
+#vivoSocial .ig-stories{gap:15px}
+#vivoSocial .ig-story{color:#536b70}
+#vivoSocial .ig-story-ring{box-shadow:0 0 0 1px #e4eded}
+#vivoSocial .ig-post{background:#fff;border:1px solid #e0e8e8;border-radius:20px;margin:0 0 19px;overflow:hidden;box-shadow:0 8px 26px #173c420b}
+#vivoSocial .ig-post-head{padding:14px 16px}
+#vivoSocial .ig-post-media{background:#e8eeee}
+#vivoSocial .ig-post-actions{padding:11px 15px}
+#vivoSocial .ig-post-caption{padding:0 16px 15px;line-height:2}
+#vivoSocial .ig-suggestions{position:sticky;top:90px;align-self:start}
+#vivoSocial .ig-explore-head,#vivoSocial .ig-create-box,#vivoSocial .ig-profile{background:#fff;border:1px solid #e0e9e9;border-radius:20px;box-shadow:0 8px 26px #173c4209}
+#vivoSocial .ig-explore-head{padding:20px;margin-bottom:17px}
+#vivoSocial .ig-explore-head h2,#vivoSocial .ig-subheading{color:#17353a}
+#vivoSocial .ig-explore-head input,#vivoSocial .ig-message-search input{font-family:inherit}
+#vivoSocial .ig-primary{background:linear-gradient(120deg,#079b89,#087b8b);border-radius:12px;box-shadow:0 7px 18px #078b7d25}
+#vivoSocial .ig-secondary{border-radius:12px}
+#vivoSocial .ig-grid button{border-radius:5px;overflow:hidden}
+#vivoSocial .ig-profile{padding:18px}
+#vivoSocial .ig-profile-tabs{border-bottom:1px solid #e2ebeb}
+#vivoSocial .ig-profile-tabs button.active{color:#07877d;border-color:#07877d}
+#vivoSocial .ig-messages-layout{gap:16px}
+#vivoSocial .ig-inbox,#vivoSocial .ig-dm-empty{background:#fff;border:1px solid #e0e9e9;border-radius:18px;padding:16px}
+#vivoSocial .ig-dm-row{border-radius:12px}
+#vivoSocial .ig-dm-row:hover{background:#edf7f5}
+#vivoSocial .ig-mobile-head{background:#fff;border-bottom:1px solid #e0e9e9}
+#vivoSocial .ig-mobile-head b{font-family:Vazirmatn,Tahoma,sans-serif;font-weight:900;color:#087f77;letter-spacing:1px}
+#vivoSocial .ig-mobile-head button{width:38px;height:38px;border-radius:12px;background:#edf5f4;color:#24545a;font-size:19px;margin:0 0 0 7px}
+#vivoSocial .ig-mobile-nav{height:calc(66px + env(safe-area-inset-bottom));padding:5px 7px calc(5px + env(safe-area-inset-bottom));display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:3px;background:#fffffff2;border-top:1px solid #dce7e7;box-shadow:0 -8px 25px #173c420c;backdrop-filter:blur(18px)}
+#vivoSocial .ig-mobile-nav button{min-width:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;border:0;border-radius:12px;background:transparent;color:#6a7e82;font-family:inherit;font-size:10px}
+#vivoSocial .ig-mobile-nav button i{display:grid;place-items:center;height:25px;font-style:normal}
+#vivoSocial .ig-mobile-nav button span{display:block;font-size:10px;line-height:1.2}
+#vivoSocial .ig-mobile-nav button.active{color:#07877d;background:#eaf6f3;font-weight:800}
+#vivoSocial .ig-mobile-nav button:active{transform:scale(.96)}
+#vivoSocial .ig-reels-page{max-width:900px;margin:0 auto}
+#vivoSocial .ig-reels-heading{background:#fff;border:1px solid #e0e9e9;border-radius:18px;padding:18px;margin-bottom:15px}
+#vivoSocial .ig-reels-list{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:15px}
+#vivoSocial .ig-reel-card{background:#fff;border:1px solid #e0e9e9;border-radius:18px;overflow:hidden;box-shadow:0 8px 24px #173c420a}
+#vivoSocial .ig-reel-player{position:relative;aspect-ratio:9/15;max-height:690px;background:#101a20;overflow:hidden}
+#vivoSocial .ig-reel-player video{width:100%;height:100%;object-fit:cover}
+#vivoSocial .ig-reel-info{padding:12px 14px;color:#243c42}
+#vivoSocial .ig-reel-info p{font-size:13px;line-height:1.9}
+#vivoSocial .ig-reel-side-actions button{color:#fff}
+#vivoSocial .ig-local-note{border-radius:12px;background:#fff7e7;color:#765a24;padding:12px;line-height:1.9}
+#vivoSocial .ig-viewer-card{border-radius:18px}
+#app{background:#0b151d}
+#app .top{background:linear-gradient(110deg,#101d27f5,#13252cf2);border-bottom:1px solid #29434a}
+#app .logo{background:linear-gradient(140deg,#6be0c3,#20aa98 58%,#7da9ff);color:#07201d;box-shadow:0 8px 22px #2ac1a144}
+#app .sidebar{background:linear-gradient(180deg,#101d26,#0c171e);border-color:#29434a}
+#app .chatrow:hover,#app .chatrow.active{background:#19323a;border-color:#315c58}
+#app .search,#app .field,#app .composer textarea{border-color:#31505a}
+#app .btn.primary,#app .send{background:linear-gradient(120deg,#17a98f,#2386a1)}
+#app .mobilebar{background:#101d26f5;border-color:#29434a}
+#app .welcome .heroicon{background:linear-gradient(140deg,#14564d,#1e526c);border-color:#397c75}
+@media(max-width:760px){
+ #vivoSocial{overflow:auto}
+ #vivoSocial .ig-main{padding-bottom:calc(66px + env(safe-area-inset-bottom))}
+ #vivoSocial .ig-feed-layout{padding:0 0 20px}
+ #vivoSocial .ig-stories-wrap{border:0;border-bottom:1px solid #e3ebeb;border-radius:0;margin:0;padding:13px 10px;background:#fff}
+ #vivoSocial .ig-post{border-radius:0;border-left:0;border-right:0;margin-bottom:9px}
+ #vivoSocial .ig-post-media{max-height:68dvh}
+ #vivoSocial .ig-mobile-nav{left:0;right:0;bottom:0}
+ #vivoSocial .ig-reels-list{grid-template-columns:1fr;gap:12px}
+ #vivoSocial .ig-reel-player{height:calc(100dvh - 230px);max-height:none;aspect-ratio:auto}
+ #vivoSocial .ig-reel-card{border-radius:0;border-left:0;border-right:0}
+ #vivoSocial .ig-profile{border-radius:0;border-left:0;border-right:0}
+}
+@media(min-width:761px) and (max-width:1050px){#vivoSocial .ig-feed-layout{grid-template-columns:minmax(0,650px);justify-content:center}}
+
 </style></head>
 <body>
 <section id="authScreen" class="authscreen">
@@ -685,7 +765,7 @@ html,body{background:radial-gradient(ellipse at 8% 0%,#284b8038,transparent 34%)
    <div class="ig-side-bottom"><button class="ig-nav" data-ig-page="settings"><i data-vivo-icon="settings"></i><span>تنظیمات</span></button><button class="ig-nav" id="igExit"><i>↩</i><span>بازگشت به پیام‌رسان</span></button></div>
   </aside>
   <main class="ig-main">
-   <header class="ig-mobile-head"><b>VIVO</b><div><button data-ig-page="notifications">♡</button><button id="igMobileExit">×</button></div></header>
+   <header class="ig-mobile-head"><b>VIVO</b><div><button data-ig-page="reels" aria-label="ریلز" title="ریلز">▶</button><button data-ig-page="notifications" aria-label="اعلان‌ها">♧</button><button id="igMobileExit" aria-label="بازگشت به پیام‌رسان">×</button></div></header>
    <section class="ig-feed-layout">
     <div class="ig-center">
      <div class="ig-stories-wrap"><div class="ig-stories" id="igStories"></div></div>
@@ -693,8 +773,12 @@ html,body{background:radial-gradient(ellipse at 8% 0%,#284b8038,transparent 34%)
     </div>
     <aside class="ig-suggestions" id="igSuggestions"></aside>
    </section>
-   <nav class="ig-mobile-nav">
-    <button class="active" data-ig-page="home" aria-label="خانه"><i data-vivo-icon="home"></i></button><button data-ig-page="explore" aria-label="اکسپلور"><i data-vivo-icon="explore"></i></button><button data-ig-page="reels" aria-label="ریلز"><i data-vivo-icon="reels"></i></button><button data-ig-page="create" aria-label="ساختن"><i data-vivo-icon="create"></i></button><button data-ig-page="messages" aria-label="پیام‌ها"><i data-vivo-icon="messages"></i></button><button data-ig-page="profile" aria-label="پروفایل"><i data-vivo-icon="profile"></i></button>
+   <nav class="ig-mobile-nav" aria-label="ناوبری اصلی ویوو">
+    <button class="active" data-ig-page="home" aria-label="خانه"><i data-vivo-icon="home"></i><span>خانه</span></button>
+    <button data-ig-page="explore" aria-label="اکتشاف"><i data-vivo-icon="explore"></i><span>اکتشاف</span></button>
+    <button data-ig-page="create" aria-label="ساخت محتوا"><i data-vivo-icon="create"></i><span>ساخت</span></button>
+    <button type="button" aria-label="پیام‌رسان" onclick="vivoSocialClose()"><i data-vivo-icon="messages"></i><span>پیام‌رسان</span></button>
+    <button data-ig-page="profile" aria-label="نمایه"><i data-vivo-icon="profile"></i><span>نمایه</span></button>
    </nav>
   </main>
  </div>
