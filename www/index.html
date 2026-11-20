@@ -1118,7 +1118,58 @@ body[data-theme="dark"] .vpf-sub header button{background:#20374f!important;colo
 body[data-theme="dark"] .vpf-actions button{background:#1a3045!important;color:#eaf4fb!important;border-color:#344b60!important}
 body[data-theme="dark"] .vpf-actions .vpf-primary{background:linear-gradient(120deg,#168b73,#287d9e)!important}
 @media(max-width:760px){#vivoThemeQuick{bottom:calc(82px + env(safe-area-inset-bottom))!important;left:12px!important;width:48px!important;height:48px!important}#vivoThemeMenu{bottom:calc(140px + env(safe-area-inset-bottom))}}
-</style></head>
+</style>
+<style id="vivo-reference-layout">
+@media(max-width:760px){
+ #app>.top{height:66px!important;min-height:66px!important;position:sticky!important;top:0!important;z-index:1500!important;display:flex!important;align-items:center!important;justify-content:center!important;padding:0 12px!important;border:0!important;border-bottom:1px solid #303437!important;border-radius:0!important;background:#191b1d!important;box-shadow:none!important}
+ #app>.top .brand{position:absolute!important;left:50%!important;transform:translateX(-50%)!important;display:flex!important;align-items:center!important;gap:8px!important;font-size:21px!important;white-space:nowrap!important}
+ #app>.top .brand .logo{width:35px!important;height:35px!important;border-radius:50%!important}
+ #app>.top .topright{position:absolute!important;right:12px!important;top:0!important;height:66px!important;display:flex!important;align-items:center!important;gap:10px!important}
+ #app>.top .topright>.iconbtn{display:none!important}
+ #vivoHeaderMenu{position:absolute!important;left:13px!important;top:13px!important;width:40px!important;height:40px!important;display:grid!important;place-items:center!important;border:0!important;background:transparent!important;color:var(--text)!important;font-size:27px!important;z-index:2!important}
+ #vivoHeaderPlus,#vivoHeaderSearch{width:38px!important;height:38px!important;display:grid!important;place-items:center!important;border-radius:50%!important;border:1.5px solid #dfe5e6!important;background:transparent!important;color:var(--text)!important;font-size:27px!important;line-height:1!important}
+ #vivoHeaderPlus{font-size:30px!important}
+ #app .layout{display:block!important;height:calc(100dvh - 66px - 78px - env(safe-area-inset-bottom))!important;min-height:0!important;padding:0!important}
+ #app .sidebar{height:100%!important;min-height:0!important;padding:0 10px 10px!important;border:0!important;border-radius:0!important;background:#151719!important}
+ #app .sidehead{display:none!important}
+ #app .search{margin:10px 5px!important;width:calc(100% - 10px)!important;height:42px!important;border-radius:24px!important;background:#24282a!important;border:1px solid #373d40!important;color:#fff!important}
+ #app .tabs{display:flex!important;gap:20px!important;overflow-x:auto!important;white-space:nowrap!important;height:48px!important;padding:0 9px!important;align-items:stretch!important;border-bottom:1px solid #303437!important;scrollbar-width:none!important}
+ #app .tabs::-webkit-scrollbar{display:none!important}
+ #app .tabs .tab{flex:0 0 auto!important;padding:0 2px!important;border:0!important;border-bottom:3px solid transparent!important;border-radius:0!important;background:transparent!important;color:#a3aaad!important;font-size:13px!important}
+ #app .tabs .tab.active{border-bottom-color:#08ad8b!important;color:#fff!important}
+ #app .chatlist{padding:0 2px 8px!important;display:flex!important;flex-direction:column!important;gap:0!important}
+ #app .chatrow{display:grid!important;grid-template-columns:minmax(0,1fr) 58px!important;grid-template-areas:"meta avatar"!important;gap:11px!important;position:relative!important;align-items:center!important;min-height:82px!important;padding:10px 5px!important;border:0!important;border-bottom:1px solid #292e30!important;border-radius:0!important;background:transparent!important;text-align:right!important}
+ #app .chatrow .avatar{grid-area:avatar!important;width:54px!important;height:54px!important;border-radius:50%!important;overflow:hidden!important;display:grid!important;place-items:center!important;background:#30383b!important;color:#fff!important;font-size:20px!important}
+ #app .chatrow .avatar img{width:100%!important;height:100%!important;object-fit:cover!important}
+ #app .chatrow .chatmeta{grid-area:meta!important;min-width:0!important;display:flex!important;flex-direction:column!important;align-items:flex-start!important;gap:6px!important}
+ #app .chatrow .chatmeta strong{max-width:100%!important;overflow:hidden!important;text-overflow:ellipsis!important;white-space:nowrap!important;font-size:15px!important;font-weight:650!important;color:#f1f3f4!important}
+ #app .chatrow .chatmeta small{max-width:100%!important;overflow:hidden!important;text-overflow:ellipsis!important;white-space:nowrap!important;color:#92999c!important;font-size:12px!important}
+ #app .chatrow .chatstamp{position:absolute!important;left:7px!important;top:12px!important;color:#92999c!important;font-size:10px!important}
+ #app .mobilebar{position:fixed!important;z-index:1600!important;left:0!important;right:0!important;bottom:0!important;height:calc(68px + env(safe-area-inset-bottom))!important;padding:4px 5px calc(4px + env(safe-area-inset-bottom))!important;display:grid!important;grid-template-columns:repeat(5,minmax(0,1fr))!important;gap:1px!important;align-items:center!important;border:0!important;border-top:1px solid #303437!important;border-radius:0!important;background:#202224!important;box-shadow:none!important}
+ #app .mobilebar button{height:58px!important;min-width:0!important;flex:initial!important;display:flex!important;flex-direction:column!important;align-items:center!important;justify-content:center!important;gap:3px!important;padding:3px 0!important;border:0!important;border-radius:10px!important;background:transparent!important;color:#9da4a7!important;font-size:10px!important}
+ #app .mobilebar button b{width:auto!important;height:25px!important;display:grid!important;place-items:center!important;font-size:21px!important;line-height:1!important;color:inherit!important}
+ #app .mobilebar button span{font-size:9px!important;white-space:nowrap!important}
+ #app .mobilebar button.active{color:#fff!important;background:transparent!important}
+ #app .mobilebar #vivoNavPlus b{width:43px!important;height:43px!important;margin-top:-17px!important;border-radius:50%!important;background:#08ad8b!important;color:#fff!important;font-size:29px!important;box-shadow:0 3px 12px #0005!important}
+ #app .mobilebar #navSettings{display:none!important}
+ #vivoMessengerPlus{display:none!important}
+ #vivoMessengerPlusMenu{position:fixed!important;left:auto!important;right:12px!important;top:112px!important;bottom:auto!important;z-index:1800!important}
+ #app .main{height:100%!important;min-height:0!important;padding:0!important;background:#151719!important}
+ #app .layout.roomopen .main{display:flex!important}
+ #app .layout.roomopen .room{border-radius:0!important}
+}
+@media(min-width:761px){
+ #vivoHeaderMenu,#vivoHeaderPlus,#vivoHeaderSearch{display:none!important}
+}
+#vivoHeaderDrawer{position:fixed;inset:0;z-index:2100;display:none;background:#0008}
+#vivoHeaderDrawer.open{display:block}
+#vivoHeaderDrawer .vivo-drawer-panel{position:absolute;top:0;bottom:0;left:0;width:min(310px,84vw);padding:18px 12px;background:#202426;border-right:1px solid #394043;box-shadow:15px 0 40px #0007}
+#vivoHeaderDrawer h3{margin:8px 10px 18px;color:#f3f5f5;font-size:18px}
+#vivoHeaderDrawer button{width:100%;display:flex;gap:12px;align-items:center;text-align:right;padding:14px 12px;border:0;border-radius:11px;background:transparent;color:#e8ecee;font:inherit}
+#vivoHeaderDrawer button:active{background:#30383a}
+@media(max-width:760px){#app .top .brand{pointer-events:none}}
+</style>
+</head>
 <body>
 <section id="authScreen" class="authscreen">
  <div class="authcard">
@@ -1141,7 +1192,7 @@ body[data-theme="dark"] .vpf-actions .vpf-primary{background:linear-gradient(120
  </div>
 </section>
 <div id="app" class="app hidden">
- <header class="top"><div class="brand"><span class="logo">V</span> ویوو</div><div class="topright"><button class="iconbtn" id="installBtn" title="نصب برنامه">⇩</button><button class="iconbtn" id="notifyBtn" title="اعلان‌ها">♧</button><button class="iconbtn" id="settingsBtn" title="تنظیمات ویوو">⚙</button><button class="iconbtn" id="profileBtn" title="حساب کاربری">◉</button><button class="iconbtn" id="socialOpenBtn" title="اینستا ویوو" onclick="vivoSocialOpen()">◎</button><button class="iconbtn" id="botsBtn" title="ربات‌های من">♙</button></div></header>
+ <header class="top"><button class="vivo-header-menu" id="vivoHeaderMenu" aria-label="منوی اصلی">☰</button><div class="brand"><span class="logo">V</span> ویوو</div><div class="topright"><button class="vivo-header-plus" id="vivoHeaderPlus" aria-label="ایجاد">＋</button><button class="vivo-header-search" id="vivoHeaderSearch" aria-label="جست‌وجو">⌕</button><button class="iconbtn" id="installBtn" title="نصب برنامه">⇩</button><button class="iconbtn" id="notifyBtn" title="اعلان‌ها">♧</button><button class="iconbtn" id="settingsBtn" title="تنظیمات ویوو">⚙</button><button class="iconbtn" id="profileBtn" title="حساب کاربری">◉</button><button class="iconbtn" id="socialOpenBtn" title="اینستا ویوو" onclick="vivoSocialOpen()">◎</button><button class="iconbtn" id="botsBtn" title="ربات‌های من">♙</button></div></header>
  <div class="layout" id="layout">
   <aside class="sidebar">
    <div class="sidehead"><div><span class="eyebrow">VIVO MESSENGER</span><h2>پیام‌ها</h2></div><span class="live-mark"><i></i> فضای شخصی</span></div>
@@ -1158,7 +1209,7 @@ body[data-theme="dark"] .vpf-actions .vpf-primary{background:linear-gradient(120
    </section>
   </main>
  </div>
- <nav class="mobilebar"><button id="navChats"><b>▤</b>گفتگوها</button><button id="navAccount"><b>◉</b>حساب کاربری</button><button id="navSettings"><b>⚙</b>تنظیمات</button><button onclick="vivoSocialOpen()"><b>◎</b>اینستا ویوو</button><button id="mobileBotsBtn"><b>♙</b>ربات‌ها</button></nav>
+ <nav class="mobilebar"><button id="navChats" class="active"><b>▤</b><span>گفتگو</span></button><button id="vivoNavSocial" onclick="vivoSocialOpen()"><b>◎</b><span>اینستا ویوو</span></button><button id="vivoNavPlus"><b>＋</b><span>ایجاد</span></button><button id="mobileBotsBtn"><b>♙</b><span>ربات‌ها</span></button><button id="navAccount"><b>◉</b><span>پروفایل</span></button><button id="navSettings" class="vivo-nav-settings"><b>⚙</b><span>تنظیمات</span></button></nav>
 </div>
 
 <div id="vivoSocial" dir="rtl">
@@ -1230,7 +1281,7 @@ function openChat(id){const c=db.chats.find(x=>x.id===id);if(!c)return;db.active
 function current(){return db.chats.find(c=>c.id===db.active)}
 function renderMessages(){const c=current();if(!c)return;const box=$('messages');box.innerHTML='';if(!c.messages.length){box.innerHTML='<div class="empty">هنوز پیامی در این گفتگو نیست.<br>پیام اول را بنویسید.</div>';return}let last='';c.messages.forEach(m=>{const day=new Date(m.at).toLocaleDateString('fa-IR');if(day!==last){const d=document.createElement('div');d.className='day';d.textContent=day;box.appendChild(d);last=day}const el=document.createElement('div');el.className='bubble '+(m.from==='other'?'theirs':'mine');const a=m.attachment;let attachment='';if(a?.data){if(a.type?.startsWith('image/'))attachment='<a class="msg-attachment" href="'+esc(a.data)+'" target="_blank" rel="noopener"><img src="'+esc(a.data)+'" alt="'+esc(a.name||'تصویر پیوست')+'"></a>';else if(a.type?.startsWith('audio/'))attachment='<audio class="msg-attachment" controls src="'+esc(a.data)+'"></audio>';else if(a.type?.startsWith('video/'))attachment='<video class="msg-attachment" controls src="'+esc(a.data)+'"></video>';else attachment='<a class="msg-file" href="'+esc(a.data)+'" download="'+esc(a.name||'file')+'">📎 '+esc(a.name||'فایل پیوست')+'</a>'}el.innerHTML=(m.forwardedFrom?'<div class="vivo-forwarded-label">↗ باز ارسال از '+esc(m.forwardedFrom)+'</div>':'')+(m.reply?'<div class="reply"><small>پاسخ به</small>'+esc(m.reply)+'</div>':'')+esc(m.text||'').replace(/\n/g,'<br>')+attachment+(m.buttons?.length?'<div class="bot-inline-buttons">'+m.buttons.map(x=>'<button data-bot-button="'+esc(x)+'">'+esc(x)+'</button>').join('')+'</div>':'')+(m.reaction?'<button class="msg-reaction" data-react="'+esc(m.id)+'">'+esc(m.reaction)+'</button>':'')+(m.file?'<div class="reply">پیوست: '+esc(m.file)+'</div>':'')+'<time>'+new Date(m.at).toLocaleTimeString('fa-IR',{hour:'2-digit',minute:'2-digit'})+(m.edited?' · ویرایش‌شده':'')+'</time>';let sx=0,sy=0,longTimer=null,longTriggered=false;el.addEventListener('pointerdown',e=>{sx=e.clientX;sy=e.clientY;longTriggered=false;longTimer=setTimeout(()=>{longTriggered=true;vivoMessageQuickActions(m.id,el)},520)});el.addEventListener('pointermove',e=>{if(Math.abs(e.clientX-sx)>12||Math.abs(e.clientY-sy)>12)clearTimeout(longTimer)});el.addEventListener('pointerup',e=>{clearTimeout(longTimer);if(sx-e.clientX>55){replyTo(m.id);el.classList.add('reply-swipe');setTimeout(()=>el.classList.remove('reply-swipe'),260)}});el.addEventListener('pointercancel',()=>clearTimeout(longTimer));el.onclick=()=>{if(!longTriggered)messageMenu(m.id)};el.oncontextmenu=e=>{e.preventDefault();messageMenu(m.id)};box.appendChild(el)});box.scrollTop=box.scrollHeight}
 function send(){const text=$('messageInput').value.trim();if(!text)return;const c=current();if(!c)return;c.messages.push({id:crypto.randomUUID(),text,at:Date.now(),reply:reply?.text||null,from:'me'});reply=null;$('replyBar').classList.add('hidden');$('messageInput').value='';save();renderMessages();renderList();if(c.id==='botfather')botFatherReply(text);if(typeof vivoPrefs!=='undefined'&&vivoPrefs.sounds)vivoPlaySendSound()}
-function botFatherReply(text){const c=db.chats.find(x=>x.id==='botfather');if(!c)return;const t=text.trim().toLowerCase();let answer='برای دیدن راهنما، دستور /help را بفرست.';let buttons=[];if(t==='/start'){answer='به BotFather ویوو خوش آمدی. از منوی زیر برای آشنایی با امکانات مدیریت ربات استفاده کن.\n\nتوجه: این گفت‌وگو فعلاً راهنمای داخلی و محلی است؛ ساخت و اجرای ربات واقعی به سرویس سرور نیاز دارد.';buttons=['ساخت ربات جدید','ربات‌های من','راهنما','تنظیمات']}else if(t==='/help'||t==='راهنما'){answer='راهنمای BotFather ویوو:\n• ساخت ربات: تعریف نام و شناسه\n• ربات‌های من: مشاهده پیش‌نویس‌ها\n• تنظیمات: اطلاعات و وضعیت سرویس\n\nتوکن عملیاتی و اجرای وب‌هوک هنوز به سرور متصل نشده است.';buttons=['ساخت ربات جدید','ربات‌های من','تنظیمات']}else if(t==='ساخت ربات جدید'){answer='برای ساخت پیش‌نویس ربات، مرکز ربات‌ها را باز کن و نام، شناسه و توضیحات را وارد کن.';buttons=['باز کردن مرکز ربات‌ها','راهنما']}else if(t==='ربات‌های من'){answer='فهرست ربات‌های محلی در مرکز ربات‌ها قابل مشاهده است.';buttons=['باز کردن مرکز ربات‌ها']}else if(t==='تنظیمات'){answer='تنظیمات و وضعیت سرویس در مرکز ربات‌ها قرار دارد.';buttons=['باز کردن مرکز ربات‌ها']}else if(t==='باز کردن مرکز ربات‌ها'){openBotHub();return}setTimeout(()=>{c.messages.push({id:crypto.randomUUID(),text:answer,at:Date.now(),from:'other',buttons});save();renderMessages();renderList()},350)}
+function botFatherReply(text){const c=db.chats.find(x=>x.id==='botfather');if(!c)return;const t=text.trim().toLowerCase();let answer='فرمان شناخته نشد. برای دیدن فرمان‌ها /help را بفرست.';let buttons=[];if(t==='/start'||t==='منوی اصلی'){answer='به BotFather ویوو خوش آمدی.\\n\\nاز دکمه‌های زیر برای مدیریت ربات‌ها استفاده کن. ساخت ربات در این نسخه به‌صورت پیش‌نویس محلی انجام می‌شود؛ اتصال سرور و اجرای واقعی هنوز فعال نیست.';buttons=['ساخت ربات جدید','ربات‌های من','تنظیمات','راهنما']}else if(t==='/help'||t==='راهنما'){answer='راهنمای BotFather ویوو\\n/start — منوی اصلی\\n/newbot — ساخت پیش‌نویس ربات\\n/mybots — فهرست ربات‌ها\\n/settings — وضعیت و تنظیمات\\n/help — راهنما\\n\\nتوکن واقعی و وب‌هوک بدون backend امن صادر یا اجرا نمی‌شود.';buttons=['ساخت ربات جدید','ربات‌های من','تنظیمات','منوی اصلی']}else if(t==='/newbot'||t==='ساخت ربات جدید'){answer='برای ساخت ربات جدید، مرکز ربات‌ها را باز کن و نام، شناسه و توضیحات آن را ثبت کن. اطلاعات به‌صورت پیش‌نویس روی همین دستگاه ذخیره می‌شود.';buttons=['باز کردن مرکز ربات‌ها','راهنما','منوی اصلی']}else if(t==='/mybots'||t==='ربات‌های من'){answer='فهرست ربات‌های ساخته‌شده و پیش‌نویس‌ها را در مرکز ربات‌ها ببین.';buttons=['باز کردن مرکز ربات‌ها','منوی اصلی']}else if(t==='/settings'||t==='تنظیمات'){answer='وضعیت فعلی:\\nذخیره‌سازی: محلی روی دستگاه\\nصدور توکن واقعی: غیرفعال\\nاجرای وب‌هوک: غیرفعال\\nاتصال سرور: برقرار نشده';buttons=['باز کردن مرکز ربات‌ها','راهنما','منوی اصلی']}else if(t==='باز کردن مرکز ربات‌ها'){openBotHub();return}setTimeout(()=>{c.messages.push({id:crypto.randomUUID(),text:answer,at:Date.now(),from:'other',buttons});save();renderMessages();renderList()},250)}
 function openBotHub(){const el=$('vivoBotHub');if(el){el.classList.add('open');el.setAttribute('aria-hidden','false');if(typeof render==='function')render()}}
 
 $('sendBtn').onclick=send;$('messageInput').onkeydown=e=>{if(e.key==='Enter'&&!e.shiftKey&&vivoPrefs.enterSend!==false){e.preventDefault();send()}};$('messageInput').oninput=e=>{e.target.style.height='auto';e.target.style.height=Math.min(e.target.scrollHeight,140)+'px'};
@@ -1824,6 +1875,24 @@ if(typeof originalOpen==='function'&&!window.__vivoUnreadOpenWrapped){
 const profileBtn=$('profileBtn');if(profileBtn)profileBtn.onclick=window.vivoProfileOpen;
 const navAccount=$('navAccount');if(navAccount)navAccount.onclick=window.vivoProfileOpen;
 const settingsBtn=$('settingsBtn');if(settingsBtn)settingsBtn.onclick=()=>window.vivoProfileOpen();
+})();
+</script>
+
+<script id="vivo-reference-layout-js">
+(()=>{
+const $=id=>document.getElementById(id);
+const menu=$('vivoHeaderMenu'),plus=$('vivoHeaderPlus'),search=$('vivoHeaderSearch'),navPlus=$('vivoNavPlus');
+if(!menu||menu.dataset.bound)return;menu.dataset.bound='1';
+const drawer=document.createElement('div');drawer.id='vivoHeaderDrawer';drawer.innerHTML='<div class="vivo-drawer-panel"><h3>منوی ویوو</h3><button data-open="profileBtn">◉　پروفایل و حساب کاربری</button><button data-open="socialOpenBtn">◎　اینستا ویوو</button><button data-open="botsBtn">♙　BotFather و ربات‌ها</button><button data-open="settingsBtn">⚙　تنظیمات</button><button data-open="notifyBtn">♧　اعلان‌ها</button><button data-open="installBtn">⇩　نصب ویوو</button><button data-close="1">×　بستن منو</button></div>';
+document.body.appendChild(drawer);
+menu.onclick=()=>drawer.classList.add('open');drawer.addEventListener('click',e=>{if(e.target===drawer||e.target.closest('[data-close]')){drawer.classList.remove('open');return}const b=e.target.closest('[data-open]');if(!b)return;drawer.classList.remove('open');$(b.dataset.open)?.click()});
+const openPlus=()=>{$('vivoMessengerPlus')?.click()};
+plus.onclick=openPlus;navPlus.onclick=openPlus;
+search.onclick=()=>{$('search')?.focus();$('search')?.scrollIntoView({behavior:'smooth',block:'nearest'})};
+const account=$('navAccount');if(account)account.onclick=()=>window.vivoProfileOpen?.();
+const social=$('vivoNavSocial');if(social)social.onclick=()=>window.vivoSocialOpen?.();
+const bots=$('mobileBotsBtn');if(bots)bots.onclick=()=>{$('botsBtn')?.click()};
+const chats=$('navChats');if(chats)chats.onclick=()=>{window.vivoMessengerOpen?.();document.querySelectorAll('#app .mobilebar button').forEach(x=>x.classList.toggle('active',x.id==='navChats'))};
 })();
 </script>
 </body></html>
