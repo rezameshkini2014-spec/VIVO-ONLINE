@@ -2,8 +2,8 @@
 <html lang="fa" dir="rtl">
 <head>
 <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<meta name="theme-color" content="#0a1020"><meta name="description" content="ویوو؛ فضای گفت‌وگو و ارتباط">
-<link rel="manifest" href="/manifest.webmanifest"><title>ویوو | پیام‌رسان</title>
+<meta name="theme-color" content="#eef4f6"><meta name="description" content="ویوو؛ فضای گفت‌وگو و ارتباط">
+<link rel="manifest" href="/manifest.webmanifest"><title>VIVO | ویوو</title>
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Vazirmatn:wght@300;400;500;600;700;800;900&display=swap');
 :root{color-scheme:dark;--bg:#080d18;--panel:#101a2c;--panel2:#15233a;--line:#293b59;--text:#f4f7ff;--muted:#91a2bf;--blue:#668cff;--cyan:#55d6d0;--violet:#a58aff;--red:#ff7187;--green:#55d6a7;--shadow:0 22px 70px #0006}
@@ -628,7 +628,444 @@ html,body{background:radial-gradient(ellipse at 8% 0%,#284b8038,transparent 34%)
 .ig-mobile-head,.ig-mobile-nav{display:none}
 @media(max-width:1050px){.ig-feed-layout{grid-template-columns:minmax(0,630px);justify-content:center}.ig-suggestions{display:none}}
 @media(max-width:760px){#vivoSocial{background:#fff}.ig-side{display:none}.ig-main{margin:0;padding-bottom:58px}.ig-mobile-head{height:52px;display:flex;align-items:center;justify-content:space-between;padding:0 15px;border-bottom:1px solid #dbdbdb;background:#fff;position:sticky;top:0;z-index:8}.ig-mobile-head b{font:800 26px Georgia,serif}.ig-mobile-head button{border:0;background:none;font-size:24px;margin-left:12px}.ig-feed-layout{display:block;padding:0 0 30px}.ig-stories-wrap{border:0;border-radius:0;border-bottom:1px solid #efefef;padding:13px 10px;margin:0}.ig-stories{gap:13px}.ig-post{border:0;border-radius:0;margin-bottom:12px;border-bottom:1px solid #efefef}.ig-post-media{max-height:620px}.ig-post-head{padding-left:12px;padding-right:12px}.ig-mobile-nav{display:flex;position:fixed;bottom:0;left:0;right:0;height:54px;background:#fff;border-top:1px solid #dbdbdb;z-index:10;justify-content:space-around;align-items:center}.ig-mobile-nav button{border:0;background:none;font-size:26px;color:#262626}.ig-feed{padding-bottom:10px}.ig-profile-head{gap:18px;padding:22px 14px}.ig-profile-photo{width:86px;height:86px}.ig-profile-info h2{font-size:17px}.ig-profile-stats{gap:13px;font-size:12px}.ig-grid{gap:2px;margin-top:10px}.ig-viewer{padding:0}.ig-viewer-card{width:100vw;height:100dvh;border-radius:0;max-height:none}.ig-viewer-close{right:13px;top:9px;z-index:1301}.ig-create-box{border:0;padding:18px}.ig-page-title{padding:0 14px}}
-</style></head>
+</style><style id="vivo-2026-design-reset">
+/* VIVO 2026 — complete visual system reset */
+:root{
+ --bg:#f3f5f8;--panel:#ffffff;--panel-2:#f7f8fb;--line:#e4e8ef;
+ --text:#182230;--muted:#778397;--accent:#6558e8;--accent-2:#18a999;
+ --accent-soft:#efedff;--danger:#e45d72;--shadow:0 16px 44px rgba(28,39,64,.08);
+ --radius:18px;--radius-lg:24px;
+}
+html,body{background:var(--bg)!important;color:var(--text)!important;font-family:Vazirmatn,Tahoma,sans-serif!important}
+body{background-image:none!important}
+button,input,textarea,select{font-family:inherit}
+button{transition:background .18s,border-color .18s,color .18s,transform .18s,box-shadow .18s}
+button:focus-visible,input:focus-visible,textarea:focus-visible{outline:3px solid #6558e855;outline-offset:2px}
+.app{max-width:1600px;background:var(--bg);color:var(--text)}
+.top{height:76px;padding:0 clamp(16px,3vw,42px);background:#ffffffed;border-bottom:1px solid var(--line);box-shadow:0 3px 18px #1a29400a;backdrop-filter:blur(18px)}
+.brand{font-size:21px;color:#202a3a;gap:12px}
+.logo{width:42px;height:42px;border-radius:14px;background:#6558e8;color:#fff;box-shadow:0 7px 18px #6558e833}
+.topright{gap:8px}
+.iconbtn,.btn{border:1px solid var(--line);background:#fff;color:#344054;border-radius:13px;box-shadow:none}
+.iconbtn{width:43px;height:43px;font-size:17px}
+.iconbtn:hover,.btn:hover{transform:translateY(-1px);border-color:#b9b2fa;background:#f8f7ff;color:#5145ca}
+.btn.primary{background:var(--accent);color:#fff;border:1px solid var(--accent);box-shadow:0 7px 18px #6558e82a}
+.btn.primary:hover{background:#5549d4}
+.btn.subtle{background:#f3f4f8;color:#344054}
+.layout{grid-template-columns:350px minmax(0,1fr);min-height:calc(100dvh - 76px)}
+.sidebar{background:#fff;border-left:1px solid var(--line);padding:22px 17px}
+.sidehead{margin:2px 5px 18px}
+.sidehead h2{font-size:21px;color:#1e293b}
+.eyebrow{color:#8b7ff0;letter-spacing:1.4px;font-size:10px;font-weight:800}
+.live-mark{font-size:10px;color:#168c7e;background:#e9f8f4;border-radius:20px;padding:7px 10px}
+.search{background:#f6f7fa;border:1px solid #e8ebf1;color:#273244;border-radius:13px;padding:13px 15px}
+.search::placeholder,.composer textarea::placeholder{color:#9aa4b4}
+.tabs{gap:5px}
+.tab{border:1px solid transparent;background:#f2f4f8;color:#667085;padding:8px 12px}
+.tab.active{background:var(--accent-soft);border-color:#d8d3ff;color:#5145ca}
+.chatrow{padding:12px 10px;border-radius:15px}
+.chatrow:hover,.chatrow.active{background:#f4f3ff;border-color:#e2dfff}
+.avatar{border-radius:16px;background:linear-gradient(145deg,#786df0,#36b8a7);color:#fff}
+.chatmeta strong{font-size:13px;color:#263244}
+.chatmeta small{color:#8792a4}
+.chatstamp{color:#929bad}
+.main{padding:clamp(15px,2.2vw,30px);background:var(--bg)}
+.welcome{max-width:850px;text-align:right;padding:0;margin:20px auto;width:100%}
+.welcome-head{border-radius:26px;padding:30px;background:linear-gradient(115deg,#25234a,#5146b8 58%,#278f91);color:#fff;display:flex;align-items:center;justify-content:space-between;gap:20px;box-shadow:0 18px 40px #39327b22}
+.welcome-head h1{font-size:clamp(22px,3vw,34px);margin:8px 0;color:#fff}
+.welcome-head p{color:#e2e3ff;margin:0}
+.welcome-mark{width:100px;height:100px;border-radius:30px;background:#ffffff1c;border:1px solid #ffffff44;display:grid;place-items:center;font-size:58px;font-weight:900;color:#fff;flex:none}
+.overview-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px;margin-top:16px}
+.overview-card{background:#fff;border:1px solid var(--line);border-radius:20px;padding:20px;box-shadow:0 6px 22px #1b2c4406}
+.overview-card small{color:#8a95a6}
+.overview-card strong{color:#263244;font-size:20px}
+.overview-card p{color:#7b8798;font-size:12px;line-height:1.9}
+.overview-card.wide{grid-column:1/-1}
+.overview-icon{width:40px;height:40px;border-radius:13px;background:#eeedff;color:#6558e8;display:grid;place-items:center}
+.overview-icon.violet{background:#e9f8f5;color:#159c8b}
+.card-heading h2{font-size:18px;color:#263244;margin:5px 0}
+.secure-mark{background:#e8f8f1;color:#178a69;padding:7px 10px;border-radius:20px;font-size:11px}
+.info-line{border-top:1px solid #eef0f4;padding:11px 0;display:flex;justify-content:space-between;color:#788397;font-size:12px}
+.info-line b{color:#354154}
+.recent-item{background:#fafbfc;border:1px solid #edf0f4;border-radius:13px;color:#344054;padding:11px}
+.recent-item:hover{background:#f3f2ff;border-color:#e1ddff}
+.recent-avatar{background:#e8e6ff;color:#5a4ed1;border-radius:12px}
+.room{height:calc(100dvh - 125px);background:#fff;border:1px solid var(--line);border-radius:22px;overflow:hidden;box-shadow:var(--shadow)}
+.roomhead{padding:14px 17px;border-bottom:1px solid var(--line);background:#fff}
+.roomhead .avatar{border-radius:15px}
+.roominfo strong{color:#253145}
+.roominfo small{color:#8994a5}
+.roomtools .iconbtn{background:#f6f7fa}
+.messages{background:#f7f8fb;padding:22px}
+.day{color:#8d97a7;background:#fff;border:1px solid #e8ebf1;border-radius:30px;padding:5px 12px;align-self:center}
+.bubble{background:#fff;color:#344054;border:1px solid #e7eaf0;border-radius:18px 18px 5px 18px;box-shadow:0 3px 12px #26344a08}
+.bubble.mine{background:#6558e8;color:#fff;border-color:#6558e8;border-radius:18px 18px 18px 5px}
+.bubble time{color:#a8b1c1}
+.bubble.mine time{color:#e4e1ff}
+.composerwrap{background:#fff;border-top:1px solid var(--line);padding:13px 15px}
+.composer textarea{background:#f6f7fa;border:1px solid #e5e8ef;color:#263244;border-radius:15px}
+.send{background:var(--accent);color:#fff;box-shadow:0 7px 18px #6558e833}
+.replybar{background:#f1f0ff;color:#5145ca}
+.mobilebar{background:#fff;border-top:1px solid var(--line);box-shadow:0 -5px 20px #18233a0a}
+.mobilebar button{color:#667085}
+.mobilebar b{color:#6558e8}
+.modal{background:#17203388;backdrop-filter:blur(5px)}
+.dialog,.authcard{background:#fff;color:#263244;border:1px solid var(--line);border-radius:24px;box-shadow:var(--shadow)}
+.field{background:#f7f8fb;border:1px solid #e4e8ef;color:#263244}
+.dialog label{color:#667085}
+.authscreen{background:radial-gradient(circle at 15% 15%,#e9e7ff,transparent 35%),radial-gradient(circle at 90% 85%,#dff6f1,transparent 32%),#f4f6fa}
+.authcard{padding:34px}
+.authcard h1{color:#202b3b}
+.authcard p{color:#788397}
+.steps .step{background:#e7e9f0}
+.steps .step.on{background:var(--accent)}
+.toast{background:#24264a;border:1px solid #514ab1;box-shadow:var(--shadow)}
+.menu{background:#17203366;backdrop-filter:blur(4px)}
+.menupanel{background:#fff;color:#263244;border:1px solid var(--line);border-radius:22px}
+.menuitem{background:#f7f8fb;border:1px solid #e8ebf1;color:#344054}
+.menuitem:hover{background:#f0efff;border-color:#d8d3ff}
+.profile-dialog{background:#fff!important;border-color:var(--line)!important}
+.vp-wrap{color:#263244}
+.vp-cover{background:linear-gradient(120deg,#27254f,#6558e8 55%,#20a899)}
+.vp-cover:after{background:linear-gradient(0deg,#fff,transparent 75%)}
+.vp-avatar{border-color:#fff}
+.vp-stat,.vp-card{background:#fff;border-color:var(--line);color:#263244}
+.vp-stat span,.vp-info-row span{color:#778397}
+.vp-info-row b{color:#263244}
+.vp-tabs button{background:#f6f7fa;color:#667085;border-color:#e8ebf1}
+.vp-tabs button.active{background:#efedff;color:#5145ca;border-color:#d8d3ff}
+.vp-edit-grid label{color:#667085}
+.vp-edit-grid input,.vp-edit-grid textarea{background:#f7f8fb;border-color:#e4e8ef;color:#263244}
+.vp-footer{border-color:var(--line);color:#8994a5}
+#vivoSocial{background:#f3f5f8!important;color:#182230!important;font-family:Vazirmatn,Tahoma,sans-serif!important}
+#vivoSocial .ig-app{background:#f3f5f8!important;color:#182230!important}
+#vivoSocial .ig-side{width:250px;background:#fff;border:0;border-left:1px solid #e6e9f0;box-shadow:5px 0 24px #1a294008;padding:28px 16px}
+#vivoSocial .ig-wordmark{font-family:Vazirmatn,sans-serif;font-size:30px;letter-spacing:2px;color:#6558e8;padding:0 15px 34px}
+#vivoSocial .ig-nav{height:50px;margin:4px 0;border-radius:13px;color:#667085;font-size:14px}
+#vivoSocial .ig-nav i{display:grid;place-items:center;width:24px;height:24px}
+#vivoSocial .ig-nav:hover,#vivoSocial .ig-nav.active{background:#f0efff;color:#5549d4}
+#vivoSocial .ig-nav.active span{font-weight:800}
+#vivoSocial .ig-main{margin-left:250px;background:#f3f5f8}
+#vivoSocial .ig-feed-layout{max-width:1280px;grid-template-columns:minmax(0,700px) 300px;gap:42px;padding:30px 28px 70px}
+#vivoSocial .ig-stories-wrap,#vivoSocial .ig-post,#vivoSocial .ig-suggestions,#vivoSocial .ig-create-box,#vivoSocial .ig-messages-layout,#vivoSocial .ig-profile-card{background:#fff;border:1px solid #e5e8ef;border-radius:20px;box-shadow:0 8px 26px #1b2c4407;color:#253145}
+#vivoSocial .ig-stories-wrap{padding:17px 15px;margin-bottom:18px}
+#vivoSocial .ig-stories{gap:16px}
+#vivoSocial .ig-story{color:#344054}
+#vivoSocial .ig-story-ring{background:conic-gradient(#6558e8,#22b39f,#f0a85d,#6558e8)}
+#vivoSocial .ig-story-ring.seen{background:#d7dce5}
+#vivoSocial .ig-story-avatar{border-color:#fff;background:#eef0f6;color:#5c6680}
+#vivoSocial .ig-post{margin-bottom:18px;overflow:hidden}
+#vivoSocial .ig-post-head{height:66px}
+#vivoSocial .ig-post-user strong,#vivoSocial .ig-post-caption,#vivoSocial .ig-post-likes{color:#253145}
+#vivoSocial .ig-post-user small,#vivoSocial .ig-post-time{color:#8792a4}
+#vivoSocial .ig-post-media{background:#edf0f5}
+#vivoSocial .ig-post-actions{padding:12px 15px 4px}
+#vivoSocial .ig-action{color:#48556a}
+#vivoSocial .ig-action.liked{color:#e34f70}
+#vivoSocial .ig-post-comments{color:#697589}
+#vivoSocial .ig-add-comment{border-color:#edf0f4}
+#vivoSocial .ig-add-comment input{color:#263244}
+#vivoSocial .ig-add-comment button{color:#6558e8}
+#vivoSocial .ig-suggestions{padding:20px;position:sticky;top:22px}
+#vivoSocial .ig-own-info b,#vivoSocial .ig-suggest-person b{color:#263244}
+#vivoSocial .ig-own-info small,#vivoSocial .ig-suggest-person small{color:#8994a5}
+#vivoSocial .ig-suggest-title{color:#8994a5}
+#vivoSocial .ig-suggest-person button,#vivoSocial .ig-link{color:#6558e8}
+#vivoSocial .ig-empty{background:#fff;border:1px dashed #dfe3eb;border-radius:20px;color:#778397}
+#vivoSocial .ig-empty b,#vivoSocial .ig-page-title,#vivoSocial .ig-explore-head h2,#vivoSocial .ig-subheading{color:#253145}
+#vivoSocial .ig-create-box{padding:26px}
+#vivoSocial .ig-create-heading{color:#6558e8}
+#vivoSocial .ig-create-heading h2{color:#253145}
+#vivoSocial .ig-create-heading p{color:#8994a5}
+#vivoSocial .ig-field{background:#f7f8fb;border:1px solid #e3e7ef;color:#263244;border-radius:13px}
+#vivoSocial .ig-primary{background:#6558e8;color:#fff;border-radius:12px;box-shadow:0 7px 18px #6558e82a}
+#vivoSocial .ig-primary:hover{background:#5549d4}
+#vivoSocial .ig-secondary{background:#f1f2f7;color:#344054;border-radius:12px}
+#vivoSocial .ig-upload-zone{background:#f8f8ff;border-color:#bcb6f6;color:#6558e8;border-radius:16px}
+#vivoSocial .ig-upload-zone small{color:#8994a5}
+#vivoSocial .ig-profile{max-width:900px}
+#vivoSocial .ig-profile-top{border-color:#e7eaf0}
+#vivoSocial .ig-profile-title h2{color:#253145}
+#vivoSocial .ig-profile-stats button{color:#667085}
+#vivoSocial .ig-profile-stats b{color:#253145}
+#vivoSocial .ig-profile-bio{color:#475467}
+#vivoSocial .ig-profile-highlights button{color:#667085}
+#vivoSocial .ig-highlight,#vivoSocial .ig-highlight-add{border-color:#e4e8ef;background:#f5f6fa}
+#vivoSocial .ig-highlight-add{color:#6558e8}
+#vivoSocial .ig-profile-tabs{border-color:#e7eaf0}
+#vivoSocial .ig-profile-tabs button{color:#8994a5}
+#vivoSocial .ig-profile-tabs button.active{color:#6558e8;border-color:#6558e8}
+#vivoSocial .ig-grid button{background:#e9edf3}
+#vivoSocial .ig-explore-head label,#vivoSocial .ig-message-search{background:#fff;border:1px solid #e4e8ef;color:#778397;border-radius:13px}
+#vivoSocial .ig-explore-head input,#vivoSocial .ig-message-search input{color:#263244}
+#vivoSocial .ig-people-grid button{background:#fff;border:1px solid #e5e8ef;color:#344054;border-radius:16px}
+#vivoSocial .ig-messages-layout{overflow:hidden}
+#vivoSocial .ig-inbox{border-color:#e8ebf1}
+#vivoSocial .ig-dm-row{background:#fff;color:#344054}
+#vivoSocial .ig-dm-row:hover{background:#f4f3ff}
+#vivoSocial .ig-dm-row small{color:#8994a5}
+#vivoSocial .ig-chat-panel{background:#fff;border-color:#e5e8ef}
+#vivoSocial .ig-chat-panel>header{border-color:#e8ebf1}
+#vivoSocial .ig-chat-person{color:#263244}
+#vivoSocial .ig-chat-notice{background:#f5f4ff;color:#6558e8}
+#vivoSocial .ig-chat-messages{background:#f8f9fb}
+#vivoSocial .ig-chat-bubble{background:#fff;border:1px solid #e5e8ef;color:#344054}
+#vivoSocial .ig-chat-bubble.mine{background:#efedff;border-color:#ddd8ff}
+#vivoSocial .ig-chat-compose{background:#fff;border-color:#e8ebf1}
+#vivoSocial .ig-chat-compose input{background:#f7f8fb;border-color:#e4e8ef;color:#263244}
+#vivoSocial .ig-settings-list button{background:#fff;border-color:#e5e8ef;color:#344054;border-radius:14px}
+#vivoSocial .ig-local-note,#vivoSocial .ig-modal-help{background:#f4f5f9;color:#778397}
+#vivoSocial .ig-modal{background:#18233888;backdrop-filter:blur(6px)}
+#vivoSocial .ig-modal-card{background:#fff;color:#263244;border:1px solid #e5e8ef;border-radius:22px;box-shadow:var(--shadow)}
+#vivoSocial .ig-modal-card h3{color:#253145}
+#vivoSocial .ig-comment{border-color:#edf0f4}
+#vivoSocial .ig-comment-body{color:#344054}
+#vivoSocial .ig-comment-body small{color:#8994a5}
+#vivoSocial .ig-comment-tools button{color:#667085}
+#vivoSocial .ig-comment-reply{border-color:#dcd8ff}
+#vivoSocial .ig-danger-button{background:#fff0f2;color:#c63f58;border-radius:12px}
+#vivoSocial .ig-archive-row{border-color:#edf0f4;color:#475467}
+#vivoSocial .ig-toast{background:#25234a;border:1px solid #5149ae;box-shadow:var(--shadow)}
+#vivoSocial .ig-reels-heading{background:linear-gradient(115deg,#28254e,#6558e8);border:0;border-radius:22px;box-shadow:0 15px 32px #5145ca22}
+#vivoSocial .ig-reels-heading h2,#vivoSocial .ig-reels-heading p{color:#fff}
+#vivoSocial .ig-reels-heading span{color:#c9c4ff}
+#vivoSocial .ig-reel-card{border-radius:22px;border:1px solid #e5e8ef;background:#fff;box-shadow:0 8px 26px #1b2c4408}
+#vivoSocial .ig-reel-info{color:#263244}
+#vivoSocial .ig-reel-info p{color:#667085}
+#vivoSocial .ig-reel-author small{color:#8994a5}
+#vivoSocial .ig-viewer{background:#121827f5;backdrop-filter:blur(8px)}
+#vivoSocial .ig-viewer-card{border-radius:22px;box-shadow:0 25px 90px #0008}
+#vivoBotHub .vb-panel{background:#fff;color:#263244;border:1px solid #e5e8ef;border-radius:26px;box-shadow:0 24px 80px #18233833}
+#vivoBotHub .vb-head h2,#vivoBotHub .vb-create h3,#vivoBotHub .vb-list h3{color:#253145}
+#vivoBotHub .vb-notice{background:#fff8e8;border-color:#f5dfaa;color:#76551a}
+#vivoBotHub .vb-create,#vivoBotHub .vb-list{background:#f8f9fc;border-color:#e5e8ef}
+#vivoBotHub input,#vivoBotHub textarea{background:#fff;border-color:#e1e6ee;color:#263244}
+#vivoBotHub .vb-primary{background:#6558e8;color:#fff}
+@media(max-width:1050px){
+ #vivoSocial .ig-feed-layout{grid-template-columns:minmax(0,700px);justify-content:center}
+ #vivoSocial .ig-suggestions{display:none}
+}
+@media(max-width:760px){
+ .top{height:62px;padding:0 12px}
+ .brand{font-size:18px}.logo{width:37px;height:37px}
+ .topright{gap:5px}.topright .iconbtn{width:37px;height:37px}
+ .layout{display:block;min-height:calc(100dvh - 62px)}
+ .sidebar{min-height:calc(100dvh - 120px);padding:14px 12px 75px;border:0}
+ .main{display:none;padding:10px;height:calc(100dvh - 62px)}
+ .layout.roomopen .sidebar{display:none}.layout.roomopen .main{display:flex}
+ .room{height:calc(100dvh - 84px);border-radius:18px}
+ .roomhead{padding:10px}.messages{padding:13px 10px}.composerwrap{padding:10px}
+ .welcome{padding:0;margin:5px auto}.welcome-head{padding:21px;border-radius:20px}
+ .welcome-mark{width:70px;height:70px;font-size:40px;border-radius:22px}
+ .overview-grid{grid-template-columns:1fr;gap:10px}.overview-card.wide{grid-column:auto}
+ .overview-card{padding:16px;border-radius:17px}
+ .mobilebar{height:64px;padding:5px 4px calc(5px + env(safe-area-inset-bottom));}
+ .mobilebar button{font-size:9px}.mobilebar b{font-size:17px}
+ .authcard{padding:25px 21px}
+ #vivoSocial .ig-side{display:none}
+ #vivoSocial .ig-main{margin:0;padding-bottom:calc(66px + env(safe-area-inset-bottom))}
+ #vivoSocial .ig-mobile-head{height:58px;display:flex;align-items:center;justify-content:space-between;padding:0 17px;background:#ffffffed;border-bottom:1px solid #e8ebf1;position:sticky;top:0;z-index:8;backdrop-filter:blur(14px)}
+ #vivoSocial .ig-mobile-head b{font:900 24px Vazirmatn,sans-serif;letter-spacing:1px;color:#6558e8}
+ #vivoSocial .ig-mobile-head button{border:0;background:transparent;color:#344054;font-size:23px;margin-right:8px}
+ #vivoSocial .ig-feed-layout{display:block;padding:12px 0 24px}
+ #vivoSocial .ig-stories-wrap{margin:0 10px 13px;border-radius:17px;padding:13px 10px}
+ #vivoSocial .ig-stories{gap:13px}
+ #vivoSocial .ig-story{min-width:65px;width:65px}
+ #vivoSocial .ig-story-ring{width:60px;height:60px}
+ #vivoSocial .ig-post{margin:0 10px 14px;border-radius:17px;border:1px solid #e5e8ef}
+ #vivoSocial .ig-post-media{aspect-ratio:4/4.5;max-height:65dvh}
+ #vivoSocial .ig-mobile-nav{display:flex;position:fixed;bottom:0;left:0;right:0;height:calc(62px + env(safe-area-inset-bottom));padding-bottom:env(safe-area-inset-bottom);background:#ffffffed;border-top:1px solid #e4e8ef;box-shadow:0 -8px 24px #1b2c440a;z-index:10;justify-content:space-around;align-items:center;backdrop-filter:blur(16px)}
+ #vivoSocial .ig-mobile-nav button{display:grid;place-items:center;width:20%;height:56px;border:0;background:transparent;color:#8a94a5;font-size:0}
+ #vivoSocial .ig-mobile-nav button svg{width:23px;height:23px}
+ #vivoSocial .ig-mobile-nav button.active{color:#6558e8}
+ #vivoSocial .ig-mobile-nav button:nth-child(3){color:#6558e8}
+ #vivoSocial .ig-profile-top{gap:15px;padding:22px 15px}
+ #vivoSocial .ig-profile-photo{width:86px;height:86px}
+ #vivoSocial .ig-profile-title h2{font-size:17px}
+ #vivoSocial .ig-profile-stats{gap:8px}
+ #vivoSocial .ig-profile-highlights{padding:15px}
+ #vivoSocial .ig-profile-tabs{justify-content:space-around;gap:0}
+ #vivoSocial .ig-grid{gap:2px}
+ #vivoSocial .ig-create-box{margin:8px 10px;padding:19px;border-radius:18px}
+ #vivoSocial .ig-explore-head{padding:0 13px}
+ #vivoSocial .ig-subheading{padding:0 13px}
+ #vivoSocial .ig-people-grid{grid-template-columns:repeat(2,minmax(0,1fr));padding:0 10px}
+ #vivoSocial .ig-messages-layout{grid-template-columns:1fr;border-radius:0;border:0}
+ #vivoSocial .ig-chat-panel{height:calc(100dvh - 128px);border-radius:17px}
+ #vivoSocial .ig-viewer{padding:0}
+ #vivoSocial .ig-viewer-card{width:100vw;height:100dvh;border-radius:0;max-height:none}
+ #vivoSocial .ig-modal{padding:12px}
+ #vivoSocial .ig-modal-card{border-radius:20px;padding:18px}
+}
+@media(max-width:380px){#vivoSocial .ig-mobile-nav button svg{width:21px;height:21px}.topright #botsBtn{display:none}}
+@media(prefers-reduced-motion:reduce){*,*::before,*::after{transition:none!important;animation:none!important;scroll-behavior:auto!important}}
+<style id="vivo-messenger-interactions">
+/* Messenger conversation refinement */
+#welcome{display:none!important}
+#room{min-height:calc(100dvh - 110px)}
+.messages{align-items:stretch;gap:12px;padding:22px clamp(12px,3vw,34px)}
+.bubble{position:relative;align-self:flex-end!important;max-width:min(78%,620px);background:#e9e5ff!important;color:#262044!important;border:1px solid #d8d0ff!important;border-radius:19px 19px 5px 19px!important;box-shadow:0 5px 18px #30256c0b}
+.bubble.mine{align-self:flex-end!important}
+.bubble.theirs{align-self:flex-start!important;background:#fff!important;color:#263244!important;border-color:#e1e6ed!important;border-radius:19px 19px 19px 5px!important}
+.bubble time{color:#8792a4!important}
+.bubble.mine time{color:#756ca6!important}
+.bubble .reply{background:#dcd5ff!important;border-right:3px solid #6558e8!important;color:#5145a1!important}
+.bubble.theirs .reply{background:#f1f3f7!important;border-right-color:#19a18e!important;color:#526174!important}
+.bubble .reply small{display:block;font-size:10px;opacity:.75;margin-bottom:3px}
+.msg-reaction{display:inline-flex;margin-top:8px;border:1px solid #d8dce6;background:#fff;border-radius:20px;padding:3px 9px;font-size:17px;cursor:pointer}
+.bubble.reply-swipe{transform:translateX(-12px);transition:transform .18s}
+.reaction-picks{display:flex;justify-content:space-between;gap:6px;padding:10px 0 15px}
+.reaction-picks button{font-size:25px;border:0;border-radius:13px;background:#f1f2f7;padding:9px;cursor:pointer}
+.reaction-picks button:hover{background:#e7e3ff;transform:translateY(-2px)}
+.menuitem{border-radius:13px}
+.chatrow[data-bot="true"] .avatar{background:linear-gradient(145deg,#6a5ce8,#249d9a)}
+#botsBtn,#mobileBotsBtn{display:flex!important}
+#vivoBotHub .vb-overlay{z-index:40}
+@media(max-width:760px){#room{height:calc(100dvh - 78px);min-height:calc(100dvh - 78px)}.messages{padding:14px 10px}.bubble{max-width:86%}}
+.bot-inline-buttons{display:flex;flex-wrap:wrap;gap:7px;margin-top:12px}.bot-inline-buttons button{border:1px solid #d8d3ff;background:#f5f3ff;color:#574bc8;padding:8px 11px;border-radius:11px;font:inherit;font-size:11px;cursor:pointer}<style id="vivo-messenger-route">
+/* Route the social messenger tab to the dedicated VIVO Messenger */
+#vivoSocial .ig-mobile-nav button[data-ig-page="messages"]{color:#6558e8}
+#vivoSocial .ig-nav[data-ig-page="messages"]{font-weight:800}
+#vivoBotHub{z-index:60}
+#vivoBotHub .vb-panel{max-height:92dvh;overflow:auto}
+</style>
+<style id="vivo-messenger-refresh-20261120">
+:root{color-scheme:light;--bg:#f1f6f8;--panel:#fff;--panel2:#f7fafb;--line:#e1eaee;--text:#20343d;--muted:#71858d;--accent:#35ad98;--accent2:#688ee0;--shadow:0 18px 55px #24495814;--radius:22px}
+*{box-sizing:border-box}
+html,body{background:#eef4f6!important;color:var(--text)!important;font-family:Tahoma,"Segoe UI",sans-serif}
+body{min-height:100dvh}
+#app{width:100%;max-width:none;min-height:100dvh;margin:0 auto;padding:0 0 84px!important;background:transparent!important}
+#app>.top{display:none!important}
+#app .layout{width:min(1600px,100%);margin:0 auto;min-height:calc(100dvh - 84px);display:grid;grid-template-columns:370px minmax(0,1fr);gap:0;background:transparent}
+#app .sidebar{height:calc(100dvh - 84px);position:sticky;top:0;overflow:hidden;display:flex;flex-direction:column;padding:26px 19px 18px;background:linear-gradient(180deg,#fff 0%,#f9fcfd 100%);border-left:1px solid #e2ebee;box-shadow:8px 0 40px #24495808}
+#app .sidehead{align-items:center;margin:0 3px 22px;padding:0 0 19px;border-bottom:1px solid #e9eff1}
+#app .sidehead>div{display:flex;flex-direction:column;gap:7px}
+#app .eyebrow{font-size:10px;letter-spacing:2px;font-weight:900;color:#55a89b}
+#app .sidehead h2{font-size:25px;letter-spacing:-.8px;color:#203a42}
+#app .live-mark{font-size:10px;color:#338d7d;background:#e8f7f2;padding:7px 10px;border-radius:30px}
+#app .live-mark i{display:inline-block;width:7px;height:7px;border-radius:50%;background:#39c49e;margin-left:5px;box-shadow:0 0 0 4px #39c49e20}
+#app .search{height:48px;border-radius:15px!important;background:#f3f7f8!important;border:1px solid #e2ebee!important;color:#263e46!important;padding:0 15px!important;margin-bottom:15px!important;box-shadow:none!important}
+#app .search::placeholder{color:#91a2a8}
+#app .tabs{gap:6px;margin:0 -2px 15px;padding:2px 1px 7px;scrollbar-width:none}
+#app .tab{border:1px solid #e5edef;background:#f7fafb;color:#70838a;border-radius:30px;padding:8px 13px;font-size:11px;transition:.2s}
+#app .tab.active{background:#ddf4ed;border-color:#b8e6d8;color:#16836d;font-weight:800;box-shadow:0 4px 12px #36b99812}
+#app .chatlist{flex:1;min-height:0;overflow:auto;padding:2px 0 18px;gap:7px}
+#app .chatrow{position:relative;min-height:76px;padding:11px 10px;border:1px solid transparent;border-radius:18px;gap:12px;background:transparent;transition:background .18s,border .18s,transform .18s}
+#app .chatrow:hover{background:#f3f8f8;border-color:#e6eff0;transform:translateY(-1px)}
+#app .chatrow.active{background:linear-gradient(110deg,#e6f7f1,#f0f6ff);border-color:#d4eee6;box-shadow:0 5px 18px #315f5910}
+#app .avatar{width:51px;height:51px;border-radius:18px;background:linear-gradient(145deg,#62cdb6,#79a8e6 60%,#a6a0ed);color:#fff;font-size:18px;box-shadow:0 7px 17px #609c9b28;border:2px solid white}
+#app .chatmeta strong{font-size:13px;color:#2b4149;font-weight:800}
+#app .chatmeta small{font-size:11px;color:#81949a;line-height:1.6}
+#app .chatstamp{font-size:10px;color:#93a4aa}
+#app .main{height:calc(100dvh - 84px);min-height:0;padding:22px 24px 24px;background:radial-gradient(ellipse at 75% 5%,#e0f3ef 0,transparent 38%),radial-gradient(ellipse at 12% 90%,#e8efff 0,transparent 36%),#f1f6f8}
+#app .welcome{display:none!important}
+#app .room{height:100%;min-height:0;padding:0;border:1px solid #e2ebee;border-radius:26px;overflow:hidden;background:#fbfdfe;box-shadow:var(--shadow)}
+#app .roomhead{min-height:82px;padding:13px 19px;background:#fff;border-bottom:1px solid #e7eef0;gap:13px}
+#app .roomhead .avatar{width:48px;height:48px}
+#app .roominfo strong{font-size:15px;color:#263f47;font-weight:800}
+#app .roominfo small{font-size:11px;color:#81949a}
+#app .roomtools .iconbtn{width:42px;height:42px;padding:0;border-radius:14px;background:#f4f8f9;border:1px solid #e6eef0;color:#5d747c}
+#app .messages{min-height:0;padding:26px clamp(12px,4vw,56px);gap:12px;background-color:#f5f9fa;background-image:radial-gradient(#a8c3c51c .8px,transparent .8px);background-size:20px 20px}
+#app .day{align-self:center;padding:6px 13px;margin:10px 0;border-radius:30px;background:#e8f0f2;color:#82969c;font-size:10px}
+#app .bubble{max-width:min(76%,650px);padding:11px 15px 8px;border:1px solid #e0e9ec;border-radius:19px 19px 5px 19px;background:#fff;color:#2b4149;box-shadow:0 5px 16px #2b56610c;line-height:1.9;font-size:13px}
+#app .bubble.mine{align-self:flex-start;background:linear-gradient(135deg,#d8f4e9,#e3f0fc);border-color:#c8e9df;color:#214b45;border-radius:19px 19px 19px 5px}
+#app .bubble.theirs{align-self:flex-end;background:#fff;color:#2b4149}
+#app .bubble time{color:#879da2;font-size:9px}
+#app .bubble .reply{background:#edf5f5;border-right:3px solid #48b99f;color:#5d777d;border-radius:8px;padding:6px 9px}
+#app .composerwrap{padding:13px 17px 16px;background:#fff;border-top:1px solid #e7eef0}
+#app .replybar{background:#eff8f5;color:#477d70;border:1px solid #dcefe8;border-radius:12px}
+#app .composer{align-items:flex-end;gap:9px}
+#app .composer .iconbtn{height:48px;min-width:46px;padding:0;border-radius:15px;background:#f3f8f8;border:1px solid #e5edef;color:#5b7880}
+#app .composer textarea{min-height:48px;max-height:130px;border-radius:16px;background:#f7fafb;border:1px solid #e2ebee;color:#263f47;padding:13px 15px}
+#app .composer textarea::placeholder{color:#94a5aa}
+#app .send{height:48px;min-width:50px;border-radius:16px;background:linear-gradient(135deg,#36b89e,#579bd2);color:white;box-shadow:0 7px 17px #4caa9a2b}
+#app .iconbtn,#app .btn{background:#fff;border:1px solid #e1eaed;color:#49636b}
+#app .btn.primary{background:linear-gradient(135deg,#36b89e,#579bd2);color:#fff;border:0}
+#app .modal{background:#19333b70;backdrop-filter:blur(7px)}
+#app .modal .sheet{background:#fff;color:#253d45;border:1px solid #e0eaed;border-radius:24px;box-shadow:0 24px 70px #1c465222}
+#app .modal .field{background:#f6fafb;color:#253d45;border-color:#dce8eb}
+#app .mobilebar{position:fixed!important;z-index:60!important;right:0;left:0;bottom:0;height:78px!important;padding:7px 12px calc(7px + env(safe-area-inset-bottom))!important;display:flex!important;align-items:center;justify-content:space-around;gap:4px;background:#ffffffed!important;border-top:1px solid #e1ebee!important;backdrop-filter:blur(22px);box-shadow:0 -8px 28px #31515a0c}
+#app .mobilebar button{flex:1;min-width:0;height:57px;padding:5px 2px!important;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:5px;border:0!important;border-radius:16px!important;background:transparent!important;color:#83969b!important;font-size:10px!important;transition:.18s}
+#app .mobilebar button b{font-size:0;line-height:1}
+#app .mobilebar button b svg{width:21px;height:21px;stroke:currentColor;fill:none;stroke-width:1.7}
+#app .mobilebar button span{font-size:10px}
+#app .mobilebar button:active,#app .mobilebar button:focus-visible{background:#e4f5ef!important;color:#16836d!important}
+#app .mobilebar button:first-child{color:#16836d!important;background:#e9f7f2!important}
+#app .toast{background:#274d4b;color:#fff;border:1px solid #70cbb5}
+#app .empty{color:#8ba0a5}
+#app .room .mobileback{display:none}
+#app .room.hidden{display:none!important}
+#app .layout.roomopen .sidebar{display:none}
+#app .layout.roomopen .main{display:flex}
+@media(max-width:760px){
+ #app{padding-bottom:calc(78px + env(safe-area-inset-bottom))!important}
+ #app .layout{display:block;height:calc(100dvh - 78px - env(safe-area-inset-bottom));min-height:0}
+ #app .sidebar{height:100%;min-height:0;padding:18px 13px 12px;border:0}
+ #app .sidehead{margin-bottom:15px;padding-bottom:14px}
+ #app .sidehead h2{font-size:23px}
+ #app .search{height:45px}
+ #app .main{height:100%;min-height:0;padding:8px 8px 10px;background:#f1f6f8}
+ #app .layout.roomopen .sidebar{display:none}
+ #app .layout.roomopen .main{display:flex}
+ #app .room{border-radius:19px;height:100%;width:100%}
+ #app .roomhead{min-height:68px;padding:8px 10px;gap:9px}
+ #app .roomhead .avatar{width:42px;height:42px;border-radius:15px}
+ #app .roomtools .iconbtn{width:36px;height:36px}
+ #app .room .mobileback{display:inline-grid;width:36px;height:36px;padding:0;border-radius:12px}
+ #app .messages{padding:15px 9px}
+ #app .bubble{max-width:88%;padding:9px 12px}
+ #app .composerwrap{padding:8px 8px max(9px,env(safe-area-inset-bottom))}
+ #app .composer{gap:5px}
+ #app .composer .iconbtn{min-width:39px;height:43px}
+ #app .composer textarea{min-height:43px;padding:10px}
+ #app .send{min-width:43px;height:43px}
+ #app .mobilebar{height:calc(78px + env(safe-area-inset-bottom))!important}
+}
+@media(min-width:761px){
+ #app .mobilebar{max-width:1600px;margin:auto;border-radius:22px 22px 0 0}
+ #app .layout.roomopen .sidebar{display:flex}
+}
+</style>
+
+<style id="vivo-theme-v2">
+:root{color-scheme:light}
+body{transition:background-color .22s ease,color .22s ease}
+#vivoThemeQuick{position:fixed;left:17px;bottom:76px;z-index:1400;width:46px;height:46px;border-radius:16px;border:1px solid #d9deea;background:#fff;color:#37415a;box-shadow:0 10px 28px #17243a22;display:grid;place-items:center;font-size:20px;cursor:pointer;backdrop-filter:blur(14px)}
+#vivoThemeQuick:focus-visible{outline:3px solid #6558e855;outline-offset:3px}
+body[data-theme="dark"]{color-scheme:dark;--bg:#080e1b;--panel:#111d31;--panel2:#172741;--line:#2a3e5e;--text:#edf3ff;--muted:#9aacc8;background:#080e1b!important;color:#edf3ff!important}
+body[data-theme="dark"] #app,body[data-theme="dark"] .app{background:#080e1b!important;color:#edf3ff!important}
+body[data-theme="dark"] .top,body[data-theme="dark"] .sidebar,body[data-theme="dark"] .mobilebar{background:#101b2ef5!important;border-color:#2b4163!important;color:#edf3ff}
+body[data-theme="dark"] .main,body[data-theme="dark"] .room,body[data-theme="dark"] .messages{background:#0c1729!important;color:#edf3ff!important}
+body[data-theme="dark"] .main{border-color:#2a3e5e}
+body[data-theme="dark"] .search,body[data-theme="dark"] .field,body[data-theme="dark"] .composer textarea{background:#0a1425!important;color:#edf3ff!important;border-color:#344b6e!important}
+body[data-theme="dark"] .chatrow,body[data-theme="dark"] .tab,body[data-theme="dark"] .feature,body[data-theme="dark"] .overview-card,body[data-theme="dark"] .vp-card,body[data-theme="dark"] .vp-stat,body[data-theme="dark"] .dialog,body[data-theme="dark"] .menupanel{background:#14233b!important;color:#edf3ff!important;border-color:#304869!important}
+body[data-theme="dark"] .chatrow:hover,body[data-theme="dark"] .chatrow.active{background:#203858!important}
+body[data-theme="dark"] .chatmeta strong,body[data-theme="dark"] .roominfo strong,body[data-theme="dark"] .welcome h1,body[data-theme="dark"] .welcome h2,body[data-theme="dark"] .sidehead h2{color:#f3f6ff!important}
+body[data-theme="dark"] .chatmeta small,body[data-theme="dark"] .muted,body[data-theme="dark"] .welcome p{color:#9aacc8!important}
+body[data-theme="dark"] .bubble{background:#1a2c47!important;color:#edf3ff!important;border-color:#344e73!important}
+body[data-theme="dark"] .bubble.mine{background:linear-gradient(135deg,#315fae,#514b9b)!important;color:#fff!important}
+body[data-theme="dark"] .roomhead,body[data-theme="dark"] .composerwrap{border-color:#2b4163!important}
+body[data-theme="dark"] .iconbtn,body[data-theme="dark"] .btn,body[data-theme="dark"] .tab{background:#172944!important;color:#eaf1ff!important;border-color:#344b6c!important}
+body[data-theme="dark"] .btn.primary,body[data-theme="dark"] .send{background:linear-gradient(120deg,#527eff,#8468ed)!important;color:#fff!important;border:0}
+body[data-theme="dark"] #vivoSocial,body[data-theme="dark"] .ig-app,body[data-theme="dark"] .ig-main{background:#080e1b!important;color:#edf3ff!important}
+body[data-theme="dark"] .ig-mobile-head,body[data-theme="dark"] .ig-stories-wrap,body[data-theme="dark"] .ig-post,body[data-theme="dark"] .ig-mobile-nav,body[data-theme="dark"] .ig-side{background:#101b2e!important;color:#edf3ff!important;border-color:#293d5d!important}
+body[data-theme="dark"] .ig-nav,body[data-theme="dark"] .ig-mobile-nav button,body[data-theme="dark"] .ig-post button{color:#edf3ff!important}
+body[data-theme="dark"] .ig-post{border-bottom-color:#293d5d!important}
+body[data-theme="dark"] .ig-post p,body[data-theme="dark"] .ig-post small,body[data-theme="dark"] .ig-suggestions{color:#b5c4dd!important}
+body[data-theme="dark"] .ig-modal-card{background:#14233b!important;color:#edf3ff!important}
+body[data-theme="dark"] .ig-modal-card input,body[data-theme="dark"] .ig-modal-card textarea{background:#091426!important;color:#edf3ff!important;border-color:#344b6c!important}
+body[data-theme="dark"] .ig-mobile-nav{border-top-color:#293d5d!important}
+body[data-theme="dark"] #vivoThemeQuick{background:#172944;color:#f7e6a7;border-color:#3c5276;box-shadow:0 10px 30px #0006}
+body[data-theme="light"] #vivoThemeQuick{background:#fff;color:#4f46b8}
+body[data-theme="light"] #vivoSocial,body[data-theme="light"] .ig-app,body[data-theme="light"] .ig-main{background:#f5f6fa!important;color:#20283a!important}
+body[data-theme="light"] .ig-mobile-head,body[data-theme="light"] .ig-stories-wrap,body[data-theme="light"] .ig-post,body[data-theme="light"] .ig-mobile-nav,body[data-theme="light"] .ig-side{background:#fff!important;color:#20283a!important;border-color:#e5e8ef!important}
+body[data-theme="light"] .ig-nav,body[data-theme="light"] .ig-mobile-nav button,body[data-theme="light"] .ig-post button{color:#273248!important}
+body[data-theme="light"] .ig-post{border-bottom-color:#e7eaf0!important}
+body[data-theme="light"] .ig-modal-card{background:#fff!important;color:#20283a!important}
+body[data-theme="light"] .ig-modal-card input,body[data-theme="light"] .ig-modal-card textarea{background:#f7f8fb!important;color:#20283a!important;border-color:#dfe3ec!important}
+@media(max-width:760px){#vivoThemeQuick{left:12px;bottom:68px;width:42px;height:42px;border-radius:14px}}
+</style>
+</head>
 <body>
 <section id="authScreen" class="authscreen">
  <div class="authcard">
@@ -694,7 +1131,7 @@ html,body{background:radial-gradient(ellipse at 8% 0%,#284b8038,transparent 34%)
     <aside class="ig-suggestions" id="igSuggestions"></aside>
    </section>
    <nav class="ig-mobile-nav">
-    <button class="active" data-ig-page="home" aria-label="خانه"><i data-vivo-icon="home"></i></button><button data-ig-page="explore" aria-label="اکسپلور"><i data-vivo-icon="explore"></i></button><button data-ig-page="reels" aria-label="ریلز"><i data-vivo-icon="reels"></i></button><button data-ig-page="create" aria-label="ساختن"><i data-vivo-icon="create"></i></button><button data-ig-page="messages" aria-label="پیام‌ها"><i data-vivo-icon="messages"></i></button><button data-ig-page="profile" aria-label="پروفایل"><i data-vivo-icon="profile"></i></button>
+    <button class="active" data-ig-page="home" aria-label="خانه"><i data-vivo-icon="home"></i></button><button data-ig-page="explore" aria-label="اکسپلور"><i data-vivo-icon="explore"></i></button><button data-ig-page="create" aria-label="ساختن"><i data-vivo-icon="create"></i></button><button data-ig-page="messages" aria-label="پیام‌رسان"><i data-vivo-icon="messages"></i></button><button data-ig-page="profile" aria-label="پروفایل"><i data-vivo-icon="profile"></i></button>
    </nav>
   </main>
  </div>
@@ -727,17 +1164,23 @@ let pending={phone:'',name:'',requestId:''};
 $('startOtp').onclick=async()=>{showError('');const phone=phoneNorm($('phone').value);const name=$('displayName').value.trim();if(!/^09\d{9}$/.test(phone))return showError('شماره موبایل معتبر ایران وارد کنید.');if(!name)return showError('نام نمایشی را وارد کنید.');pending.phone=phone;pending.name=name;$('startOtp').disabled=true;$('startOtp').textContent='در حال آماده‌سازی…';try{$('pushStatus').textContent='در حال فعال‌سازی اعلان‌های دستگاه…';await enablePush(phone);const result=await api('/api/otp/send',{phone});pending.requestId=result.requestId;$('phoneStep').classList.add('hidden');$('codeStep').classList.remove('hidden');$('authTitle').textContent='تأیید شماره موبایل';$('authDesc').textContent='اعلان کد شش‌رقمی ارسال شد. کد را از اعلان دستگاه وارد کنید.';$('st2').classList.add('on');$('pushStatus').textContent='اعلان ارسال شد؛ کد تا دو دقیقه اعتبار دارد.';$('otpCode').focus()}catch(e){showError(e.message);$('pushStatus').textContent='ارسال کد انجام نشد.'}finally{$('startOtp').disabled=false;$('startOtp').textContent='ادامه و فعال‌سازی اعلان'}};
 $('backPhone').onclick=()=>{$('codeStep').classList.add('hidden');$('phoneStep').classList.remove('hidden');$('authTitle').textContent='ساخت حساب ویوو';$('authDesc').textContent='شماره موبایل خود را وارد کنید. کد ورود از طریق اعلان روی همین دستگاه ارسال می‌شود.';showError('')};
 $('verifyOtp').onclick=async()=>{showError('');const code=$('otpCode').value.trim();if(!/^\d{6}$/.test(code))return showError('کد شش‌رقمی را کامل وارد کنید.');$('verifyOtp').disabled=true;try{await api('/api/otp/verify',{phone:pending.phone,requestId:pending.requestId,code});db.user={phone:pending.phone,name:pending.name,verifiedAt:Date.now()};if(!db.chats.some(c=>c.id==='saved'))db.chats.unshift({id:'saved',name:'پیام‌های ذخیره‌شده',type:'saved',messages:[],createdAt:Date.now()});save();enterApp()}catch(e){showError(e.message)}finally{$('verifyOtp').disabled=false}};
-function enterApp(){$('authScreen').classList.add('hidden');$('app').classList.remove('hidden');renderList();if(db.active)openChat(db.active);if(window.vivoSocialOpen)window.vivoSocialOpen();else window.__vivoOpenSocialOnReady=true}
-function renderList(){const q=$('search').value.trim().toLocaleLowerCase('fa');let list=db.chats.filter(c=>(filter==='all'||c.type===filter)&&((c.name+' '+(c.messages.at(-1)?.text||'')).toLocaleLowerCase('fa').includes(q)));list.sort((a,b)=>(b.pinned===true)-(a.pinned===true)||(b.messages.at(-1)?.at||b.createdAt)-(a.messages.at(-1)?.at||a.createdAt));$('chatList').innerHTML=list.length?'':'<div class="empty">گفتگویی پیدا نشد.</div>';const count=$('overviewChats');if(count)count.textContent=new Intl.NumberFormat('fa-IR').format(db.chats.length);const recent=$('welcomeRecent');if(recent){recent.innerHTML=db.chats.slice(0,4).map(c=>'<button class="recent-item" data-open="'+esc(c.id)+'"><span class="recent-avatar">'+esc(c.name.slice(0,1))+'</span><span><b>'+esc(c.name)+'</b><small>'+esc(c.messages.at(-1)?.text||'هنوز پیامی ثبت نشده')+'</small></span><i>‹</i></button>').join('')||'<div class="muted small">هنوز گفتگویی در این دستگاه وجود ندارد.</div>';recent.querySelectorAll('[data-open]').forEach(b=>b.onclick=()=>openChat(b.dataset.open))}list.forEach(c=>{const b=document.createElement('button');b.className='chatrow'+(db.active===c.id?' active':'');b.innerHTML='<span class="avatar">'+esc(c.name.slice(0,1))+'</span><span class="chatmeta"><strong>'+esc(c.name)+'</strong><small>'+esc(c.messages.at(-1)?.text||typeName(c.type))+'</small></span><span class="chatstamp">'+(c.messages.at(-1)?new Date(c.messages.at(-1).at).toLocaleTimeString('fa-IR',{hour:'2-digit',minute:'2-digit'}):'')+'</span>';b.onclick=()=>openChat(c.id);b.oncontextmenu=e=>{e.preventDefault();chatMenu(c.id)};$('chatList').appendChild(b)})}
+function ensureSystemChats(){if(!db.chats.some(c=>c.id==='botfather'))db.chats.unshift({id:'botfather',name:'BotFather',type:'bot',system:true,messages:[],createdAt:Date.now()});if(!db.chats.some(c=>c.id==='saved'))db.chats.unshift({id:'saved',name:'پیام‌های ذخیره‌شده',type:'saved',messages:[],createdAt:Date.now()});save()}
+function enterApp(){$('authScreen').classList.add('hidden');$('app').classList.remove('hidden');ensureSystemChats();$('welcome').classList.add('hidden');renderList();if(db.active)openChat(db.active);else{$('layout').classList.remove('roomopen');$('room').classList.add('hidden')}}
+window.vivoMessengerOpen=function(){if($('vivoSocial'))$('vivoSocial').classList.remove('open');$('app').classList.remove('hidden');$('layout').classList.remove('roomopen');$('room').classList.add('hidden');$('welcome').classList.add('hidden');renderList();window.scrollTo?.(0,0)};
+function renderList(){const q=$('search').value.trim().toLocaleLowerCase('fa');let list=db.chats.filter(c=>(filter==='all'||c.type===filter)&&((c.name+' '+(c.messages.at(-1)?.text||'')).toLocaleLowerCase('fa').includes(q)));list.sort((a,b)=>(b.pinned===true)-(a.pinned===true)||(b.messages.at(-1)?.at||b.createdAt)-(a.messages.at(-1)?.at||a.createdAt));$('chatList').innerHTML=list.length?'':'<div class="empty">گفتگویی پیدا نشد.</div>';const count=$('overviewChats');if(count)count.textContent=new Intl.NumberFormat('fa-IR').format(db.chats.length);const recent=$('welcomeRecent');if(recent){recent.innerHTML=db.chats.slice(0,4).map(c=>'<button class="recent-item" data-open="'+esc(c.id)+'"><span class="recent-avatar">'+esc(c.name.slice(0,1))+'</span><span><b>'+esc(c.name)+'</b><small>'+esc(c.messages.at(-1)?.text||'هنوز پیامی ثبت نشده')+'</small></span><i>‹</i></button>').join('')||'<div class="muted small">هنوز گفتگویی در این دستگاه وجود ندارد.</div>';recent.querySelectorAll('[data-open]').forEach(b=>b.onclick=()=>openChat(b.dataset.open))}list.forEach(c=>{const b=document.createElement('button');b.className='chatrow'+(db.active===c.id?' active':'');if(c.id==='botfather')b.dataset.bot='true';b.innerHTML='<span class="avatar">'+(c.id==='botfather'?'♙':esc(c.name.slice(0,1)))+'</span><span class="chatmeta"><strong>'+esc(c.name)+'</strong><small>'+esc(c.messages.at(-1)?.text||typeName(c.type))+'</small></span><span class="chatstamp">'+(c.messages.at(-1)?new Date(c.messages.at(-1).at).toLocaleTimeString('fa-IR',{hour:'2-digit',minute:'2-digit'}):'')+'</span>';b.onclick=()=>openChat(c.id);b.oncontextmenu=e=>{e.preventDefault();chatMenu(c.id)};$('chatList').appendChild(b)})}
 function typeName(t){return ({private:'گفتگوی شخصی · محلی',group:'گروه · محلی',channel:'کانال · محلی',saved:'فضای شخصی'})[t]||'گفتگو'}
-function openChat(id){const c=db.chats.find(x=>x.id===id);if(!c)return;db.active=id;save();$('layout').classList.add('roomopen');$('welcome').classList.add('hidden');$('room').classList.remove('hidden');$('roomName').textContent=c.name;$('roomAvatar').textContent=c.name.slice(0,1);$('roomSub').textContent=typeName(c.type)+' · پیام‌ها روی این دستگاه ذخیره می‌شوند';renderMessages();renderList()}
+function openChat(id){const c=db.chats.find(x=>x.id===id);if(!c)return;db.active=id;save();$('layout').classList.add('roomopen');$('welcome').classList.add('hidden');$('room').classList.remove('hidden');$('roomName').textContent=c.name;$('roomAvatar').textContent=c.name.slice(0,1);$('roomSub').textContent=c.id==='botfather'?'راهنمای ربات‌ساز ویوو · محلی و غیرعملیاتی':typeName(c.type)+' · پیام‌ها روی این دستگاه ذخیره می‌شوند';renderMessages();renderList()}
 function current(){return db.chats.find(c=>c.id===db.active)}
-function renderMessages(){const c=current();if(!c)return;const box=$('messages');box.innerHTML='';if(!c.messages.length){box.innerHTML='<div class="empty">هنوز پیامی در این گفتگو نیست.<br>پیام اول را بنویسید.</div>';return}let last='';c.messages.forEach(m=>{const day=new Date(m.at).toLocaleDateString('fa-IR');if(day!==last){const d=document.createElement('div');d.className='day';d.textContent=day;box.appendChild(d);last=day}const el=document.createElement('div');el.className='bubble mine';const a=m.attachment;let attachment='';if(a?.data){if(a.type?.startsWith('image/'))attachment='<a class="msg-attachment" href="'+esc(a.data)+'" target="_blank" rel="noopener"><img src="'+esc(a.data)+'" alt="'+esc(a.name||'تصویر پیوست')+'"></a>';else if(a.type?.startsWith('audio/'))attachment='<audio class="msg-attachment" controls src="'+esc(a.data)+'"></audio>';else if(a.type?.startsWith('video/'))attachment='<video class="msg-attachment" controls src="'+esc(a.data)+'"></video>';else attachment='<a class="msg-file" href="'+esc(a.data)+'" download="'+esc(a.name||'file')+'">📎 '+esc(a.name||'فایل پیوست')+'</a>'}el.innerHTML=(m.reply?'<div class="reply">'+esc(m.reply)+'</div>':'')+esc(m.text||'').replace(/\n/g,'<br>')+attachment+(m.reaction?'<div class="msg-reaction">'+esc(m.reaction)+'</div>':'')+(m.file?'<div class="reply">پیوست: '+esc(m.file)+'</div>':'')+'<time>'+new Date(m.at).toLocaleTimeString('fa-IR',{hour:'2-digit',minute:'2-digit'})+(m.edited?' · ویرایش‌شده':'')+'</time>';el.onclick=()=>messageMenu(m.id);el.oncontextmenu=e=>{e.preventDefault();messageMenu(m.id)};let start=0;el.ontouchstart=e=>start=e.touches[0].clientX;el.ontouchend=e=>{if(e.changedTouches[0].clientX-start>65){replyTo(m.id)}};box.appendChild(el)});box.scrollTop=box.scrollHeight}
-function send(){const text=$('messageInput').value.trim();if(!text)return;const c=current();if(!c)return;c.messages.push({id:crypto.randomUUID(),text,at:Date.now(),reply:reply?.text||null});reply=null;$('replyBar').classList.add('hidden');$('messageInput').value='';save();renderMessages();renderList();if(typeof vivoPrefs!=='undefined'&&vivoPrefs.sounds)vivoPlaySendSound()}
+function renderMessages(){const c=current();if(!c)return;const box=$('messages');box.innerHTML='';if(!c.messages.length){box.innerHTML='<div class="empty">هنوز پیامی در این گفتگو نیست.<br>پیام اول را بنویسید.</div>';return}let last='';c.messages.forEach(m=>{const day=new Date(m.at).toLocaleDateString('fa-IR');if(day!==last){const d=document.createElement('div');d.className='day';d.textContent=day;box.appendChild(d);last=day}const el=document.createElement('div');el.className='bubble '+(m.from==='other'?'theirs':'mine');const a=m.attachment;let attachment='';if(a?.data){if(a.type?.startsWith('image/'))attachment='<a class="msg-attachment" href="'+esc(a.data)+'" target="_blank" rel="noopener"><img src="'+esc(a.data)+'" alt="'+esc(a.name||'تصویر پیوست')+'"></a>';else if(a.type?.startsWith('audio/'))attachment='<audio class="msg-attachment" controls src="'+esc(a.data)+'"></audio>';else if(a.type?.startsWith('video/'))attachment='<video class="msg-attachment" controls src="'+esc(a.data)+'"></video>';else attachment='<a class="msg-file" href="'+esc(a.data)+'" download="'+esc(a.name||'file')+'">📎 '+esc(a.name||'فایل پیوست')+'</a>'}el.innerHTML=(m.reply?'<div class="reply"><small>پاسخ به</small>'+esc(m.reply)+'</div>':'')+esc(m.text||'').replace(/\n/g,'<br>')+attachment+(m.buttons?.length?'<div class="bot-inline-buttons">'+m.buttons.map(x=>'<button data-bot-button="'+esc(x)+'">'+esc(x)+'</button>').join('')+'</div>':'')+(m.reaction?'<button class="msg-reaction" data-react="'+esc(m.id)+'">'+esc(m.reaction)+'</button>':'')+(m.file?'<div class="reply">پیوست: '+esc(m.file)+'</div>':'')+'<time>'+new Date(m.at).toLocaleTimeString('fa-IR',{hour:'2-digit',minute:'2-digit'})+(m.edited?' · ویرایش‌شده':'')+'</time>';let sx=0,sy=0,longTimer=null,longTriggered=false;el.addEventListener('pointerdown',e=>{sx=e.clientX;sy=e.clientY;longTriggered=false;longTimer=setTimeout(()=>{longTriggered=true;messageMenu(m.id)},520)});el.addEventListener('pointermove',e=>{if(Math.abs(e.clientX-sx)>12||Math.abs(e.clientY-sy)>12)clearTimeout(longTimer)});el.addEventListener('pointerup',e=>{clearTimeout(longTimer);if(sx-e.clientX>55){replyTo(m.id);el.classList.add('reply-swipe');setTimeout(()=>el.classList.remove('reply-swipe'),260)}});el.addEventListener('pointercancel',()=>clearTimeout(longTimer));el.onclick=()=>{if(!longTriggered)messageMenu(m.id)};el.oncontextmenu=e=>{e.preventDefault();messageMenu(m.id)};box.appendChild(el)});box.scrollTop=box.scrollHeight}
+function send(){const text=$('messageInput').value.trim();if(!text)return;const c=current();if(!c)return;c.messages.push({id:crypto.randomUUID(),text,at:Date.now(),reply:reply?.text||null,from:'me'});reply=null;$('replyBar').classList.add('hidden');$('messageInput').value='';save();renderMessages();renderList();if(c.id==='botfather')botFatherReply(text);if(typeof vivoPrefs!=='undefined'&&vivoPrefs.sounds)vivoPlaySendSound()}
+function botFatherReply(text){const c=db.chats.find(x=>x.id==='botfather');if(!c)return;const t=text.trim().toLowerCase();let answer='برای دیدن راهنما، دستور /help را بفرست.';let buttons=[];if(t==='/start'){answer='به BotFather ویوو خوش آمدی. از منوی زیر برای آشنایی با امکانات مدیریت ربات استفاده کن.\n\nتوجه: این گفت‌وگو فعلاً راهنمای داخلی و محلی است؛ ساخت و اجرای ربات واقعی به سرویس سرور نیاز دارد.';buttons=['ساخت ربات جدید','ربات‌های من','راهنما','تنظیمات']}else if(t==='/help'||t==='راهنما'){answer='راهنمای BotFather ویوو:\n• ساخت ربات: تعریف نام و شناسه\n• ربات‌های من: مشاهده پیش‌نویس‌ها\n• تنظیمات: اطلاعات و وضعیت سرویس\n\nتوکن عملیاتی و اجرای وب‌هوک هنوز به سرور متصل نشده است.';buttons=['ساخت ربات جدید','ربات‌های من','تنظیمات']}else if(t==='ساخت ربات جدید'){answer='برای ساخت پیش‌نویس ربات، مرکز ربات‌ها را باز کن و نام، شناسه و توضیحات را وارد کن.';buttons=['باز کردن مرکز ربات‌ها','راهنما']}else if(t==='ربات‌های من'){answer='فهرست ربات‌های محلی در مرکز ربات‌ها قابل مشاهده است.';buttons=['باز کردن مرکز ربات‌ها']}else if(t==='تنظیمات'){answer='تنظیمات و وضعیت سرویس در مرکز ربات‌ها قرار دارد.';buttons=['باز کردن مرکز ربات‌ها']}else if(t==='باز کردن مرکز ربات‌ها'){openBotHub();return}setTimeout(()=>{c.messages.push({id:crypto.randomUUID(),text:answer,at:Date.now(),from:'other',buttons});save();renderMessages();renderList()},350)}
+function openBotHub(){const el=$('vivoBotHub');if(el){el.classList.add('open');el.setAttribute('aria-hidden','false');if(typeof render==='function')render()}}
+
 $('sendBtn').onclick=send;$('messageInput').onkeydown=e=>{if(e.key==='Enter'&&!e.shiftKey&&vivoPrefs.enterSend!==false){e.preventDefault();send()}};$('messageInput').oninput=e=>{e.target.style.height='auto';e.target.style.height=Math.min(e.target.scrollHeight,140)+'px'};
-function replyTo(id){const m=current()?.messages.find(x=>x.id===id);if(!m)return;reply=m;$('replyText').textContent='پاسخ به: '+m.text.slice(0,90);$('replyBar').classList.remove('hidden');$('messageInput').focus()}
+$('messages').addEventListener('click',e=>{const b=e.target.closest('[data-bot-button]');if(!b)return;$('messageInput').value=b.dataset.botButton;$('sendBtn').click()});
+function replyTo(id){const m=current()?.messages.find(x=>x.id===id);if(!m)return;reply=m;$('replyText').textContent='پاسخ به: '+(m.text||'پیوست').slice(0,90);$('replyBar').classList.remove('hidden');$('messageInput').focus()}
 $('cancelReply').onclick=()=>{reply=null;$('replyBar').classList.add('hidden')};
-function messageMenu(id){const c=current(),m=c?.messages.find(x=>x.id===id);if(!m)return;openMenu('<h3>مدیریت پیام</h3><button class="menuitem" data-action="reply">↩ پاسخ به پیام</button><button class="menuitem" data-action="edit">✎ ویرایش پیام</button><button class="menuitem" data-action="copy">▣ کپی متن</button><button class="menuitem" data-action="react">♡ واکنش ❤️</button><button class="menuitem" data-action="delete">حذف پیام</button>');$('menuPanel').querySelectorAll('[data-action]').forEach(b=>b.onclick=async()=>{closeMenu();if(b.dataset.action==='reply')replyTo(id);if(b.dataset.action==='edit'){const v=prompt('متن پیام',m.text);if(v?.trim()){m.text=v.trim();m.edited=true;save();renderMessages()}}if(b.dataset.action==='copy'){await navigator.clipboard?.writeText(m.text);toast('متن کپی شد')}if(b.dataset.action==='react'){m.reaction='❤️';save();toast('واکنش ذخیره شد')}if(b.dataset.action==='delete'){c.messages=c.messages.filter(x=>x.id!==id);save();renderMessages();renderList()}})}
+function messageMenu(id){const c=current(),m=c?.messages.find(x=>x.id===id);if(!m)return;openMenu('<h3>واکنش به پیام</h3><div class="reaction-picks">'+['❤️','👍','😂','😮','😢','🔥','👏','🎉'].map(x=>'<button data-emoji="'+x+'">'+x+'</button>').join('')+'</div><h3>مدیریت پیام</h3><button class="menuitem" data-action="reply">↩ پاسخ به پیام</button><button class="menuitem" data-action="edit">✎ ویرایش پیام</button><button class="menuitem" data-action="copy">▣ کپی متن</button><button class="menuitem" data-action="delete">حذف پیام</button>');$('menuPanel').querySelectorAll('[data-emoji]').forEach(b=>b.onclick=()=>{m.reaction=b.dataset.emoji;save();closeMenu();renderMessages()});$('menuPanel').querySelectorAll('[data-action]').forEach(b=>b.onclick=async()=>{closeMenu();if(b.dataset.action==='reply')replyTo(id);if(b.dataset.action==='edit'){if(m.from==='other')return toast('پیام مخاطب قابل ویرایش نیست.');const v=prompt('متن پیام',m.text);if(v?.trim()){m.text=v.trim();m.edited=true;save();renderMessages()}}if(b.dataset.action==='copy'){await navigator.clipboard?.writeText(m.text||'');toast('متن کپی شد')}if(b.dataset.action==='delete'){if(m.from==='other')return toast('پیام مخاطب را نمی‌توان حذف کرد.');c.messages=c.messages.filter(x=>x.id!==id);save();renderMessages();renderList()}})}
 function openModal(html){$('dialog').innerHTML=html;$('modal').classList.add('open')}function closeModal(){$('modal').classList.remove('open')}
 function openMenu(html){$('menuPanel').innerHTML=html;$('menu').classList.add('open')}function closeMenu(){$('menu').classList.remove('open')}
 $('modal').onclick=e=>{if(e.target===$('modal'))closeModal()};$('menu').onclick=e=>{if(e.target===$('menu'))closeMenu()};
@@ -764,7 +1207,7 @@ window.vivoProfileShare=function(){const u=db.user,txt='پروفایل '+(u.name
 $('profileBtn').onclick=vivoProfileOpen;$('navAccount').onclick=vivoProfileOpen;
 
 
-const VIVO_SETTINGS_KEY='vivo_preferences_v2';let vivoPrefs={theme:'dark',accent:'teal',density:'comfortable',font:'normal',enterSend:true,sounds:false};try{vivoPrefs={...vivoPrefs,...JSON.parse(localStorage.getItem(VIVO_SETTINGS_KEY)||'{}')}}catch{}
+const VIVO_SETTINGS_KEY='vivo_preferences_v2';let vivoPrefs={theme:'system',accent:'teal',density:'comfortable',font:'normal',enterSend:true,sounds:false};try{vivoPrefs={...vivoPrefs,...JSON.parse(localStorage.getItem(VIVO_SETTINGS_KEY)||'{}')}}catch{}
 function vivoPlaySendSound(){try{const C=window.AudioContext||window.webkitAudioContext;if(!C)return;const c=new C(),o=c.createOscillator(),g=c.createGain();o.type='sine';o.frequency.value=740;g.gain.setValueAtTime(.035,c.currentTime);g.gain.exponentialRampToValueAtTime(.001,c.currentTime+.09);o.connect(g);g.connect(c.destination);o.start();o.stop(c.currentTime+.1);o.onended=()=>c.close()}catch{}}
 function applyVivoPrefs(){const t=vivoPrefs.theme==='system'?(matchMedia('(prefers-color-scheme: light)').matches?'light':'dark'):vivoPrefs.theme;document.body.dataset.theme=t;document.body.dataset.accent=vivoPrefs.accent;document.body.dataset.density=vivoPrefs.density;document.body.dataset.font=vivoPrefs.font}
 function saveVivoPrefs(){localStorage.setItem(VIVO_SETTINGS_KEY,JSON.stringify(vivoPrefs));applyVivoPrefs()}
@@ -778,6 +1221,7 @@ else p.innerHTML='<section class="vs-section"><h3>فضای ذخیره‌سازی
 if(k==='appearance'){$('vsTheme').value=vivoPrefs.theme;$('vsDensity').value=vivoPrefs.density;$('vsFont').value=vivoPrefs.font;$('vsTheme').onchange=e=>{vivoPrefs.theme=e.target.value;saveVivoPrefs()};$('vsDensity').onchange=e=>{vivoPrefs.density=e.target.value;saveVivoPrefs()};$('vsFont').onchange=e=>{vivoPrefs.font=e.target.value;saveVivoPrefs()};document.querySelectorAll('[data-accent-choice]').forEach(b=>b.classList.toggle('active',b.dataset.accentChoice===vivoPrefs.accent))}
 if(k==='messages'){$('vsEnter').checked=vivoPrefs.enterSend;$('vsSounds').checked=vivoPrefs.sounds;$('vsEnter').onchange=e=>{vivoPrefs.enterSend=e.target.checked;saveVivoPrefs()};$('vsSounds').onchange=e=>{vivoPrefs.sounds=e.target.checked;saveVivoPrefs()}}
 }
+window.vivoSetTheme=function(t){if(!['light','dark','system'].includes(t))return;vivoPrefs.theme=t;saveVivoPrefs()};
 window.vivoSetAccent=function(a){vivoPrefs.accent=a;saveVivoPrefs();document.querySelectorAll('[data-accent-choice]').forEach(b=>b.classList.toggle('active',b.dataset.accentChoice===a))}
 window.vivoRequestNotifications=async function(){if(!('Notification'in window))return toast('اعلان در این محیط پشتیبانی نمی‌شود.');const p=await Notification.requestPermission();if($('vsNotifyState'))$('vsNotifyState').textContent=p;toast(p==='granted'?'مجوز اعلان فعال شد.':'مجوز اعلان فعال نشد.')}
 window.vivoExportData=function(){const data={app:'VIVO',version:2,exportedAt:new Date().toISOString(),db,prefs:vivoPrefs},blob=new Blob([JSON.stringify(data,null,2)],{type:'application/json'}),url=URL.createObjectURL(blob),a=document.createElement('a');a.href=url;a.download='vivo-backup-'+new Date().toISOString().slice(0,10)+'.json';a.click();setTimeout(()=>URL.revokeObjectURL(url),1000);toast('نسخه پشتیبان آماده شد.')}
@@ -916,7 +1360,7 @@ root.addEventListener('click',async e=>{const b=e.target.closest('button');if(!b
 if(b.dataset.createKind){if(b.dataset.createKind==='story'){storyComposer();return}if(!document.getElementById('igCreateMode'))page('create');const mode=$('igCreateMode');if(mode){mode.dataset.mode=b.dataset.createKind;document.querySelectorAll('[data-create-kind]').forEach(x=>x.classList.toggle('active',x.dataset.createKind===b.dataset.createKind));const file=$('igPostFile'),title=$('igUploadTitle'),hint=$('igUploadHint'),publish=$('igPublish');if(b.dataset.createKind==='reel'){file.accept='video/*';title.textContent='انتخاب ویدئوی ریلز';hint.textContent='فقط ویدئو؛ سقف فعلی ذخیرهٔ محلی ۱٫۲ مگابایت است.';publish.textContent='انتشار ریلز'}else{file.accept='image/*,video/*';title.textContent='انتخاب عکس یا ویدئو';hint.textContent='برای ریلز، حالت ریلز را انتخاب کن.';publish.textContent='انتشار پست'}}return}
 if(b.dataset.reelMute){const v=b.closest('.ig-reel-player')?.querySelector('video');if(v){v.muted=!v.muted;b.textContent=v.muted?'صدا روشن':'بی‌صدا'}return}
 if(b.id==='igExit'||b.id==='igMobileExit'){close();return}
-if(b.dataset.igPage){page(b.dataset.igPage);return}
+if(b.dataset.igPage){if(b.dataset.igPage==='messages'){close();window.vivoMessengerOpen?.();return}page(b.dataset.igPage);return}
 if(b.hasAttribute('data-story-create')){storyComposer();return}
 if(b.dataset.storyUser){openStories(b.dataset.storyUser);return}
 if(b.id==='igModalCancel'){closeModal();return}
@@ -983,4 +1427,26 @@ $('botsBtn')?.addEventListener('click',open);$('mobileBotsBtn')?.addEventListene
 $('vbCreate')?.addEventListener('click',()=>{const name=$('vbName').value.trim(),username=$('vbUsername').value.trim().toLowerCase(),description=$('vbDescription').value.trim();if(name.length<2)return notify('نام ربات باید دست‌کم دو نویسه باشد.');if(!/^[a-z][a-z0-9_]{3,29}$/.test(username))return notify('شناسه باید ۴ تا ۳۰ نویسه، با حرف انگلیسی شروع‌شده و فقط شامل حروف، عدد و زیرخط باشد.');if(bots.some(b=>b.username===username))return notify('این شناسه در پیش‌نویس‌های همین دستگاه تکراری است.');let t;try{t=token()}catch(e){return notify(e.message)}bots.unshift({id:Date.now().toString(36)+Math.random().toString(36).slice(2,7),name,username,description,token:t,createdAt:Date.now()});if(!save()){bots.shift();return notify('فضای ذخیره‌سازی دستگاه کافی نیست.')}$('vbName').value='';$('vbUsername').value='';$('vbDescription').value='';render();notify('پیش‌نویس ربات ساخته شد؛ کلید آن عملیاتی نیست.')});
 $('vbBotsList')?.addEventListener('click',async e=>{const b=e.target.closest('button');if(!b)return;const id=b.dataset.vbCopy||b.dataset.vbRotate||b.dataset.vbDelete,bot=bots.find(x=>x.id===id);if(!bot)return;if(b.dataset.vbCopy){try{await navigator.clipboard.writeText(bot.token);notify('کلید محلی کپی شد.')}catch{notify('کپی خودکار ممکن نیست؛ کلید را دستی انتخاب کن.')}return}if(b.dataset.vbRotate){if(!confirm('کلید محلی قبلی جایگزین شود؟'))return;try{bot.token=token()}catch(e){return notify(e.message)}if(!save())return notify('ذخیره کلید جدید ناموفق بود.');render();notify('کلید محلی جدید ساخته شد؛ کلید قبلی دیگر در این دستگاه نگهداری نمی‌شود.');return}if(b.dataset.vbDelete){if(!confirm('این پیش‌نویس از همین دستگاه حذف شود؟'))return;bots=bots.filter(x=>x.id!==id);save();render()}});
 })();
-</script></body></html>
+</script>
+<script id="vivo-messenger-navigation-fix">
+(()=>{const $=id=>document.getElementById(id);
+function showChats(){const layout=$('layout');if(!layout)return;layout.classList.remove('roomopen');$('room')?.classList.add('hidden');$('welcome')?.classList.add('hidden');if($('app'))$('app').classList.remove('hidden');}
+$('navChats')?.addEventListener('click',e=>{e.preventDefault();showChats()});
+$('backChats')?.addEventListener('click',e=>{e.preventDefault();showChats()});
+window.vivoMessengerOpen=function(){ $('vivoSocial')?.classList.remove('open');$('app')?.classList.remove('hidden');showChats();if(typeof renderList==='function')renderList();window.scrollTo?.(0,0)};
+})();
+</script>
+
+<script id="vivo-theme-controller-v2">
+(()=> {
+ const KEY='vivo_preferences_v2';
+ const read=()=>{try{return JSON.parse(localStorage.getItem(KEY)||'{}')}catch{return {}}};
+ const resolved=()=>{const p=read();return p.theme==='system'||!p.theme?(matchMedia('(prefers-color-scheme: light)').matches?'light':'dark'):p.theme};
+ const paint=()=>{const t=resolved();document.body.dataset.theme=t;document.documentElement.style.colorScheme=t;const m=document.querySelector('meta[name="theme-color"]');if(m)m.content=t==='dark'?'#080e1b':'#f3f5f8';const b=document.getElementById('vivoThemeQuick');if(b){b.textContent=t==='dark'?'☀':'☾';b.setAttribute('aria-label',t==='dark'?'فعال‌کردن حالت روشن':'فعال‌کردن حالت تاریک');b.title=b.getAttribute('aria-label')}};
+ if(!document.getElementById('vivoThemeQuick')){const b=document.createElement('button');b.id='vivoThemeQuick';b.type='button';b.setAttribute('aria-label','تغییر حالت نمایش');b.addEventListener('click',()=>{const t=resolved()==='dark'?'light':'dark';if(typeof window.vivoSetTheme==='function')window.vivoSetTheme(t);else{const p=read();p.theme=t;localStorage.setItem(KEY,JSON.stringify(p))}paint()});document.body.appendChild(b)}
+ paint();
+ try{matchMedia('(prefers-color-scheme: light)').addEventListener('change',()=>{if(read().theme==='system'||!read().theme)paint()})}catch{}
+ window.addEventListener('storage',e=>{if(e.key===KEY)paint()});
+})();
+</script>
+</body></html>
