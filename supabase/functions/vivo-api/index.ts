@@ -20,8 +20,8 @@ Deno.serve((req: Request) => {
 
   const url = new URL(req.url);
   const path = url.pathname
-    .replace(/^\\/functions\\/v1\\/vivo-api/, "")
-    .replace(/^\\/vivo-api/, "") || "/";
+    .replace(/^\/functions\/v1\/vivo-api/, "")
+    .replace(/^\/vivo-api/, "") || "/";
 
   if (path === "/health") {
     if (req.method !== "GET") {
