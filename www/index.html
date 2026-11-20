@@ -1169,11 +1169,53 @@ body[data-theme="dark"] .vpf-actions .vpf-primary{background:linear-gradient(120
 #vivoHeaderDrawer button:active{background:#30383a}
 @media(max-width:760px){#app .top .brand{pointer-events:none}}
 </style>
-</head>
+<style id="vivo-original-polish">
+:root{--bg:#151719;--panel:#1d2022;--panel2:#25292b;--line:#303638;--text:#f3f4f4;--muted:#92999c;--blue:#08ad8b;--cyan:#08ad8b;--green:#08ad8b;--shadow:0 18px 48px #0007}
+html,body{background:#151719!important;color:#f3f4f4}
+#app{background:#151719!important}
+#app>.top{background:#191b1d!important;border-bottom:1px solid #303437!important}
+#app>.top .brand{gap:9px!important;font-weight:800!important;letter-spacing:.1px!important}
+#app>.top .brand .logo,.authcard .brand .logo{background:transparent!important;box-shadow:none!important;border-radius:0!important;width:40px!important;height:40px!important;display:grid!important;place-items:center!important}
+.vivo-logo-mark svg{width:100%;height:100%;display:block;filter:drop-shadow(0 2px 8px #326cff55)}
+#app .tabs .tab.active{border-bottom-color:#08ad8b!important}
+#app .chatrow:hover,#app .chatrow.active{background:#202426!important;border-color:transparent!important}
+#app .chatrow .avatar{border:1px solid #343b3d!important}
+#app .roomhead{border-bottom-color:#303638!important}
+#app .bubble{background:#292d2f!important;border:1px solid #363c3e!important;color:#f1f3f3!important}
+#app .bubble.mine{background:#087f70!important;border-color:#099b84!important;color:#fff!important}
+#app .composerwrap{border-top-color:#303638!important}
+#app .composer textarea{background:#202426!important;border-color:#3a4143!important}
+#app .send{background:#08ad8b!important;box-shadow:none!important}
+#app .mobilebar{background:#202224!important;border-top:1px solid #303638!important}
+#app .mobilebar button.active{color:#fff!important}
+#app .mobilebar #vivoNavPlus b{background:#08ad8b!important}
+#app .iconbtn,#app .btn{box-shadow:none}
+#vivoHeaderPlus,#vivoHeaderSearch{border-color:#e2e6e7!important;background:transparent!important}
+#vivoHeaderPlus{font-size:0!important;position:relative!important}
+#vivoHeaderPlus:before{content:"+";font-size:29px;line-height:1;font-weight:300}
+#vivoHeaderSearch{font-size:0!important;position:relative!important}
+#vivoHeaderSearch:before{content:"";width:17px;height:17px;border:2px solid #eef1f2;border-radius:50%;position:absolute;top:7px;left:7px}
+#vivoHeaderSearch:after{content:"";width:9px;height:2px;background:#eef1f2;position:absolute;top:25px;left:23px;transform:rotate(48deg);border-radius:2px}
+#vivoHeaderMenu{font-size:0!important}
+#vivoHeaderMenu:before{content:"☰";font-size:26px;color:#f3f4f4}
+#vivoHeaderDrawer .vivo-drawer-panel{background:#202426!important;border-color:#343a3c!important}
+#vivoHeaderDrawer button:active{background:#303638!important}
+.profile-dialog{background:#191c1e!important;border-color:#343a3c!important}
+@media(max-width:760px){
+ #app>.top .brand .logo{width:40px!important;height:40px!important}
+ #app>.top .brand{font-size:21px!important}
+ #app .mobilebar{grid-template-columns:repeat(5,minmax(0,1fr))!important}
+ #app .mobilebar button{font-size:10px!important}
+ #app .mobilebar button span{font-size:9px!important}
+ #app .sidebar{background:#151719!important}
+ #app .chatrow{min-height:84px!important}
+ #app .chatrow .avatar{width:52px!important;height:52px!important}
+}
+</style></head>
 <body>
 <section id="authScreen" class="authscreen">
  <div class="authcard">
-  <div class="brand"><span class="logo">V</span> ویوو</div>
+  <div class="brand"><span class="logo vivo-logo-mark" aria-label="لوگوی VIVO"><svg viewBox="0 0 64 64" role="img" aria-hidden="true"><defs><linearGradient id="vivoMarkGradient" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#a83cf0"/><stop offset=".52" stop-color="#476cff"/><stop offset="1" stop-color="#00c9ed"/></linearGradient></defs><path d="M7 9h14l11 29L45 9h13L38 53c-2 5-9 5-12 0L7 9z" fill="url(#vivoMarkGradient)"/></svg></span> ویوو</div>
   <div class="steps"><i class="step on" id="st1"></i><i class="step" id="st2"></i><i class="step" id="st3"></i></div>
   <h1 id="authTitle">ساخت حساب ویوو</h1><p id="authDesc">شماره موبایل خود را وارد کنید. کد ورود از طریق اعلان روی همین دستگاه ارسال می‌شود.</p>
   <div id="phoneStep">
@@ -1192,7 +1234,7 @@ body[data-theme="dark"] .vpf-actions .vpf-primary{background:linear-gradient(120
  </div>
 </section>
 <div id="app" class="app hidden">
- <header class="top"><button class="vivo-header-menu" id="vivoHeaderMenu" aria-label="منوی اصلی">☰</button><div class="brand"><span class="logo">V</span> ویوو</div><div class="topright"><button class="vivo-header-plus" id="vivoHeaderPlus" aria-label="ایجاد">＋</button><button class="vivo-header-search" id="vivoHeaderSearch" aria-label="جست‌وجو">⌕</button><button class="iconbtn" id="installBtn" title="نصب برنامه">⇩</button><button class="iconbtn" id="notifyBtn" title="اعلان‌ها">♧</button><button class="iconbtn" id="settingsBtn" title="تنظیمات ویوو">⚙</button><button class="iconbtn" id="profileBtn" title="حساب کاربری">◉</button><button class="iconbtn" id="socialOpenBtn" title="اینستا ویوو" onclick="vivoSocialOpen()">◎</button><button class="iconbtn" id="botsBtn" title="ربات‌های من">♙</button></div></header>
+ <header class="top"><button class="vivo-header-menu" id="vivoHeaderMenu" aria-label="منوی اصلی">☰</button><div class="brand"><span class="logo vivo-logo-mark" aria-label="لوگوی VIVO"><svg viewBox="0 0 64 64" role="img" aria-hidden="true"><defs><linearGradient id="vivoMarkGradient" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#a83cf0"/><stop offset=".52" stop-color="#476cff"/><stop offset="1" stop-color="#00c9ed"/></linearGradient></defs><path d="M7 9h14l11 29L45 9h13L38 53c-2 5-9 5-12 0L7 9z" fill="url(#vivoMarkGradient)"/></svg></span> ویوو</div><div class="topright"><button class="vivo-header-plus" id="vivoHeaderPlus" aria-label="ایجاد">＋</button><button class="vivo-header-search" id="vivoHeaderSearch" aria-label="جست‌وجو">⌕</button><button class="iconbtn" id="installBtn" title="نصب برنامه">⇩</button><button class="iconbtn" id="notifyBtn" title="اعلان‌ها">♧</button><button class="iconbtn" id="settingsBtn" title="تنظیمات ویوو">⚙</button><button class="iconbtn" id="profileBtn" title="حساب کاربری">◉</button><button class="iconbtn" id="socialOpenBtn" title="اینستا ویوو" onclick="vivoSocialOpen()">◎</button><button class="iconbtn" id="botsBtn" title="ربات‌های من">♙</button></div></header>
  <div class="layout" id="layout">
   <aside class="sidebar">
    <div class="sidehead"><div><span class="eyebrow">VIVO MESSENGER</span><h2>پیام‌ها</h2></div><span class="live-mark"><i></i> فضای شخصی</span></div>
