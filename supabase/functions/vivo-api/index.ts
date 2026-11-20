@@ -304,6 +304,10 @@ Deno.serve(async (req: Request) => {
       const userIds = [...new Set(allMembers.map((x: any) => x.user_id).concat((chatsResult.data || []).map((x: any) => x.owner_id)))];
       const usersResult = userIds.length ? await supabase.from("vivo_users").select("id,display_name,username,avatar_url").in("id", userIds) : { data: [], error: null };
       const userMap = new Map((usersResult.data || []).map((x: any) => [x.id, x]));
+      const preferencesResult = await supabase.from("vivo_chat_contact_preferences")
+        .select("contact_user_id,nickname,avatar_url").eq("owner_id", userId);
+      if (preferencesResult.error) return json(500, { ok: false, error: "دریافت شخصی‌سازی مخاطبان ناموفق بود." });
+      const preferencesMap = new Map((preferencesResult.data || []).map((x: any) => [x.contact_user_id, x]));
       const latest = new Map<string, any>(), unread = new Map<string, number>();
       for (const msg of messagesResult.data || []) {
         if (msg.deleted_at) continue;
@@ -317,10 +321,14 @@ Deno.serve(async (req: Request) => {
       const result = (chatsResult.data || []).map((chat: any) => {
         const members = allMembers.filter((x: any) => x.chat_id === chat.id);
         const others = members.filter((x: any) => x.user_id !== userId).map((x: any) => userMap.get(x.user_id)).filter(Boolean);
+        const decoratedOthers = others.map((person: any) => {
+          const preference: any = preferencesMap.get(person.id);
+          return preference ? { ...person, display_name: preference.nickname || person.display_name, avatar_url: preference.avatar_url || person.avatar_url } : person;
+        });
         const last = latest.get(chat.id), member = members.find((x: any) => x.user_id === userId);
-        return { id: chat.id, name: chat.chat_type === "private" ? (others[0]?.display_name || chat.name) : chat.name,
+        return { id: chat.id, name: chat.chat_type === "private" ? (decoratedOthers[0]?.display_name || chat.name) : chat.name,
           type: chat.chat_type, description: chat.description, photo: chat.photo, pinned: chat.pinned,
-          unread: unread.get(chat.id) || 0, muted: !!member?.is_muted, participants: others,
+          unread: unread.get(chat.id) || 0, muted: !!member?.is_muted, participants: decoratedOthers,
           lastMessage: last ? { text: last.body, senderId: last.sender_id, sentAt: new Date(last.sent_at).getTime(), status: last.status } : null,
           updatedAt: new Date(chat.last_message_at || chat.created_at).getTime() };
       }).filter((chat: any) => chat.type !== "private" || !chat.participants.some((person: any) => blocked.has(person.id)))
@@ -365,6 +373,38 @@ Deno.serve(async (req: Request) => {
       return json(201, { ok: true, chat: { id: created.data.id, name, type: "group" } });
     }
 
+    if (path === "/chat/contact-preferences" && (req.method === "GET" || req.method === "POST")) {
+      const body = req.method === "POST" ? await req.json().catch(() => ({})) : {};
+      const chatId = safeText(req.method === "GET" ? url.searchParams.get("chatId") : body.chatId, 64);
+      if (!chatId || !(await isChatMember(chatId, userId))) return json(404, { ok: false, error: "گفت‌وگو پیدا نشد." });
+      const { data: chat } = await supabase.from("vivo_chats").select("chat_type").eq("id", chatId).maybeSingle();
+      if (chat?.chat_type !== "private") return json(400, { ok: false, error: "شخصی‌سازی نام و تصویر فقط برای گفت‌وگوی خصوصی فعال است." });
+      const { data: members } = await supabase.from("vivo_chat_members").select("user_id").eq("chat_id", chatId);
+      const target = (members || []).find((x: any) => x.user_id !== userId)?.user_id;
+      if (!target) return json(404, { ok: false, error: "مخاطب این گفت‌وگو پیدا نشد." });
+      if (req.method === "GET") {
+        const [pref, profile] = await Promise.all([
+          supabase.from("vivo_chat_contact_preferences").select("nickname,avatar_url").eq("owner_id", userId).eq("contact_user_id", target).maybeSingle(),
+          supabase.from("vivo_users").select("display_name,username,avatar_url").eq("id", target).single()
+        ]);
+        if (profile.error || !profile.data) return json(404, { ok: false, error: "پروفایل مخاطب پیدا نشد." });
+        return json(200, { ok: true, preference: pref.data || { nickname: null, avatar_url: null }, original: profile.data });
+      }
+      const nickname = typeof body.nickname === "string" ? body.nickname.trim().slice(0, 50) : "";
+      const avatarUrl = typeof body.avatarUrl === "string" ? body.avatarUrl.trim().slice(0, 2048) : "";
+      if (avatarUrl && !/^https:\/\//i.test(avatarUrl)) return json(400, { ok: false, error: "نشانی تصویر باید با HTTPS شروع شود." });
+      if (!nickname && !avatarUrl) {
+        const { error } = await supabase.from("vivo_chat_contact_preferences").delete().eq("owner_id", userId).eq("contact_user_id", target);
+        if (error) return json(500, { ok: false, error: "بازگرداندن مشخصات اصلی انجام نشد." });
+        return json(200, { ok: true, reset: true });
+      }
+      const { error } = await supabase.from("vivo_chat_contact_preferences").upsert({
+        owner_id: userId, contact_user_id: target, nickname: nickname || null, avatar_url: avatarUrl || null, updated_at: new Date().toISOString()
+      }, { onConflict: "owner_id,contact_user_id" });
+      if (error) return json(500, { ok: false, error: "ذخیره شخصی‌سازی مخاطب انجام نشد." });
+      return json(200, { ok: true });
+    }
+
     if (path === "/chat/messages" && req.method === "GET") {
       const chatId = url.searchParams.get("chatId") || "";
       if (!chatId || !(await isChatMember(chatId, userId))) return json(404, { ok: false, error: "گفت‌وگو پیدا نشد." });
@@ -377,13 +417,22 @@ Deno.serve(async (req: Request) => {
         messageIds.length ? supabase.from("vivo_message_reactions").select("message_id,user_id,reaction").in("message_id", messageIds) : Promise.resolve({ data: [], error: null })
       ]);
       const userMap = new Map((users.data || []).map((x: any) => [x.id, x]));
+      const senderPreferences = await supabase.from("vivo_chat_contact_preferences")
+        .select("contact_user_id,nickname,avatar_url").eq("owner_id", userId).in("contact_user_id", senderIds.filter((id: string) => id !== userId));
+      if (senderPreferences.error) return json(500, { ok: false, error: "دریافت نام‌های نمایشی مخاطبان ناموفق بود." });
+      const senderPreferenceMap = new Map((senderPreferences.data || []).map((x: any) => [x.contact_user_id, x]));
       const reactionMap = new Map<string, any[]>();
       for (const reaction of reactions.data || []) {
         const rows = reactionMap.get(reaction.message_id) || [];
         rows.push({ userId: reaction.user_id, reaction: reaction.reaction, fromMe: reaction.user_id === userId });
         reactionMap.set(reaction.message_id, rows);
       }
-      return json(200, { ok: true, messages: (data || []).map((x: any) => ({ id: x.id, senderId: x.sender_id, sender: userMap.get(x.sender_id) || null, fromMe: x.sender_id === userId, text: x.body, attachment: x.attachment, replyTo: x.reply_to, sentAt: new Date(x.sent_at).getTime(), status: x.status, editedAt: x.edited_at, reactions: reactionMap.get(x.id) || [] })) });
+      return json(200, { ok: true, messages: (data || []).map((x: any) => {
+        const originalSender: any = userMap.get(x.sender_id) || null;
+        const preference: any = senderPreferenceMap.get(x.sender_id);
+        const sender = originalSender && preference ? { ...originalSender, display_name: preference.nickname || originalSender.display_name, avatar_url: preference.avatar_url || originalSender.avatar_url } : originalSender;
+        return { id: x.id, senderId: x.sender_id, sender, fromMe: x.sender_id === userId, text: x.body, attachment: x.attachment, replyTo: x.reply_to, sentAt: new Date(x.sent_at).getTime(), status: x.status, editedAt: x.edited_at, reactions: reactionMap.get(x.id) || [] };
+      }) });
     }
 
     if (path === "/chat/send" && req.method === "POST") {
