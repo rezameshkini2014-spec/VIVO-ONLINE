@@ -1623,4 +1623,124 @@ function init(){
 if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',init,{once:true});else init();
 })();
 </script>
+<!-- VIVO FULL-VIEWPORT + PRIVATE PROFILE REFRESH 2026-11-20 -->
+<style id="vivo-fullscreen-free-layout-20261120">
+/* Edge-to-edge messenger: remove nested cards, artificial gutters and constrained width */
+html,body{width:100%;min-width:0;min-height:100%;margin:0;overflow-x:hidden}
+#app{width:100%!important;max-width:none!important;min-height:100dvh!important;margin:0!important;padding:0 0 78px!important}
+#app .layout{width:100%!important;max-width:none!important;margin:0!important;min-height:calc(100dvh - 78px)!important;grid-template-columns:minmax(300px, min(34vw,410px)) minmax(0,1fr)!important}
+#app .sidebar{width:100%;height:calc(100dvh - 78px)!important;min-height:0;padding:22px 18px 14px!important}
+#app .main{width:100%;height:calc(100dvh - 78px)!important;min-width:0;padding:0!important;background:#f1f6f8!important}
+#app .room{width:100%;height:100%!important;min-height:0;border:0!important;border-radius:0!important;box-shadow:none!important}
+#app .roomhead{min-height:76px;padding:12px clamp(14px,2vw,30px)!important}
+#app .messages{padding:22px clamp(14px,3vw,42px)!important}
+#app .composerwrap{padding:12px clamp(12px,2vw,28px) 14px!important}
+#app .chatrow{min-height:82px;padding:12px 10px!important;border-radius:15px!important}
+#app .avatar{width:56px;height:56px;border-radius:50%!important}
+#app .chatmeta strong{font-size:14px!important}
+#app .chatmeta small{font-size:12px!important}
+#app .chatstamp{font-size:11px!important}
+#app .bubble{max-width:min(82%,760px)!important;font-size:14px!important;padding:12px 16px 9px!important}
+#app .mobilebar{height:78px!important}
+#app .chat-unread-wrap{position:relative;display:block;flex:0 0 56px;width:56px;height:56px}
+#app .chat-unread-wrap .avatar{width:56px;height:56px}
+#app .chat-unread-badge{position:absolute;top:-5px;left:-5px;min-width:22px;height:22px;padding:0 6px;border:2px solid #fff;border-radius:99px;background:#08ad89;color:#fff;display:grid;place-items:center;font:800 10px/1 Tahoma,sans-serif;box-shadow:0 3px 9px #1233}
+#app .chat-unread-badge.mention{background:#e65d82}
+#app .chatrow .chatmeta{min-width:0}
+#app .chatrow .chatstamp{min-width:42px;text-align:left}
+#vivoBotHub{position:fixed!important;inset:0!important;padding:0!important;align-items:stretch!important;justify-content:stretch!important;background:#07111edb!important;backdrop-filter:blur(18px)!important;z-index:2200!important}
+#vivoBotHub .vb-panel{width:100%!important;max-width:none!important;height:100dvh!important;max-height:100dvh!important;margin:0!important;border:0!important;border-radius:0!important;padding:clamp(16px,3vw,34px)!important;overflow:auto!important;overscroll-behavior:contain}
+#vivoBotHub .vb-grid{grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:18px!important}
+#vivoBotHub .vb-create,#vivoBotHub .vb-list{border-radius:22px!important;padding:20px!important}
+#vivoBotHub .vb-head{position:sticky;top:calc(-1 * clamp(16px,3vw,34px));z-index:3;padding:12px 0 16px;background:inherit;backdrop-filter:blur(16px)}
+#vivoBotHub .vb-close{width:46px!important;height:46px!important;border-radius:16px!important}
+#vivoBotHub button{border-radius:15px!important;backdrop-filter:blur(14px)}
+#vivoBotHub .vb-primary,#vivoBotHub .vb-actions button{border:1px solid #ffffff30!important;box-shadow:0 8px 24px #0b9f8430!important}
+@media(max-width:760px){
+ #app{padding:0!important;min-height:100dvh!important}
+ #app .layout{display:block!important;width:100%!important;height:100dvh!important;min-height:0!important}
+ #app .sidebar{width:100%!important;height:calc(100dvh - 76px)!important;min-height:0!important;padding:18px 14px 12px!important}
+ #app .main{width:100%!important;height:100dvh!important;min-height:0!important;padding:0!important}
+ #app .room{height:100dvh!important;min-height:0!important;border-radius:0!important}
+ #app .roomhead{min-height:68px!important;padding:calc(7px + env(safe-area-inset-top)) 12px 8px!important;gap:9px!important}
+ #app .roomhead .avatar{width:44px;height:44px}
+ #app .messages{padding:14px 12px!important;gap:10px!important}
+ #app .bubble{max-width:88%!important;padding:10px 13px!important;font-size:14px!important}
+ #app .composerwrap{padding:9px 10px calc(10px + env(safe-area-inset-bottom))!important}
+ #app .mobilebar{height:calc(76px + env(safe-area-inset-bottom))!important;padding-bottom:env(safe-area-inset-bottom)!important}
+ #app .layout.roomopen~.mobilebar,#app .layout.roomopen .mobilebar{display:none!important}
+ #app:has(.layout.roomopen) .mobilebar{display:none!important}
+ #app:has(.layout.roomopen){padding:0!important}
+ #app .chatrow{min-height:76px!important;padding:10px 8px!important}
+ #app .avatar,#app .chat-unread-wrap,#app .chat-unread-wrap .avatar{width:53px;height:53px;flex-basis:53px}
+ #vivoBotHub .vb-panel{padding:calc(14px + env(safe-area-inset-top)) 13px calc(14px + env(safe-area-inset-bottom))!important}
+ #vivoBotHub .vb-grid{grid-template-columns:1fr!important}
+ #vivoBotHub .vb-head{top:calc(-14px - env(safe-area-inset-top))}
+}
+@media(min-width:761px){
+ #app .layout.roomopen{grid-template-columns:minmax(0,1fr)!important;height:100dvh!important;min-height:100dvh!important}
+ #app .layout.roomopen .sidebar{display:none!important}
+ #app .layout.roomopen .main{display:flex!important;width:100%!important;height:100dvh!important;padding:0!important}
+ #app .layout.roomopen .room{border-radius:0!important}
+ #app:has(.layout.roomopen){padding-bottom:0!important}
+ #app:has(.layout.roomopen) .mobilebar{display:none!important}
+}
+</style>
+<script id="vivo-private-profile-and-unread-v20261120">
+(()=>{
+'use strict';
+const $=id=>document.getElementById(id);
+const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const safeAvatar=u=>u?.avatar?'<img src="'+esc(u.avatar)+'" alt="تصویر پروفایل">':esc((u?.name||'و').slice(0,1));
+window.vivoProfileOpen=function(){
+ if(!window.db?.user)return;
+ const u=db.user,handle=u.username||('vivo_'+String(u.phone||'').slice(-4));
+ const avatar=safeAvatar(u);
+ $('dialog').classList.add('profile-dialog');
+ $('dialog').innerHTML='<div class="vpf-shell"><header class="vpf-top"><button class="vpf-icon" onclick="closeModal()" aria-label="بازگشت">‹</button><strong>پروفایل کاربری</strong><button class="vpf-icon" onclick="vivoSettingsOpen()" aria-label="تنظیمات">⚙</button></header><section class="vpf-hero"><div class="vpf-cover"><span>VIVO</span><button onclick="vivoProfileEdit()">✎ تغییر تصویر و اطلاعات</button></div><div class="vpf-identity"><div class="vpf-avatar">'+avatar+'</div><div class="vpf-names"><h1>'+esc(u.name||'کاربر ویوو')+(u.verifiedAt?'<span class="vpf-verified">✓</span>':'')+'</h1><div dir="ltr">@'+esc(handle)+'</div><p>'+esc(u.bio||'هنوز معرفی کوتاهی نوشته نشده است.')+'</p></div></div><div class="vpf-actions"><button class="vpf-primary" onclick="vivoProfileEdit()">ویرایش پروفایل</button><button onclick="vivoProfileShare()">اشتراک‌گذاری پروفایل</button></div></section><section class="vpf-section"><h3>حساب و تنظیمات</h3><div class="vpf-grid"><button onclick="vivoProfileEdit()"><i>✎</i><span><b>اطلاعات شخصی</b><small>نام، شناسه، معرفی و تصویر</small></span><em>‹</em></button><button onclick="vivoSettingsOpen(\'appearance\')"><i>◐</i><span><b>ظاهر و شخصی‌سازی</b><small>پوسته، رنگ و اندازه نمایش</small></span><em>‹</em></button><button onclick="vivoSettingsOpen(\'notifications\')"><i>♧</i><span><b>اعلان‌ها و صدا</b><small>تنظیمات اعلان‌های این دستگاه</small></span><em>‹</em></button><button onclick="vivoSettingsOpen(\'messages\')"><i>▤</i><span><b>تنظیمات گفتگو</b><small>ارسال، پشتیبان‌گیری و داده‌ها</small></span><em>‹</em></button><button onclick="vpfPrivacy()"><i>◈</i><span><b>حریم خصوصی</b><small>نمایش اطلاعات و کنترل دسترسی</small></span><em>‹</em></button><button onclick="vpfSecurity()"><i>⌑</i><span><b>امنیت حساب</b><small>اطلاعات نشست و خروج از حساب</small></span><em>‹</em></button><button onclick="vivoSettingsOpen(\'storage\')"><i>▧</i><span><b>داده‌ها و حافظه</b><small>مدیریت و نسخه پشتیبان</small></span><em>‹</em></button><button onclick="openBotHub()"><i>⌘</i><span><b>ربات‌ها و BotFather</b><small>مدیریت پیش‌نویس‌ها و راهنمای ربات</small></span><em>‹</em></button></div></section><footer class="vpf-footer"><span>ویوو · فضای شخصی شما</span><button onclick="if(confirm(\'از حساب ویوو خارج شوی؟\'))logout()">خروج از حساب</button></footer></div>';
+ $('modal').classList.add('open');
+};
+window.vpfPrivacy=function(){
+ $('dialog').innerHTML='<div class="vpf-sub"><header><button onclick="vivoProfileOpen()">‹</button><h2>حریم خصوصی</h2></header><p>در این نسخه، تنظیمات زیر فقط ترجیحات محلی رابط هستند و هنوز روی سرور برای سایر کاربران اعمال نمی‌شوند.</p><div class="vpf-pref"><b>نمایش شماره تلفن</b><span>در پروفایل عمومی نمایش داده نمی‌شود.</span></div><div class="vpf-pref"><b>آمار فعالیت</b><span>تعداد پیام‌ها، گفتگوها و فعالیت‌ها در پروفایل نمایش داده نمی‌شوند.</span></div><div class="vpf-pref"><b>اطلاعات پروفایل</b><span>اطلاعاتی که وارد می‌کنی در همین دستگاه نگهداری می‌شوند.</span></div></div>';
+};
+window.vpfSecurity=function(){
+ $('dialog').innerHTML='<div class="vpf-sub"><header><button onclick="vivoProfileOpen()">‹</button><h2>امنیت حساب</h2></header><div class="vpf-pref"><b>شماره حساب</b><span dir="ltr">'+esc(db.user?.phone||'ثبت نشده')+'</span></div><div class="vpf-pref"><b>نشست‌های فعال</b><span>فهرست نشست‌های چنددستگاهی تا زمان اتصال مدیریت نشست سمت سرور در دسترس نیست.</span></div><div class="vpf-pref"><b>خروج از حساب</b><button class="vpf-danger" onclick="if(confirm(\'از حساب ویوو خارج شوی؟\'))logout()">خروج از حساب</button></div></div>';
+};
+const originalRender=window.renderList;
+if(typeof originalRender==='function'&&!window.__vivoUnreadRenderWrapped){
+ window.renderList=function(){
+  originalRender();
+  try{
+   (db.chats||[]).forEach(c=>{
+    const row=[...$('chatList').querySelectorAll('.chatrow')].find(b=>b.onclick&&b.querySelector('.chatmeta strong')?.textContent===(c.name||''));
+    if(!row)return;
+    const count=Math.max(0,Number(c.unreadCount??c.unread??0)||0);
+    const av=row.querySelector('.avatar');
+    if(!av)return;
+    if(count>0){
+     const wrap=document.createElement('span');wrap.className='chat-unread-wrap';
+     av.replaceWith(wrap);wrap.appendChild(av);
+     const badge=document.createElement('span');badge.className='chat-unread-badge';badge.textContent=count>99?'۹۹+':new Intl.NumberFormat('fa-IR').format(count);wrap.appendChild(badge);
+    }
+   });
+  }catch(e){}
+ };
+ window.__vivoUnreadRenderWrapped=true;
+}
+const originalOpen=window.openChat;
+if(typeof originalOpen==='function'&&!window.__vivoUnreadOpenWrapped){
+ window.openChat=function(id){
+  const c=(db.chats||[]).find(x=>x.id===id);
+  if(c){c.unread=0;c.unreadCount=0;try{save()}catch(e){}}
+  const r=originalOpen(id);
+  try{window.renderList?.()}catch(e){}
+  return r;
+ };
+ window.__vivoUnreadOpenWrapped=true;
+}
+const profileBtn=$('profileBtn');if(profileBtn)profileBtn.onclick=window.vivoProfileOpen;
+const navAccount=$('navAccount');if(navAccount)navAccount.onclick=window.vivoProfileOpen;
+const settingsBtn=$('settingsBtn');if(settingsBtn)settingsBtn.onclick=()=>window.vivoProfileOpen();
+})();
+</script>
 </body></html>
