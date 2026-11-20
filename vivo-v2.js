@@ -93,7 +93,7 @@ async function checkSession(){
 }
 async function logout(){
  try{await requestJson('/api/vivo/logout',{})}catch(error){toast(error.message)}
- updateUser(null);toast('از حساب ویوو خارج شدی.');
+ updateUser(null);$('postsList').replaceChildren();$('notificationList').replaceChildren();$('searchResults').replaceChildren();$('profilePosts').replaceChildren();storiesCache=[];document.querySelectorAll('.real-story').forEach(el=>el.remove());document.querySelector('.feed-empty').hidden=false;$('notificationsEmpty').hidden=false;$('profileEmpty').hidden=false;toast('از حساب ویوو خارج شدی.');
 }
 function formatTime(value){
  const d=new Date(value);if(Number.isNaN(d.getTime()))return '';
@@ -166,6 +166,11 @@ function openStory(storyId){
  viewer.classList.add('open');
  requestJson('/api/vivo/social/stories/view',{storyId}).catch(()=>{});
 }
+async function publishStory(){
+ if(!currentUser){authOpen();return}
+ const text=$('storyText').value.trim();if(!text){toast('متن استوری را وارد کن.');return}
+ try{await requestJson('/api/vivo/social/stories',{text,mediaType:'text',background:'blue',audience:$('storyAudience').value});$('storyText').value='';$('storyComposer').classList.remove('open');$('storyComposer').hidden=true;toast('استوری در حساب ابری ذخیره شد.');await loadStories()}catch(error){toast(error.message)}
+}
 async function publishPost(){
  if(!currentUser){authOpen();return}
  const text=$('postText').value.trim();
@@ -176,7 +181,7 @@ async function publishPost(){
   await requestJson('/api/vivo/social/posts',{text,media:[],audience:$('postAudience').value});
   $('postText').value='';button.textContent='انتشار پست';button.disabled=true;
   $('composerStatus').textContent='پست در پایگاه داده ویوو ثبت شد.';
-  toast('پست در حساب ابری ذخیره شد.');go('home');await loadFeed();
+  toast('پست در حساب ابری ذخیره شد.');go('home');
  }catch(error){toast(error.message)}
  finally{button.textContent='انتشار پست';button.disabled=!currentUser||!$('postText').value.trim()||!!selectedFile}
 }
@@ -258,7 +263,9 @@ document.addEventListener('click',async event=>{
   try{await requestJson('/api/vivo/social/notifications/read',{id:actionButton.dataset.notificationId});await loadNotifications()}catch(error){toast(error.message)}return;
  }
  if(action==='open-story'){openStory(actionButton.dataset.storyId);return}
- if(action==='story'){toast('انتشار استوری تصویری و ویدئویی در مرحله اتصال فضای ذخیره‌سازی است.');return}
+ if(action==='story'){if(!currentUser){authOpen();return}$('storyComposer').hidden=false;$('storyComposer').classList.add('open');$('storyText').focus();return}
+ if(action==='close-story-composer'){$('storyComposer').classList.remove('open');$('storyComposer').hidden=true;return}
+ if(action==='publish-story'){publishStory();return}
  if(action==='new-chat'){toast('پیام‌رسان چندکاربره هنوز در حال پیاده‌سازی است.');return}
  if(action==='search'){searchUsers();return}
  if(action==='feed-filter'){toast('فیلترهای فید در مرحله بعد اضافه می‌شوند.');return}
@@ -266,6 +273,7 @@ document.addEventListener('click',async event=>{
  if(action==='security'||action==='privacy'||action==='notifications'||action==='notification-settings'||action==='appearance'||action==='support'){toast('این تنظیم پس از اتصال سرویس مربوطه فعال می‌شود.');return}
 });
 $('authClose').addEventListener('click',authClose);
+$('storyComposer').addEventListener('click',event=>{if(event.target===$('storyComposer')){$('storyComposer').classList.remove('open');$('storyComposer').hidden=true}});
 $('authOverlay').addEventListener('click',event=>{if(event.target===$('authOverlay'))authClose()});
 $('sendOtp').addEventListener('click',sendOtp);$('resendOtp').addEventListener('click',sendOtp);$('verifyOtp').addEventListener('click',verifyOtp);
 $('backToPhone').addEventListener('click',()=>{setAuthError('');showPhoneStep()});
