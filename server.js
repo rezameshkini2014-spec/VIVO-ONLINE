@@ -37,6 +37,11 @@ async function api(req,res,url) {
   let handler, query={};
   if (pathname === "/api/vivo/session") handler=require("./api/vivo/session.js");
   else if (pathname === "/api/vivo/logout") handler=require("./api/vivo/logout.js");
+  else if (pathname.startsWith("/api/otp/")) {
+    const endpoint=pathname.slice("/api/otp/".length);
+    if (!["config","send","subscribe","verify"].includes(endpoint)) return responseAdapter(res).status(404).json({ok:false,error:"مسیر API پیدا نشد."});
+    handler=require("./api/otp/"+endpoint+".js");
+  }
   else if (pathname.startsWith("/api/vivo/")) {
     const parts=pathname.slice("/api/vivo/".length).split("/").filter(Boolean);
     if (!parts.length || parts.some(x=>x===".."||x===".")) return responseAdapter(res).status(404).json({ok:false,error:"مسیر پیدا نشد."});
