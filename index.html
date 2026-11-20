@@ -922,7 +922,13 @@ button:focus-visible,input:focus-visible,textarea:focus-visible{outline:3px soli
 #botsBtn,#mobileBotsBtn{display:flex!important}
 #vivoBotHub .vb-overlay{z-index:40}
 @media(max-width:760px){#room{height:calc(100dvh - 78px);min-height:calc(100dvh - 78px)}.messages{padding:14px 10px}.bubble{max-width:86%}}
-.bot-inline-buttons{display:flex;flex-wrap:wrap;gap:7px;margin-top:12px}.bot-inline-buttons button{border:1px solid #d8d3ff;background:#f5f3ff;color:#574bc8;padding:8px 11px;border-radius:11px;font:inherit;font-size:11px;cursor:pointer}</style></head>
+.bot-inline-buttons{display:flex;flex-wrap:wrap;gap:7px;margin-top:12px}.bot-inline-buttons button{border:1px solid #d8d3ff;background:#f5f3ff;color:#574bc8;padding:8px 11px;border-radius:11px;font:inherit;font-size:11px;cursor:pointer}<style id="vivo-messenger-route">
+/* Route the social messenger tab to the dedicated VIVO Messenger */
+#vivoSocial .ig-mobile-nav button[data-ig-page="messages"]{color:#6558e8}
+#vivoSocial .ig-nav[data-ig-page="messages"]{font-weight:800}
+#vivoBotHub{z-index:60}
+#vivoBotHub .vb-panel{max-height:92dvh;overflow:auto}
+</style></head>
 <body>
 <section id="authScreen" class="authscreen">
  <div class="authcard">
@@ -1216,7 +1222,7 @@ root.addEventListener('click',async e=>{const b=e.target.closest('button');if(!b
 if(b.dataset.createKind){if(b.dataset.createKind==='story'){storyComposer();return}if(!document.getElementById('igCreateMode'))page('create');const mode=$('igCreateMode');if(mode){mode.dataset.mode=b.dataset.createKind;document.querySelectorAll('[data-create-kind]').forEach(x=>x.classList.toggle('active',x.dataset.createKind===b.dataset.createKind));const file=$('igPostFile'),title=$('igUploadTitle'),hint=$('igUploadHint'),publish=$('igPublish');if(b.dataset.createKind==='reel'){file.accept='video/*';title.textContent='انتخاب ویدئوی ریلز';hint.textContent='فقط ویدئو؛ سقف فعلی ذخیرهٔ محلی ۱٫۲ مگابایت است.';publish.textContent='انتشار ریلز'}else{file.accept='image/*,video/*';title.textContent='انتخاب عکس یا ویدئو';hint.textContent='برای ریلز، حالت ریلز را انتخاب کن.';publish.textContent='انتشار پست'}}return}
 if(b.dataset.reelMute){const v=b.closest('.ig-reel-player')?.querySelector('video');if(v){v.muted=!v.muted;b.textContent=v.muted?'صدا روشن':'بی‌صدا'}return}
 if(b.id==='igExit'||b.id==='igMobileExit'){close();return}
-if(b.dataset.igPage){page(b.dataset.igPage);return}
+if(b.dataset.igPage){if(b.dataset.igPage==='messages'){close();window.vivoMessengerOpen?.();return}page(b.dataset.igPage);return}
 if(b.hasAttribute('data-story-create')){storyComposer();return}
 if(b.dataset.storyUser){openStories(b.dataset.storyUser);return}
 if(b.id==='igModalCancel'){closeModal();return}
