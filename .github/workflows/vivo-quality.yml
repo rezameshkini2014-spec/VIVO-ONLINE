@@ -58,5 +58,6 @@ jobs:
           done
           grep -q 'VIVO' /tmp/vivo-home.html
           test "$(curl --silent --output /dev/null --write-out '%{http_code}' http://127.0.0.1:3217/api/vivo/chat/list)" = "401"
+          test "$(curl --silent --output /dev/null --write-out '%{http_code}' http://127.0.0.1:3217/api/vivo/session -H 'content-type: application/json' -d '{"phone":"09123456789","name":"Test User","username":"test_user","requestId":"test","code":"123456"}')" = "503"
           test "$(curl --silent --output /dev/null --write-out '%{http_code}' http://127.0.0.1:3217/api/not-a-route)" = "404"
           cat /tmp/vivo-server.log
