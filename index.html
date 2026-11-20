@@ -1232,6 +1232,12 @@ html,body{background:#151719!important;color:#f3f4f4}
  #app .bot-inline-buttons button{min-height:40px;font-size:12px!important}
 }
 </style>
+<style id="vivo-otp-copy-control">
+.vivo-otp-copy-row{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:9px;align-items:center;direction:ltr}
+.vivo-otp-copy-row .field{min-width:0;margin:0;letter-spacing:.22em;font-variant-numeric:tabular-nums}
+.vivo-copy-otp{min-width:88px;min-height:46px;white-space:nowrap;margin:0}
+@media(max-width:420px){.vivo-otp-copy-row{grid-template-columns:minmax(0,1fr) 82px;gap:6px}.vivo-copy-otp{min-width:0;padding-inline:8px}}
+</style>
 </head>
 <body>
 <section id="authScreen" class="authscreen">
@@ -1246,7 +1252,7 @@ html,body{background:#151719!important;color:#f3f4f4}
   </div>
   <div id="codeStep" class="hidden">
    <div class="status" id="pushStatus">برای دریافت کد، اجازه اعلان را فعال کنید.</div>
-   <label>کد شش‌رقمی اعلان</label><input class="field" id="otpCode" inputmode="numeric" maxlength="6" placeholder="------" dir="ltr">
+   <label for="otpCode">کد شش‌رقمی اعلان</label><div class="vivo-otp-copy-row"><input class="field" id="otpCode" inputmode="numeric" autocomplete="one-time-code" maxlength="6" placeholder="------" dir="ltr" aria-label="کد شش‌رقمی اعلان"><button type="button" class="btn subtle vivo-copy-otp" id="copyOtpCode" aria-label="کپی کد واردشده">کپی کد</button></div>
    <button class="btn primary" style="width:100%" id="verifyOtp">تأیید و ورود</button>
    <button class="btn subtle" style="width:100%;margin-top:8px" id="backPhone">بازگشت</button>
   </div>
@@ -1334,6 +1340,7 @@ let pending={phone:'',name:'',requestId:''};
 const vivoDigits=v=>String(v||'').replace(/[۰-۹]/g,d=>String('۰۱۲۳۴۵۶۷۸۹'.indexOf(d))).replace(/[٠-٩]/g,d=>String('٠١٢٣٤٥٦٧٨٩'.indexOf(d)));
 function vivoRestoreOtp(){try{const x=JSON.parse(sessionStorage.getItem('vivo_pending_otp')||'null');if(x&&x.phone&&x.requestId&&x.expiresAt>Date.now()){pending=x;$('phoneStep').classList.add('hidden');$('codeStep').classList.remove('hidden');$('authTitle').textContent='تأیید شماره موبایل';$('authDesc').textContent='کد ارسال‌شده را وارد کنید؛ برای این درخواست کد تازه نخواهید.';$('pushStatus').textContent='درخواست قبلی هنوز معتبر است.';$('st2').classList.add('on')}}catch{}}
 $('otpCode').addEventListener('input',()=>{const v=vivoDigits($('otpCode').value).replace(/\D/g,'').slice(0,6);$('otpCode').value=v});
+$('copyOtpCode').addEventListener('click',async()=>{const code=vivoDigits($('otpCode').value).replace(/\D/g,'');if(!/^\d{6}$/.test(code)){showError('ابتدا کد شش‌رقمی را وارد کنید؛ سپس کپی را بزنید.');return}try{await navigator.clipboard.writeText(code);toast('کد تأیید کپی شد')}catch(error){$('otpCode').focus();$('otpCode').select();try{const ok=document.execCommand('copy');if(!ok)throw error;toast('کد تأیید کپی شد')}catch(_){showError('کپی خودکار در این مرورگر پشتیبانی نمی‌شود؛ کد را انتخاب و دستی کپی کنید.')}}});
 vivoRestoreOtp();
 $('startOtp').onclick=async()=>{showError('');const phone=phoneNorm($('phone').value);const name=$('displayName').value.trim();if(!/^09\d{9}$/.test(phone))return showError('شماره موبایل معتبر ایران وارد کنید.');if(!name)return showError('نام نمایشی را وارد کنید.');pending={phone,name,requestId:''};$('startOtp').disabled=true;$('startOtp').textContent='در حال آماده‌سازی…';try{$('pushStatus').textContent='در حال فعال‌سازی اعلان‌های دستگاه…';await enablePush(phone);const result=await api('/api/otp/send',{phone});pending.requestId=result.requestId;pending.expiresAt=Date.now()+Math.min(Number(result.expiresIn)||120,120)*1000;sessionStorage.setItem('vivo_pending_otp',JSON.stringify(pending));$('phoneStep').classList.add('hidden');$('codeStep').classList.remove('hidden');$('authTitle').textContent='تأیید شماره موبایل';$('authDesc').textContent='اعلان کد شش‌رقمی ارسال شد. کد را از اعلان دستگاه وارد کنید.';$('st2').classList.add('on');$('pushStatus').textContent='اعلان ارسال شد؛ کد تا دو دقیقه اعتبار دارد.';$('otpCode').focus()}catch(e){const msg=String(e.message||'');if(/rate.?limit|maximum 5|5 codes per hour/i.test(msg)){$('pushStatus').textContent='سقف درخواست کد برای این شماره در یک ساعت تکمیل شده است. تا پایان محدودیت صبر کنید؛ درخواست‌های بیشتر آن را دور نمی‌زنند.';showError('محدودیت ارسال کد: حداکثر ۵ درخواست در هر ساعت برای هر کاربر.')}else{showError(msg);$('pushStatus').textContent='ارسال کد انجام نشد.'}}finally{$('startOtp').disabled=false;$('startOtp').textContent='ادامه و فعال‌سازی اعلان'}};
 $('backPhone').onclick=()=>{if(pending.requestId&&pending.expiresAt>Date.now()){showError('درخواست کد قبلی هنوز معتبر است؛ برای جلوگیری از مصرف سهمیه، همان کد را وارد کنید.');return}$('codeStep').classList.add('hidden');$('phoneStep').classList.remove('hidden');$('authTitle').textContent='ساخت حساب ویوو';$('authDesc').textContent='شماره موبایل خود را وارد کنید. کد ورود از طریق اعلان روی همین دستگاه ارسال می‌شود.';showError('')};
