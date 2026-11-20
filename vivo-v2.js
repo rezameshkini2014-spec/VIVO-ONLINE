@@ -2,7 +2,7 @@
 'use strict';
 const $=id=>document.getElementById(id);
 const toast=(message)=>{const el=$('toast');if(!el)return;el.textContent=message;el.classList.add('show');clearTimeout(toast.timer);toast.timer=setTimeout(()=>el.classList.remove('show'),2600)};
-const titles={home:'خانه',messages:'پیام‌ها',create:'انتشار محتوا',reels:'ویدئوها',explore:'کشف و جست‌وجو',notifications:'اعلان‌ها',profile:'پروفایل من',settings:'تنظیمات'};
+const titles={home:'خانه',messages:'پیام‌ها',create:'انتشار محتوا',reels:'ویدئوها',explore:'کشف و جست‌وجو',contacts:'مخاطبان',notifications:'اعلان‌ها',profile:'پروفایل من',settings:'تنظیمات'};
 let currentPage='home',selectedFile=null,currentUser=null,pendingOtp=null,storiesCache=[],currentChatId=null,replyToMessageId=null,chatsCache=[];
 function go(page){
  if(!titles[page])return;
@@ -11,7 +11,7 @@ function go(page){
  document.querySelectorAll('[data-page]').forEach(el=>el.classList.toggle('active',el.dataset.page===page));
  $('pageTitle').textContent=titles[page];
  if(page==='create')$('postText').focus({preventScroll:true});
- if(currentUser){if(page==='home'){loadFeed();loadStories()}if(page==='messages')loadChats();if(page==='explore')$('exploreSearch').focus({preventScroll:true});if(page==='notifications')loadNotifications();if(page==='profile')loadProfile()}
+ if(currentUser){if(page==='home'){loadFeed();loadStories()}if(page==='messages')loadChats();if(page==='explore')$('exploreSearch').focus({preventScroll:true});if(page==='notifications')loadNotifications();if(page==='contacts')loadContacts();if(page==='profile')loadProfile()}
  window.scrollTo({top:0,behavior:'smooth'});
 }
 async function requestJson(url,body){
@@ -195,9 +195,48 @@ async function searchUsers(){
    const card=node('article','result-card');card.append(node('span','avatar',user.display_name?.slice(0,1)||'و'));
    const info=node('div','result-info');info.append(node('b','',user.display_name||'کاربر'),node('small','',user.username?'@'+user.username:''),node('p','',user.bio||''));
    card.append(info);
-   if(user.id!==currentUser.id){const follow=node('button','secondary-button',user.is_private?'درخواست دنبال‌کردن':'دنبال‌کردن');follow.dataset.action='follow';follow.dataset.username=user.username;card.append(follow)}
+   if(user.id!==currentUser.id){const follow=node('button','secondary-button','افزودن مخاطب');follow.dataset.action='follow';follow.dataset.username=user.username;card.append(follow)}
    target.append(card);
   }
+ }catch(error){toast(error.message)}
+}
+async function loadContacts(){
+ if(!currentUser){authOpen();return}
+ try{
+  const [requests,contacts]=await Promise.all([requestJson('/api/vivo/contacts/requests'),requestJson('/api/vivo/contacts/list')]);
+  const reqList=$('contactRequestsList'),conList=$('contactsList');reqList.replaceChildren();conList.replaceChildren();
+  const items=requests.requests||[],people=contacts.contacts||[];
+  $('contactRequestsEmpty').hidden=items.length>0;$('contactsEmpty').hidden=people.length>0;
+  for(const item of items){
+   const row=node('article','notification-card');row.append(node('span','avatar',item.user?.display_name?.slice(0,1)||'V'));
+   const copy=node('div','notification-copy');copy.append(node('p','',item.user?.display_name||'کاربر VIVO'),node('small','', '@'+(item.user?.username||'')));row.append(copy);
+   if(item.direction==='incoming'&&item.status==='pending'){const accept=node('button','secondary-button','پذیرفتن');accept.dataset.action='contact-respond';accept.dataset.requestId=item.id;accept.dataset.response='accept';row.append(accept);const reject=node('button','text-button','رد');reject.dataset.action='contact-respond';reject.dataset.requestId=item.id;reject.dataset.response='reject';row.append(reject)}
+   else copy.append(node('small','',item.status==='accepted'?'ارتباط برقرار است':'در انتظار پاسخ'));
+   reqList.append(row);
+  }
+  for(const person of people){
+   const row=node('article','result-card');row.append(node('span','avatar',person.display_name?.slice(0,1)||'V'));
+   const info=node('div','result-info');info.append(node('b','',person.display_name||'کاربر'),node('small','', '@'+person.username),node('p','',person.bio||''));row.append(info);
+   const chat=node('button','secondary-button','ارسال پیام');chat.dataset.action='contact-message';chat.dataset.username=person.username;row.append(chat);
+   const remove=node('button','text-button','حذف مخاطب');remove.dataset.action='contact-remove';remove.dataset.userId=person.id;row.append(remove);conList.append(row);
+  }
+ }catch(error){toast(error.message)}
+}
+async function searchContact(){
+ if(!currentUser){authOpen();return}
+ const username=$('contactUsernameSearch').value.trim().toLowerCase();
+ if(!usernameValid(username)){toast('نام کاربری معتبر وارد کن؛ ۴ تا ۳۰ نویسه انگلیسی.');return}
+ try{
+  const result=await requestJson('/api/vivo/contacts/search?username='+encodeURIComponent(username));
+  const target=$('contactSearchResult');target.replaceChildren();
+  if(!result.user){target.append(node('p','rail-empty','کاربری با این نام کاربری پیدا نشد.'));return}
+  const user=result.user,relation=result.relation,row=node('article','result-card');row.append(node('span','avatar',user.display_name?.slice(0,1)||'V'));
+  const info=node('div','result-info');info.append(node('b','',user.display_name||'کاربر'),node('small','', '@'+user.username),node('p','',user.bio||''));row.append(info);
+  if(relation?.status==='accepted'){const status=node('span','tiny-pill','مخاطب شما');row.append(status);const chat=node('button','secondary-button','ارسال پیام');chat.dataset.action='contact-message';chat.dataset.username=user.username;row.append(chat)}
+  else if(relation?.direction==='incoming'&&relation.status==='pending'){const accept=node('button','primary-button','پذیرفتن درخواست');accept.dataset.action='contact-respond';accept.dataset.requestId=relation.id;accept.dataset.response='accept';row.append(accept)}
+  else if(relation?.status==='pending'){row.append(node('span','tiny-pill','در انتظار پاسخ'))}
+  else{const add=node('button','primary-button','افزودن مخاطب');add.dataset.action='contact-add';add.dataset.username=user.username;row.append(add)}
+  target.append(row);
  }catch(error){toast(error.message)}
 }
 async function loadNotifications(){
@@ -325,8 +364,14 @@ document.addEventListener('click',async event=>{
   try{await requestJson('/api/vivo/social/comment',{postId,text});input.value='';await loadComments(postId);await loadFeed()}catch(error){toast(error.message)}return;
  }
  if(action==='follow'){
-  try{const result=await requestJson('/api/vivo/social/follow',{username:actionButton.dataset.username});actionButton.textContent=result.status==='pending'?'درخواست ارسال شد':'دنبال می‌کنی';actionButton.disabled=true}catch(error){toast(error.message)}return;
+  try{const result=await requestJson('/api/vivo/contacts/request',{username:actionButton.dataset.username});actionButton.textContent=result.status==='accepted'?'مخاطب شما':'درخواست ارسال شد';actionButton.disabled=true}catch(error){toast(error.message)}return;
  }
+ if(action==='contact-search'){searchContact();return}
+ if(action==='contacts-refresh'){loadContacts();return}
+ if(action==='contact-add'){try{const result=await requestJson('/api/vivo/contacts/request',{username:actionButton.dataset.username});toast(result.status==='accepted'?'ارتباط برقرار شد.':'درخواست ارتباط ارسال شد.');await searchContact();await loadContacts()}catch(error){toast(error.message)}return}
+ if(action==='contact-respond'){try{await requestJson('/api/vivo/contacts/respond',{requestId:actionButton.dataset.requestId,action:actionButton.dataset.response});toast(actionButton.dataset.response==='accept'?'درخواست پذیرفته شد.':'درخواست رد شد.');await loadContacts();await searchContact()}catch(error){toast(error.message)}return}
+ if(action==='contact-remove'){try{await requestJson('/api/vivo/contacts/remove',{userId:actionButton.dataset.userId});toast('مخاطب حذف شد.');await loadContacts()}catch(error){toast(error.message)}return}
+ if(action==='contact-message'){try{const result=await requestJson('/api/vivo/chat/create',{type:'private',username:actionButton.dataset.username});go('messages');await loadChats();await openChat(result.chat.id)}catch(error){toast(error.message)}return}
  if(action==='mark-notification'){
   try{await requestJson('/api/vivo/social/notifications/read',{id:actionButton.dataset.notificationId});await loadNotifications()}catch(error){toast(error.message)}return;
  }
