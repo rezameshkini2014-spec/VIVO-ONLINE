@@ -234,8 +234,10 @@ Deno.serve(async (req: Request) => {
         const { data: owned, error } = await supabase.from("vivo_media").select("object_path").eq("owner_id", userId).in("object_path", paths);
         if (error || paths.length !== media.length || (owned || []).length !== media.length) return json(403, { ok: false, error: "یکی از فایل‌ها متعلق به این حساب نیست." });
       }
+      const { data: account } = await supabase.from("vivo_users").select("is_private").eq("id", userId).single();
+      const safeAudience = account?.is_private && audience === "public" ? "followers" : audience;
       const { data, error } = await supabase.from("vivo_posts").insert({
-        author_id: userId, body: text, media, audience, status: "published"
+        author_id: userId, body: text, media, audience: safeAudience, status: "published"
       }).select("*").single();
       if (error || !data) return json(500, { ok: false, error: "انتشار پست انجام نشد." });
       return json(201, { ok: true, post: (await decoratePosts([data], userId))[0] });
@@ -313,7 +315,7 @@ Deno.serve(async (req: Request) => {
     }
 
     if (path === "/social/search" && req.method === "GET") {
-      const query = safeText(url.searchParams.get("q"), 80).trim();
+      const query = safeText(url.searchParams.get("q"), 80).replace(/[^a-zA-Z0-9_\s\u0600-\u06FF]/g, "").trim();
       if (query.length < 2) return json(200, { ok: true, users: [] });
       const blocked = await blockedUsers(userId);
       const { data, error } = await supabase.from("vivo_users")
@@ -342,7 +344,10 @@ Deno.serve(async (req: Request) => {
       if (!privateLocked) {
         const { data } = await supabase.from("vivo_posts").select("*").eq("author_id", target.id)
           .eq("status", "published").is("deleted_at", null).order("created_at", { ascending: false }).limit(30);
-        posts = await decoratePosts(data || [], userId);
+        const visiblePosts = (data || []).filter((p: any) =>
+          p.author_id === userId || p.audience === "public" || (p.audience === "followers" && following)
+        );
+        posts = await decoratePosts(visiblePosts, userId);
       }
       return json(200, { ok: true, profile: { id: target.id, name: target.display_name, username: target.username, bio: target.bio, avatarUrl: target.avatar_url, isPrivate: target.is_private, following, privateLocked, postsCount: postsCount || 0, followersCount: followersCount || 0, followingCount: followingCount || 0 }, posts });
     }
@@ -393,7 +398,11 @@ Deno.serve(async (req: Request) => {
       const storyId = safeText(body.storyId, 64);
       const { data: story } = await supabase.from("vivo_stories").select("id,author_id,audience,expires_at,deleted_at").eq("id", storyId).maybeSingle();
       if (!story || story.deleted_at || new Date(story.expires_at).getTime() <= Date.now()) return json(404, { ok: false, error: "استوری در دسترس نیست." });
-      if (story.author_id !== userId && !(await followsUser(userId, story.author_id)) && story.audience !== "public") return json(403, { ok: false, error: "مشاهده این استوری مجاز نیست." });
+      const blocked = await blockedUsers(userId);
+      if (story.author_id !== userId && blocked.has(story.author_id)) return json(404, { ok: false, error: "استوری در دسترس نیست." });
+      const { data: storyAuthor } = await supabase.from("vivo_users").select("is_private").eq("id", story.author_id).maybeSingle();
+      const followsAuthor = story.author_id === userId ? true : await followsUser(userId, story.author_id);
+      if (story.author_id !== userId && (story.audience === "private" || ((story.audience === "followers" || storyAuthor?.is_private) && !followsAuthor))) return json(403, { ok: false, error: "مشاهده این استوری مجاز نیست." });
       const { error } = await supabase.from("vivo_story_views").upsert({ story_id: storyId, viewer_id: userId, viewed_at: new Date().toISOString() }, { onConflict: "story_id,viewer_id" });
       if (error) return json(500, { ok: false, error: "ثبت بازدید استوری انجام نشد." });
       return json(200, { ok: true });
