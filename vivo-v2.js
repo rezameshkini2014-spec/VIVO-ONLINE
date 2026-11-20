@@ -34,7 +34,7 @@ function showCodeStep(){$('phoneStep').hidden=true;$('codeStep').hidden=false;$(
 function base64UrlToBytes(value){const normalized=value.replace(/-/g,'+').replace(/_/g,'/');const padded=normalized+'='.repeat((4-normalized.length%4)%4);const raw=atob(padded);return Uint8Array.from(raw,c=>c.charCodeAt(0))}
 async function sendOtp(){
  const phone=normalizePhone($('authPhone').value),name=$('authName').value.trim(),username=$('authUsername').value.trim().toLowerCase();
- if(!/^09\\d{9}$/.test(phone))return setAuthError('شماره موبایل معتبر ایران وارد کن.');
+ if(!/^09\d{9}$/.test(phone))return setAuthError('شماره موبایل معتبر ایران وارد کن.');
  if(name.length<2)return setAuthError('نام نمایشی باید دست‌کم دو نویسه باشد.');
  if(!usernameValid(username))return setAuthError('نام کاربری باید ۴ تا ۳۰ نویسه و با حرف انگلیسی شروع شود.');
  if(!('serviceWorker'in navigator)||!('PushManager'in window)||!('Notification'in window))return setAuthError('این مرورگر از اعلان لازم برای دریافت کد پشتیبانی نمی‌کند.');
