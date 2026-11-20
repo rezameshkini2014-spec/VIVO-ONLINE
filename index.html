@@ -1449,4 +1449,63 @@ window.vivoMessengerOpen=function(){ $('vivoSocial')?.classList.remove('open');$
  window.addEventListener('storage',e=>{if(e.key===KEY)paint()});
 })();
 </script>
+
+<style id="vivo-messenger-polish-v3">
+#app .bubble{width:fit-content;max-width:min(78%,680px);min-width:0;box-sizing:border-box;white-space:normal;overflow-wrap:anywhere;word-break:break-word}
+#app .bubble img,#app .bubble video,#app .bubble audio,#app .bubble .msg-attachment{display:block;max-width:100%;width:auto;height:auto;max-height:360px;object-fit:contain;border-radius:12px}
+#app .bubble .msg-file{display:inline-block;max-width:100%;overflow-wrap:anywhere}
+#vivoMessengerPlus{position:fixed;left:72px;bottom:76px;z-index:1400;width:46px;height:46px;border-radius:16px;border:1px solid #d9deea;background:#fff;color:#37415a;box-shadow:0 10px 28px #17243a22;display:grid;place-items:center;font-size:27px;line-height:1;cursor:pointer;backdrop-filter:blur(14px);transition:transform .18s,background .18s}
+#vivoMessengerPlus:active{transform:scale(.94)}
+body[data-theme="dark"] #vivoMessengerPlus{background:#172741;color:#edf3ff;border-color:#344b6e;box-shadow:0 10px 28px #0005}
+#vivoMessengerPlus:focus-visible{outline:3px solid #6558e855;outline-offset:3px}
+#vivoMessengerPlusMenu{position:fixed;left:72px;bottom:132px;z-index:1401;width:min(270px,calc(100vw - 32px));padding:9px;border:1px solid #dfe4ee;border-radius:20px;background:#fff;color:#263244;box-shadow:0 18px 55px #17243a30;display:none}
+#vivoMessengerPlusMenu.open{display:block;animation:vivoPlusIn .16s ease-out}
+#vivoMessengerPlusMenu button{width:100%;display:flex;align-items:center;gap:12px;text-align:right;padding:13px 12px;border:0;border-radius:13px;background:transparent;color:inherit;font:inherit;font-size:14px}
+#vivoMessengerPlusMenu button:active{background:#eef1f8}
+#vivoMessengerPlusMenu button span:first-child{width:34px;height:34px;display:grid;place-items:center;border-radius:11px;background:#eef1ff;color:#6259d9;font-size:19px}
+body[data-theme="dark"] #vivoMessengerPlusMenu{background:#14233b;color:#edf3ff;border-color:#304869}
+body[data-theme="dark"] #vivoMessengerPlusMenu button:active{background:#203858}
+body[data-theme="dark"] #vivoMessengerPlusMenu button span:first-child{background:#26385b;color:#c8c5ff}
+@keyframes vivoPlusIn{from{opacity:0;transform:translateY(7px) scale(.97)}to{opacity:1;transform:none}}
+@media(max-width:760px){#vivoMessengerPlus,#vivoThemeQuick{bottom:calc(82px + env(safe-area-inset-bottom))}#vivoMessengerPlusMenu{bottom:calc(138px + env(safe-area-inset-bottom))}#app .bubble{max-width:84%}}
+</style>
+<script id="vivo-messenger-create-menu-v3">
+(()=>{
+const $=id=>document.getElementById(id);
+const escV=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+function notifyV(t){if(typeof window.toast==='function')window.toast(t);else{const n=$('toast');if(n){n.textContent=t;n.classList.remove('hidden');setTimeout(()=>n.classList.add('hidden'),2600)}}}
+function closePlus(){ $('vivoMessengerPlusMenu')?.classList.remove('open');$('vivoMessengerPlus')?.setAttribute('aria-expanded','false')}
+function openForm(title,description,fields,submitLabel,handler){
+ const dialog=$('dialog'),modal=$('modal');if(!dialog||!modal)return;
+ dialog.innerHTML='<h2>'+title+'</h2><p class="muted" style="line-height:1.9;font-size:12px">'+description+'</p><form id="vivoCreateForm">'+fields+'<button class="btn primary" type="submit" style="width:100%;margin-top:8px">'+submitLabel+'</button><button class="btn subtle" type="button" id="vivoCreateCancel" style="width:100%;margin-top:8px">انصراف</button><div id="vivoCreateError" class="status" aria-live="polite"></div></form>';
+ modal.classList.add('open');$('vivoCreateCancel').onclick=()=>modal.classList.remove('open');
+ $('vivoCreateForm').onsubmit=e=>{e.preventDefault();const err=handler(new FormData(e.currentTarget));if(err)$('vivoCreateError').textContent=err;};
+}
+function dbReady(){try{return typeof db!=='undefined'&&db&&Array.isArray(db.chats)}catch{return false}}
+function makeId(prefix,value){return prefix+'_'+String(value||Date.now()).toLowerCase().replace(/[^a-z0-9_-]/g,'_').slice(0,45)+'_'+Date.now().toString(36)}
+function createRoom(type,name,description,username){
+ if(!dbReady())return 'ذخیره‌سازی گفتگو در دسترس نیست.';
+ const id=makeId(type,username||name);
+ if(db.chats.some(c=>c.id===id||((type==='private')&&c.contact?.username===username)))return 'این مخاطب یا گفتگو از قبل اضافه شده است.';
+ const item={id,name,type,messages:[],createdAt:Date.now(),description:description||'',members:[],...(username?{contact:{username,name}}:{})};
+ db.chats.unshift(item);save();renderList();openChat(id);$('modal').classList.remove('open');notifyV(type==='group'?'گروه به فهرست همین دستگاه اضافه شد.':type==='channel'?'کانال به فهرست همین دستگاه اضافه شد.':'مخاطب به فهرست همین دستگاه اضافه شد.');return '';
+}
+function showCreate(type){
+ closePlus();
+ if(type==='group')return openForm('ساخت گروه','نام گروه را انتخاب کن. اعضا را بعداً می‌توانی با افزودن مخاطب معرفی کنی.','<label>نام گروه</label><input class="field" name="name" maxlength="50" required placeholder="مثلاً دوستان مدرسه"><label>توضیحات (اختیاری)</label><textarea class="field" name="description" maxlength="240" rows="3" placeholder="دربارهٔ گروه"></textarea>','ساخت گروه',f=>{const name=String(f.get('name')||'').trim();if(name.length<2)return 'نام گروه باید دست‌کم ۲ نویسه باشد.';return createRoom('group',name,String(f.get('description')||'').trim())});
+ if(type==='channel')return openForm('ساخت کانال','یک کانال محلی بساز و نام و توضیحات آن را ثبت کن. انتشار عمومی و دنبال‌کننده‌ها تا اتصال سرور فعال نیستند.','<label>نام کانال</label><input class="field" name="name" maxlength="50" required placeholder="نام کانال"><label>توضیحات (اختیاری)</label><textarea class="field" name="description" maxlength="240" rows="3" placeholder="موضوع کانال"></textarea>','ساخت کانال',f=>{const name=String(f.get('name')||'').trim();if(name.length<2)return 'نام کانال باید دست‌کم ۲ نویسه باشد.';return createRoom('channel',name,String(f.get('description')||'').trim())});
+ return openForm('افزودن مخاطب','شناسهٔ کاربری و نام نمایشی مخاطب را وارد کن. این نسخه هنوز جست‌وجوی سراسری کاربران یا همگام‌سازی مخاطبین با سرور ندارد؛ مخاطب در همین دستگاه ثبت می‌شود.','<label>شناسهٔ کاربری</label><input class="field" name="username" maxlength="30" required dir="ltr" placeholder="username" autocomplete="off"><label>نام مخاطب</label><input class="field" name="name" maxlength="50" required placeholder="نام و نام خانوادگی">','افزودن مخاطب',f=>{const username=String(f.get('username')||'').trim().replace(/^@/,'').toLowerCase(),name=String(f.get('name')||'').trim();if(!/^[a-z][a-z0-9_]{3,29}$/.test(username))return 'شناسه باید ۴ تا ۳۰ نویسه، با حرف انگلیسی شروع شود و فقط شامل حروف، عدد یا زیرخط باشد.';if(name.length<2)return 'نام مخاطب را کامل وارد کن.';return createRoom('private',name,'',username)});
+}
+function init(){
+ if(!$('vivoThemeQuick')||!document.body)return;
+ if(!$('vivoMessengerPlus')){const b=document.createElement('button');b.id='vivoMessengerPlus';b.type='button';b.textContent='+';b.title='ساخت گروه، کانال یا افزودن مخاطب';b.setAttribute('aria-label',b.title);b.setAttribute('aria-expanded','false');document.body.appendChild(b)}
+ if(!$('vivoMessengerPlusMenu')){const m=document.createElement('div');m.id='vivoMessengerPlusMenu';m.innerHTML='<button type="button" data-vivo-create="group"><span>♧</span><span>ساخت گروه</span></button><button type="button" data-vivo-create="channel"><span>▣</span><span>ساخت کانال</span></button><button type="button" data-vivo-create="contact"><span>♙</span><span>افزودن مخاطب</span></button>';document.body.appendChild(m)}
+ $('vivoMessengerPlus').addEventListener('click',()=>{const m=$('vivoMessengerPlusMenu'),on=!m.classList.contains('open');m.classList.toggle('open',on);$('vivoMessengerPlus').setAttribute('aria-expanded',String(on))});
+ $('vivoMessengerPlusMenu').addEventListener('click',e=>{const b=e.target.closest('[data-vivo-create]');if(b)showCreate(b.dataset.vivoCreate)});
+ document.addEventListener('click',e=>{if(!e.target.closest('#vivoMessengerPlus')&&!e.target.closest('#vivoMessengerPlusMenu'))closePlus()});
+ document.addEventListener('keydown',e=>{if(e.key==='Escape')closePlus()});
+}
+if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',init,{once:true});else init();
+})();
+</script>
 </body></html>
