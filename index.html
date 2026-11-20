@@ -930,69 +930,101 @@ button:focus-visible,input:focus-visible,textarea:focus-visible{outline:3px soli
 #vivoBotHub .vb-panel{max-height:92dvh;overflow:auto}
 </style>
 <style id="vivo-messenger-refresh-20261120">
-:root{--bg:#eaf3f5;--panel:#ffffff;--panel2:#f3f8fa;--line:#d4e3e8;--text:#20353d;--muted:#71868e;--blue:#438fca;--cyan:#35bfa5;--violet:#7e8ee8;--shadow:0 16px 48px #24495818}
-html,body{background:#edf4f6;color:#20353d}
-#app{background:#edf4f6;min-height:100dvh;padding-bottom:82px}
+:root{--bg:#f1f6f8;--panel:#fff;--panel2:#f7fafb;--line:#e1eaee;--text:#20343d;--muted:#71858d;--accent:#35ad98;--accent2:#688ee0;--shadow:0 18px 55px #24495814;--radius:22px}
+*{box-sizing:border-box}
+html,body{background:#eef4f6!important;color:var(--text)!important;font-family:Tahoma,"Segoe UI",sans-serif}
+body{min-height:100dvh}
+#app{width:100%;max-width:none;min-height:100dvh;margin:0 auto;padding:0 0 84px!important;background:transparent!important}
 #app>.top{display:none!important}
-#app .layout{min-height:calc(100dvh - 82px);background:transparent}
-#app .sidebar{background:#f8fbfc;border-left:1px solid #d8e5e9}
-#app .main{background:#edf4f6;padding:18px}
+#app .layout{width:min(1600px,100%);margin:0 auto;min-height:calc(100dvh - 84px);display:grid;grid-template-columns:370px minmax(0,1fr);gap:0;background:transparent}
+#app .sidebar{height:calc(100dvh - 84px);position:sticky;top:0;overflow:hidden;display:flex;flex-direction:column;padding:26px 19px 18px;background:linear-gradient(180deg,#fff 0%,#f9fcfd 100%);border-left:1px solid #e2ebee;box-shadow:8px 0 40px #24495808}
+#app .sidehead{align-items:center;margin:0 3px 22px;padding:0 0 19px;border-bottom:1px solid #e9eff1}
+#app .sidehead>div{display:flex;flex-direction:column;gap:7px}
+#app .eyebrow{font-size:10px;letter-spacing:2px;font-weight:900;color:#55a89b}
+#app .sidehead h2{font-size:25px;letter-spacing:-.8px;color:#203a42}
+#app .live-mark{font-size:10px;color:#338d7d;background:#e8f7f2;padding:7px 10px;border-radius:30px}
+#app .live-mark i{display:inline-block;width:7px;height:7px;border-radius:50%;background:#39c49e;margin-left:5px;box-shadow:0 0 0 4px #39c49e20}
+#app .search{height:48px;border-radius:15px!important;background:#f3f7f8!important;border:1px solid #e2ebee!important;color:#263e46!important;padding:0 15px!important;margin-bottom:15px!important;box-shadow:none!important}
+#app .search::placeholder{color:#91a2a8}
+#app .tabs{gap:6px;margin:0 -2px 15px;padding:2px 1px 7px;scrollbar-width:none}
+#app .tab{border:1px solid #e5edef;background:#f7fafb;color:#70838a;border-radius:30px;padding:8px 13px;font-size:11px;transition:.2s}
+#app .tab.active{background:#ddf4ed;border-color:#b8e6d8;color:#16836d;font-weight:800;box-shadow:0 4px 12px #36b99812}
+#app .chatlist{flex:1;min-height:0;overflow:auto;padding:2px 0 18px;gap:7px}
+#app .chatrow{position:relative;min-height:76px;padding:11px 10px;border:1px solid transparent;border-radius:18px;gap:12px;background:transparent;transition:background .18s,border .18s,transform .18s}
+#app .chatrow:hover{background:#f3f8f8;border-color:#e6eff0;transform:translateY(-1px)}
+#app .chatrow.active{background:linear-gradient(110deg,#e6f7f1,#f0f6ff);border-color:#d4eee6;box-shadow:0 5px 18px #315f5910}
+#app .avatar{width:51px;height:51px;border-radius:18px;background:linear-gradient(145deg,#62cdb6,#79a8e6 60%,#a6a0ed);color:#fff;font-size:18px;box-shadow:0 7px 17px #609c9b28;border:2px solid white}
+#app .chatmeta strong{font-size:13px;color:#2b4149;font-weight:800}
+#app .chatmeta small{font-size:11px;color:#81949a;line-height:1.6}
+#app .chatstamp{font-size:10px;color:#93a4aa}
+#app .main{height:calc(100dvh - 84px);min-height:0;padding:22px 24px 24px;background:radial-gradient(ellipse at 75% 5%,#e0f3ef 0,transparent 38%),radial-gradient(ellipse at 12% 90%,#e8efff 0,transparent 36%),#f1f6f8}
 #app .welcome{display:none!important}
-#app .sidehead h2{color:#233b43}
-#app .eyebrow{color:#579a91}
-#app .live-mark{color:#54877f}
-#app .search,#app .field,#app .composer textarea{background:#fff;color:#20353d;border:1px solid #d4e2e7}
-#app .tab{background:#eef4f6;color:#607780;border-color:#dbe6e9}
-#app .tab.active{background:#d9f2eb;color:#147c68;border-color:#8ed6c2}
-#app .chatrow{color:#243b43}
-#app .chatrow:hover,#app .chatrow.active{background:#e3f3f0;border-color:#a9d9cc}
-#app .chatmeta small,#app .chatstamp{color:#7a9097}
-#app .avatar{background:linear-gradient(140deg,#65cdb7,#6c9edb 60%,#9a9ce5);color:#fff;border:2px solid #fff;box-shadow:0 5px 16px #4c8f8b20}
-#app .roomhead{border-color:#d9e5e9}
-#app .roominfo strong{color:#203941}
-#app .roominfo small{color:#789097}
-#app .messages{background:linear-gradient(180deg,#f5fafb,#edf4f6);border-radius:18px;padding:18px 14px}
-#app .bubble{background:#fff;color:#29424a;border:1px solid #d9e6e9;box-shadow:0 4px 13px #33545b0b}
-#app .bubble.mine{background:linear-gradient(135deg,#d7f5eb,#dceefa);color:#1e4945;border-color:#b7e3d6}
-#app .bubble.theirs{background:#fff;color:#29424a;border-color:#d9e6e9}
-#app .bubble time{color:#789097}
-#app .bubble .reply{background:#eaf3f5;border-right-color:#45bba1;color:#4c6970}
-#app .composerwrap{border-color:#d8e5e9}
-#app .composer textarea{background:#fff;color:#20353d}
-#app .send{background:linear-gradient(135deg,#38b99c,#559bd0);color:white}
-#app .iconbtn,#app .btn{background:#fff;color:#35535c;border-color:#d5e3e7}
-#app .btn.primary{background:linear-gradient(120deg,#39b99c,#579cce);color:#fff}
-#app .modal .dialog,#app .menupanel{background:#fff;color:#20353d;border-color:#d5e3e7}
-#app .menuitem{background:#f3f8f9;color:#29434b;border-color:#dce7e9}
-#app .mobilebar{display:flex!important;position:fixed;right:0;left:0;bottom:0;height:76px;padding:7px 8px calc(7px + env(safe-area-inset-bottom));background:#ffffffed;border-top:1px solid #d6e4e7;backdrop-filter:blur(18px);justify-content:space-around;align-items:center;z-index:45;box-shadow:0 -8px 26px #284b5510}
-#app .mobilebar button{flex:1;min-width:0;min-height:52px;border:0;background:transparent;color:#71858b;border-radius:15px;font-size:10px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px}
-#app .mobilebar button b{font-size:20px;line-height:1.3}
-#app .mobilebar button:active,#app .mobilebar button:focus-visible{background:#e3f4ef;color:#16836d}
-#app .mobilebar button:first-child{color:#16836d}
-#app .toast{background:#244d4b;border-color:#74cdb7;color:white}
-#app .day{color:#80979d}
-#app .empty{color:#789097}
-#app .room{height:100%;min-height:0}
+#app .room{height:100%;min-height:0;padding:0;border:1px solid #e2ebee;border-radius:26px;overflow:hidden;background:#fbfdfe;box-shadow:var(--shadow)}
+#app .roomhead{min-height:82px;padding:13px 19px;background:#fff;border-bottom:1px solid #e7eef0;gap:13px}
+#app .roomhead .avatar{width:48px;height:48px}
+#app .roominfo strong{font-size:15px;color:#263f47;font-weight:800}
+#app .roominfo small{font-size:11px;color:#81949a}
+#app .roomtools .iconbtn{width:42px;height:42px;padding:0;border-radius:14px;background:#f4f8f9;border:1px solid #e6eef0;color:#5d747c}
+#app .messages{min-height:0;padding:26px clamp(12px,4vw,56px);gap:12px;background-color:#f5f9fa;background-image:radial-gradient(#a8c3c51c .8px,transparent .8px);background-size:20px 20px}
+#app .day{align-self:center;padding:6px 13px;margin:10px 0;border-radius:30px;background:#e8f0f2;color:#82969c;font-size:10px}
+#app .bubble{max-width:min(76%,650px);padding:11px 15px 8px;border:1px solid #e0e9ec;border-radius:19px 19px 5px 19px;background:#fff;color:#2b4149;box-shadow:0 5px 16px #2b56610c;line-height:1.9;font-size:13px}
+#app .bubble.mine{align-self:flex-start;background:linear-gradient(135deg,#d8f4e9,#e3f0fc);border-color:#c8e9df;color:#214b45;border-radius:19px 19px 19px 5px}
+#app .bubble.theirs{align-self:flex-end;background:#fff;color:#2b4149}
+#app .bubble time{color:#879da2;font-size:9px}
+#app .bubble .reply{background:#edf5f5;border-right:3px solid #48b99f;color:#5d777d;border-radius:8px;padding:6px 9px}
+#app .composerwrap{padding:13px 17px 16px;background:#fff;border-top:1px solid #e7eef0}
+#app .replybar{background:#eff8f5;color:#477d70;border:1px solid #dcefe8;border-radius:12px}
+#app .composer{align-items:flex-end;gap:9px}
+#app .composer .iconbtn{height:48px;min-width:46px;padding:0;border-radius:15px;background:#f3f8f8;border:1px solid #e5edef;color:#5b7880}
+#app .composer textarea{min-height:48px;max-height:130px;border-radius:16px;background:#f7fafb;border:1px solid #e2ebee;color:#263f47;padding:13px 15px}
+#app .composer textarea::placeholder{color:#94a5aa}
+#app .send{height:48px;min-width:50px;border-radius:16px;background:linear-gradient(135deg,#36b89e,#579bd2);color:white;box-shadow:0 7px 17px #4caa9a2b}
+#app .iconbtn,#app .btn{background:#fff;border:1px solid #e1eaed;color:#49636b}
+#app .btn.primary{background:linear-gradient(135deg,#36b89e,#579bd2);color:#fff;border:0}
+#app .modal{background:#19333b70;backdrop-filter:blur(7px)}
+#app .modal .sheet{background:#fff;color:#253d45;border:1px solid #e0eaed;border-radius:24px;box-shadow:0 24px 70px #1c465222}
+#app .modal .field{background:#f6fafb;color:#253d45;border-color:#dce8eb}
+#app .mobilebar{position:fixed!important;z-index:60!important;right:0;left:0;bottom:0;height:78px!important;padding:7px 12px calc(7px + env(safe-area-inset-bottom))!important;display:flex!important;align-items:center;justify-content:space-around;gap:4px;background:#ffffffed!important;border-top:1px solid #e1ebee!important;backdrop-filter:blur(22px);box-shadow:0 -8px 28px #31515a0c}
+#app .mobilebar button{flex:1;min-width:0;height:57px;padding:5px 2px!important;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:5px;border:0!important;border-radius:16px!important;background:transparent!important;color:#83969b!important;font-size:10px!important;transition:.18s}
+#app .mobilebar button b{font-size:0;line-height:1}
+#app .mobilebar button b svg{width:21px;height:21px;stroke:currentColor;fill:none;stroke-width:1.7}
+#app .mobilebar button span{font-size:10px}
+#app .mobilebar button:active,#app .mobilebar button:focus-visible{background:#e4f5ef!important;color:#16836d!important}
+#app .mobilebar button:first-child{color:#16836d!important;background:#e9f7f2!important}
+#app .toast{background:#274d4b;color:#fff;border:1px solid #70cbb5}
+#app .empty{color:#8ba0a5}
+#app .room .mobileback{display:none}
+#app .room.hidden{display:none!important}
+#app .layout.roomopen .sidebar{display:none}
+#app .layout.roomopen .main{display:flex}
 @media(max-width:760px){
- #app{padding-bottom:calc(76px + env(safe-area-inset-bottom))}
- #app .layout{min-height:calc(100dvh - 76px - env(safe-area-inset-bottom));height:calc(100dvh - 76px - env(safe-area-inset-bottom))}
- #app .sidebar{min-height:0;height:100%;overflow:auto;padding:14px 12px 20px}
- #app .main{height:100%;min-height:0;padding:10px 11px 12px}
- #app .layout.roomopen .main{height:100%}
- #app .room{height:100%;min-height:0}
- #app .messages{min-height:0;flex:1}
- #app .composerwrap{padding-bottom:3px}
- #app .mobilebar{height:calc(76px + env(safe-area-inset-bottom))}
- #app .mobileback{display:inline-grid}
- #app .roomhead{padding:5px 0 11px}
- #app .bubble{max-width:88%}
+ #app{padding-bottom:calc(78px + env(safe-area-inset-bottom))!important}
+ #app .layout{display:block;height:calc(100dvh - 78px - env(safe-area-inset-bottom));min-height:0}
+ #app .sidebar{height:100%;min-height:0;padding:18px 13px 12px;border:0}
+ #app .sidehead{margin-bottom:15px;padding-bottom:14px}
+ #app .sidehead h2{font-size:23px}
+ #app .search{height:45px}
+ #app .main{height:100%;min-height:0;padding:8px 8px 10px;background:#f1f6f8}
+ #app .layout.roomopen .sidebar{display:none}
+ #app .layout.roomopen .main{display:flex}
+ #app .room{border-radius:19px;height:100%;width:100%}
+ #app .roomhead{min-height:68px;padding:8px 10px;gap:9px}
+ #app .roomhead .avatar{width:42px;height:42px;border-radius:15px}
+ #app .roomtools .iconbtn{width:36px;height:36px}
+ #app .room .mobileback{display:inline-grid;width:36px;height:36px;padding:0;border-radius:12px}
+ #app .messages{padding:15px 9px}
+ #app .bubble{max-width:88%;padding:9px 12px}
+ #app .composerwrap{padding:8px 8px max(9px,env(safe-area-inset-bottom))}
+ #app .composer{gap:5px}
+ #app .composer .iconbtn{min-width:39px;height:43px}
+ #app .composer textarea{min-height:43px;padding:10px}
+ #app .send{min-width:43px;height:43px}
+ #app .mobilebar{height:calc(78px + env(safe-area-inset-bottom))!important}
 }
 @media(min-width:761px){
- #app .layout{min-height:calc(100dvh - 82px)}
- #app .sidebar{padding-bottom:20px}
- #app .mobilebar{max-width:1500px;margin:auto;border-radius:18px 18px 0 0}
+ #app .mobilebar{max-width:1600px;margin:auto;border-radius:22px 22px 0 0}
+ #app .layout.roomopen .sidebar{display:flex}
 }
-#vivoSocial .ig-post-comments,#vivoSocial .ig-add-comment{display:none!important}
 </style>
 </head>
 <body>
