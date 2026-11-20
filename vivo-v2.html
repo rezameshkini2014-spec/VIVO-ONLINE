@@ -10,6 +10,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="/vivo-v2.css">
+<link rel="stylesheet" href="/vivo-v2-auth.css">
 </head>
 <body>
 <div class="vivo-app" id="vivoApp">
@@ -40,6 +41,7 @@
       <div class="top-actions">
         <button class="icon-button" data-page="explore" aria-label="جست‌وجو" title="جست‌وجو">⌕</button>
         <button class="icon-button notification-button" data-page="notifications" aria-label="اعلان‌ها" title="اعلان‌ها">♧<i></i></button>
+        <button class="login-button" id="loginButton" data-action="login">ورود / ثبت‌نام</button>
         <button class="profile-button" data-page="profile"><span class="avatar avatar-self">و</span><span>حساب من</span><span class="chevron">⌄</span></button>
       </div>
     </header>
@@ -144,6 +146,30 @@
     <button data-page="messages"><span>▤</span><small>پیام‌ها</small></button>
     <button data-page="profile"><span>◉</span><small>پروفایل</small></button>
   </nav>
+  <div class="auth-overlay" id="authOverlay" aria-hidden="true">
+    <section class="auth-card" role="dialog" aria-modal="true" aria-labelledby="authTitle">
+      <button class="auth-close" id="authClose" aria-label="بستن">×</button>
+      <div class="auth-brand"><span class="brand-mark">V</span><b>VIVO</b></div>
+      <span class="auth-kicker">ورود امن به ویوو</span>
+      <h2 id="authTitle">ساخت حساب یا ورود</h2>
+      <p class="auth-description" id="authDescription">شماره موبایل خود را تأیید کن تا حساب ابری ویوو برایت فعال شود.</p>
+      <div id="phoneStep">
+        <label class="auth-label" for="authName">نام نمایشی</label><input class="auth-input" id="authName" maxlength="50" autocomplete="name" placeholder="نامی که دیگران می‌بینند">
+        <label class="auth-label" for="authUsername">نام کاربری انگلیسی</label><input class="auth-input" id="authUsername" maxlength="30" autocomplete="username" autocapitalize="none" placeholder="مثلاً vivo_user">
+        <small class="auth-hint">۴ تا ۳۰ نویسه؛ فقط حروف کوچک انگلیسی، عدد و زیرخط. شروع با حرف.</small>
+        <label class="auth-label" for="authPhone">شماره موبایل</label><input class="auth-input" id="authPhone" inputmode="tel" autocomplete="tel" maxlength="14" placeholder="09xxxxxxxxx">
+        <button class="primary-button auth-submit" id="sendOtp">دریافت کد تأیید</button>
+      </div>
+      <div id="codeStep" hidden>
+        <label class="auth-label" for="authCode">کد شش‌رقمی اعلان</label><input class="auth-input auth-code" id="authCode" inputmode="numeric" autocomplete="one-time-code" maxlength="6" placeholder="••••••">
+        <p class="auth-hint" id="otpHelp">کد تأیید از طریق اعلان همین دستگاه ارسال می‌شود.</p>
+        <button class="primary-button auth-submit" id="verifyOtp">تأیید و ورود</button>
+        <div class="auth-secondary-actions"><button class="text-button" id="resendOtp">ارسال دوباره کد</button><button class="text-button" id="backToPhone">اصلاح اطلاعات</button></div>
+      </div>
+      <p class="auth-error" id="authError" role="alert"></p>
+      <p class="auth-legal">با ادامه، قوانین استفاده و حریم خصوصی VIVO را می‌پذیری.</p>
+    </section>
+  </div>
   <div class="toast" id="toast" role="status" aria-live="polite"></div>
 </div>
 <script src="/vivo-v2.js" defer></script>
