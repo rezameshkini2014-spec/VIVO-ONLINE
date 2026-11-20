@@ -16,3 +16,6 @@ create index if not exists vivo_contact_requests_requester_idx
 
 alter table public.vivo_contact_requests enable row level security;
 revoke all on table public.vivo_contact_requests from anon, authenticated;
+
+create unique index if not exists vivo_contact_requests_pair_undirected_uidx
+  on public.vivo_contact_requests (least(requester_id, recipient_id), greatest(requester_id, recipient_id));
