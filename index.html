@@ -1508,4 +1508,116 @@ function init(){
 if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',init,{once:true});else init();
 })();
 </script>
+
+<style id="vivo-fullscreen-room-v4">
+#app .layout.roomopen{display:block!important;position:fixed!important;inset:0!important;z-index:1500!important;min-height:100dvh!important;height:100dvh!important;width:100vw!important;margin:0!important;padding:0!important;gap:0!important;background:var(--bg)!important}
+#app .layout.roomopen .sidebar,#app .layout.roomopen .main{display:none!important}
+#app .layout.roomopen .room{display:flex!important;position:absolute!important;inset:0!important;width:100%!important;height:100%!important;min-height:100dvh!important;max-height:100dvh!important;border:0!important;border-radius:0!important;margin:0!important;padding:0!important;overflow:hidden!important;box-shadow:none!important;background:var(--panel)!important}
+#app .layout.roomopen .roomhead{flex:0 0 auto;min-height:76px;padding:12px max(18px,env(safe-area-inset-right)) 12px max(18px,env(safe-area-inset-left));border:0!important;border-bottom:1px solid var(--line)!important;border-radius:0!important;background:var(--panel)!important;box-shadow:0 5px 24px #00000012}
+#app .layout.roomopen .messages{flex:1 1 auto!important;min-height:0!important;height:auto!important;max-height:none!important;overflow-y:auto!important;padding:22px clamp(14px,4vw,64px)!important;overscroll-behavior:contain}
+#app .layout.roomopen .composerwrap{flex:0 0 auto!important;padding:10px max(14px,env(safe-area-inset-right)) calc(10px + env(safe-area-inset-bottom)) max(14px,env(safe-area-inset-left))!important;border:0!important;border-top:1px solid var(--line)!important;background:var(--panel)!important}
+#app .layout.roomopen .composer{max-width:1100px;margin:0 auto}
+#app .layout.roomopen .roomhead .mobileback{display:grid!important;flex:0 0 44px;width:44px;height:44px;border-radius:15px;font-size:23px;place-items:center;transform:none}
+#app .layout.roomopen .roomhead .avatar{width:48px;height:48px;flex:0 0 48px;cursor:pointer;border-radius:17px;overflow:hidden;background-size:cover;background-position:center}
+#app .layout.roomopen .roominfo{cursor:pointer;min-width:0}
+#app .layout.roomopen .roomtools{margin-right:auto;display:flex;gap:8px}
+#app .layout.roomopen .roomtools .iconbtn{width:44px;height:44px}
+body:has(#app .layout.roomopen)>.mobilebar,body:has(#app .layout.roomopen) #app>.top,body:has(#app .layout.roomopen) #vivoMessengerPlus,body:has(#app .layout.roomopen) #vivoThemeQuick{display:none!important}
+#vivoInfoModal{position:fixed;inset:0;z-index:1900;background:#07101d99;backdrop-filter:blur(9px);display:none;align-items:center;justify-content:center;padding:16px}
+#vivoInfoModal.open{display:flex}
+#vivoInfoCard{width:min(560px,100%);max-height:min(88dvh,820px);overflow:auto;border:1px solid var(--line);border-radius:26px;background:var(--panel);color:var(--text);box-shadow:0 30px 100px #0006;padding:0}
+#vivoInfoCard .vi-cover{height:112px;background:radial-gradient(circle at 78% 30%,#8ba8ff77,transparent 30%),linear-gradient(120deg,#263c67,#126e70);position:relative}
+#vivoInfoCard .vi-close{position:absolute;top:12px;left:12px;width:38px;height:38px;border:1px solid #ffffff44;border-radius:13px;background:#09132388;color:white;font-size:21px}
+#vivoInfoCard .vi-profile{padding:0 22px 20px}
+#vivoInfoCard .vi-avatar{width:82px;height:82px;border:4px solid var(--panel);border-radius:25px;margin-top:-40px;position:relative;background:linear-gradient(145deg,#4ec9b4,#607bd8);display:grid;place-items:center;color:white;font-size:30px;font-weight:800;background-size:cover;background-position:center}
+#vivoInfoCard h2{font-size:21px;margin:12px 0 3px}
+#vivoInfoCard .vi-muted{color:var(--muted);font-size:12px;line-height:1.9;overflow-wrap:anywhere}
+#vivoInfoCard .vi-statrow{display:flex;gap:9px;flex-wrap:wrap;margin:16px 0}
+#vivoInfoCard .vi-stat{border:1px solid var(--line);background:var(--panel2);border-radius:14px;padding:10px 13px;font-size:12px}
+#vivoInfoCard .vi-section{border-top:1px solid var(--line);padding:15px 0}
+#vivoInfoCard .vi-section h3{font-size:13px;margin:0 0 11px}
+#vivoInfoCard .vi-actions{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
+#vivoInfoCard button.vi-action{border:1px solid var(--line);border-radius:13px;background:var(--panel2);color:var(--text);padding:12px 10px;font:inherit;font-size:12px;text-align:right}
+#vivoInfoCard button.vi-action:active{transform:scale(.985)}
+#vivoInfoCard .vi-member{display:flex;align-items:center;gap:11px;padding:9px 0;border-bottom:1px solid var(--line)}
+#vivoInfoCard .vi-member:last-child{border-bottom:0}
+#vivoInfoCard .vi-member-avatar{width:39px;height:39px;border-radius:13px;background:linear-gradient(145deg,#4ec9b4,#607bd8);display:grid;place-items:center;color:white;font-weight:800;background-size:cover;background-position:center;flex:0 0 39px}
+#vivoInfoCard .vi-member-info{flex:1;min-width:0}.vi-member-info b{display:block;font-size:12px}.vi-member-info small{font-size:10px;color:var(--muted)}
+#vivoInfoCard .vi-member button{border:1px solid var(--line);border-radius:10px;background:var(--panel2);color:var(--text);padding:7px 9px;font-size:11px}
+#vivoInfoCard .vi-owner{font-size:10px;color:#4dc7a6;border:1px solid #4dc7a655;padding:4px 7px;border-radius:20px}
+#vivoInfoCard .vi-perm{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:10px 0;font-size:12px;border-bottom:1px solid var(--line)}
+#vivoInfoCard .vi-perm input{width:18px;height:18px;accent-color:#40bda3}
+#vivoInfoCard .vi-footer{padding:0 22px 20px}
+#vivoInfoCard .vi-primary{width:100%;border:0;border-radius:14px;padding:13px;background:linear-gradient(110deg,#168d7d,#4d72d5);color:white;font-weight:800}
+@media(max-width:620px){#vivoInfoModal{padding:0;align-items:flex-end}#vivoInfoCard{width:100%;max-height:94dvh;border-radius:25px 25px 0 0;padding-bottom:env(safe-area-inset-bottom)}#vivoInfoCard .vi-cover{height:94px}}
+</style>
+<script id="vivo-fullscreen-profile-management-v4">
+(()=>{
+const $=id=>document.getElementById(id);
+const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const ownerKey=()=>String(db?.user?.phone||db?.user?.username||db?.user?.id||'local-owner');
+const isOwner=c=>!!c&&(c.ownerId===ownerKey()||(!c.ownerId&&['group','channel'].includes(c.type)));
+const fileAsImage=file=>new Promise((resolve,reject)=>{if(!file?.type?.startsWith('image/'))return reject(Error('لطفاً یک تصویر انتخاب کن.'));const reader=new FileReader();reader.onerror=reject;reader.onload=()=>{const im=new Image();im.onerror=reject;im.onload=()=>{const scale=Math.min(1,900/Math.max(im.width,im.height)),cv=document.createElement('canvas');cv.width=Math.round(im.width*scale);cv.height=Math.round(im.height*scale);cv.getContext('2d').drawImage(im,0,0,cv.width,cv.height);resolve(cv.toDataURL('image/jpeg',.78))};im.src=reader.result};reader.readAsDataURL(file)});
+let activeSection='info';
+function ensureModal(){if(!$('vivoInfoModal')){const m=document.createElement('div');m.id='vivoInfoModal';m.innerHTML='<div id="vivoInfoCard" dir="rtl"></div>';document.body.appendChild(m);m.addEventListener('click',e=>{if(e.target===m)close()})}}
+function close(){ $('vivoInfoModal')?.classList.remove('open')}
+function show(html){ensureModal();$('vivoInfoCard').innerHTML=html;$('vivoInfoModal').classList.add('open')}
+function chooseImage(callback){const input=document.createElement('input');input.type='file';input.accept='image/*';input.onchange=async()=>{try{const data=await fileAsImage(input.files?.[0]);callback(data)}catch(e){toast(e.message||'بارگذاری تصویر ناموفق بود')}};input.click()}
+function roomAvatar(c){const a=$('roomAvatar');if(!a)return;if(c.photo){a.textContent='';a.style.backgroundImage='url("'+c.photo+'")'}else{a.style.backgroundImage='';a.textContent=c.name?.slice(0,1)||'V'}}
+function openRoomProfile(){
+ const c=current();if(!c)return;
+ if(c.type==='group'||c.type==='channel')return showRoomInfo(c);
+ const contact=c.contact||{},photo=contact.photo||c.photo||'';
+ show('<div class="vi-cover"><button class="vi-close" data-vi="close">×</button></div><div class="vi-profile"><div class="vi-avatar" style="'+(photo?'background-image:url('+JSON.stringify(photo)+')':'')+'">'+(!photo?esc(c.name.slice(0,1)):'')+'</div><h2>'+esc(c.name)+'</h2><div class="vi-muted">'+(contact.username?'@'+esc(contact.username):'مخاطب محلی')+'</div><div class="vi-statrow"><span class="vi-stat">گفتگوی شخصی</span><span class="vi-stat">اطلاعات ذخیره‌شده روی این دستگاه</span></div><div class="vi-section"><h3>اطلاعات مخاطب</h3><div class="vi-muted">نام نمایشی: '+esc(c.name)+'<br>شناسه: '+(contact.username?'@'+esc(contact.username):'ثبت نشده')+'</div></div><div class="vi-actions"><button class="vi-action" data-vi="contact-photo">تغییر عکس مخاطب</button><button class="vi-action" data-vi="contact-name">ویرایش نام</button></div></div>');
+ $('vivoInfoCard').querySelector('[data-vi="contact-photo"]').onclick=()=>chooseImage(data=>{contact.photo=data;c.contact=contact;save();close();roomAvatar(c)});
+ $('vivoInfoCard').querySelector('[data-vi="contact-name"]').onclick=()=>{const v=prompt('نام مخاطب',c.name);if(v?.trim()){c.name=v.trim();save();$('roomName').textContent=c.name;roomAvatar(c);close();renderList()}};
+}
+function showRoomInfo(c){
+ const owner=isOwner(c),members=Array.isArray(c.members)?c.members:[];
+ const label=c.type==='group'?'اعضای گروه':'مدیران و اعضای کانال';
+ const memberHtml=members.map((m,i)=>'<div class="vi-member"><div class="vi-member-avatar" '+(m.photo?'style="background-image:url('+JSON.stringify(m.photo)+')"':'')+'>'+(m.photo?'':esc((m.name||'?').slice(0,1)))+'</div><div class="vi-member-info"><b>'+esc(m.name||m.username||'کاربر')+'</b><small>'+(m.username?'@'+esc(m.username):'عضو')+'</small></div>'+(m.owner?'<span class="vi-owner">مالک</span>':owner?'<button data-remove-member="'+i+'">حذف</button>':'')+'</div>').join('');
+ show('<div class="vi-cover"><button class="vi-close" data-vi="close">×</button></div><div class="vi-profile"><div class="vi-avatar" '+(c.photo?'style="background-image:url('+JSON.stringify(c.photo)+')"':'')+'>'+(c.photo?'':esc(c.name.slice(0,1)))+'</div><h2>'+esc(c.name)+'</h2><div class="vi-muted">'+esc(c.description||'توضیحی ثبت نشده')+'</div><div class="vi-statrow"><span class="vi-stat">'+(c.type==='group'?'گروه':'کانال')+'</span><span class="vi-stat">'+members.length+' عضو ثبت‌شده</span><span class="vi-stat">'+(owner?'مالک این فضا':'عضو')+'</span></div><div class="vi-section"><h3>'+label+'</h3>'+(memberHtml||'<div class="vi-muted">هنوز عضوی به‌جز مالک ثبت نشده است.</div>')+'</div><div class="vi-section"><h3>مدیریت فضا</h3><div class="vi-actions"><button class="vi-action" data-vi="rename" '+(!owner?'disabled':'')+'>تغییر نام</button><button class="vi-action" data-vi="photo" '+(!owner?'disabled':'')+'>تغییر عکس</button><button class="vi-action" data-vi="about" '+(!owner?'disabled':'')+'>تغییر درباره</button><button class="vi-action" data-vi="add-member" '+(!owner?'disabled':'')+'>افزودن عضو</button><button class="vi-action" data-vi="permissions" '+(!owner?'disabled':'')+'>مجوزها</button><button class="vi-action" data-vi="more" '+(!owner?'disabled':'')+'>تنظیمات بیشتر</button></div>'+(owner?'':'<p class="vi-muted" style="margin-top:10px">تنظیمات مدیریتی فقط برای مالک نمایش داده می‌شود.</p>')+'</div></div>');
+ const card=$('vivoInfoCard');card.querySelector('[data-vi="close"]').onclick=close;
+ card.querySelectorAll('[data-remove-member]').forEach(b=>b.onclick=()=>{if(!owner)return;const i=Number(b.dataset.removeMember);c.members.splice(i,1);save();showRoomInfo(c)});
+ card.querySelectorAll('[data-vi]').forEach(b=>{const action=b.dataset.vi;if(action==='close')return;b.onclick=()=>{if(!owner)return;close();if(action==='rename'){const v=prompt('نام جدید',c.name);if(v?.trim()){c.name=v.trim();save();$('roomName').textContent=c.name;roomAvatar(c);renderList()}}else if(action==='photo')chooseImage(data=>{c.photo=data;save();roomAvatar(c);showRoomInfo(c) });else if(action==='about'){const v=prompt('دربارهٔ '+c.name,c.description||'');if(v!==null){c.description=v.trim();save();$('roomSub').textContent=c.description||typeName(c.type);showRoomInfo(c)}}else if(action==='add-member')addMember(c);else if(action==='permissions')showPermissions(c);else if(action==='more')showMore(c)}});
+}
+function addMember(c){
+ const available=db.chats.filter(x=>x.type==='private'&&x.id!==c.id&&!c.members.some(m=>m.chatId===x.id));
+ const options=available.map(x=>'<label class="vi-perm"><span>'+esc(x.name)+(x.contact?.username?' · @'+esc(x.contact.username):'')+'</span><input type="checkbox" value="'+esc(x.id)+'"></label>').join('');
+ show('<div class="vi-profile"><h2>افزودن عضو</h2><p class="vi-muted">فقط مخاطب‌هایی که در فهرست همین دستگاه ثبت شده‌اند قابل انتخاب‌اند.</p><div class="vi-section">'+(options||'<p class="vi-muted">مخاطب دیگری برای افزودن وجود ندارد.</p>')+'</div><button class="vi-primary" id="viAddSelected">افزودن انتخاب‌شده‌ها</button><button class="vi-action" style="width:100%;margin-top:8px" data-vi="close">انصراف</button></div>');
+ $('vivoInfoCard').querySelector('[data-vi="close"]').onclick=close;$('viAddSelected').onclick=()=>{const ids=[...$('vivoInfoCard').querySelectorAll('input:checked')].map(x=>x.value);ids.forEach(id=>{const x=db.chats.find(y=>y.id===id);if(x)c.members.push({chatId:x.id,name:x.name,username:x.contact?.username||'',photo:x.contact?.photo||''})});save();showRoomInfo(c)};
+}
+function showPermissions(c){
+ if(!isOwner(c))return;
+ c.permissions=c.permissions||{sendMessages:true,editInfo:false,addMembers:true,pinMessages:true};
+ const defs=[['sendMessages','اجازهٔ ارسال پیام برای اعضا'],['addMembers','اجازهٔ افزودن عضو برای اعضا'],['pinMessages','اجازهٔ سنجاق پیام برای اعضا'],['editInfo','اجازهٔ تغییر اطلاعات گروه برای اعضا']];
+ show('<div class="vi-profile"><h2>مجوزهای اعضا</h2><p class="vi-muted">این بخش فقط برای مالک گروه قابل مشاهده است. تنظیمات در همین دستگاه ذخیره می‌شوند.</p><div class="vi-section">'+defs.map(([k,l])=>'<label class="vi-perm"><span>'+l+'</span><input type="checkbox" data-perm="'+k+'" '+(c.permissions[k]?'checked':'')+'></label>').join('')+'</div><button class="vi-primary" id="viSavePerm">ذخیره مجوزها</button></div>');
+ $('viSavePerm').onclick=()=>{$('vivoInfoCard').querySelectorAll('[data-perm]').forEach(x=>c.permissions[x.dataset.perm]=x.checked);save();close();toast('مجوزها در همین دستگاه ذخیره شدند.')};
+}
+function showMore(c){
+ show('<div class="vi-profile"><h2>تنظیمات بیشتر</h2><div class="vi-actions"><button class="vi-action" data-extra="pin">'+(c.pinned?'برداشتن سنجاق':'سنجاق گفتگو')+'</button><button class="vi-action" data-extra="clear">پاک‌کردن پیام‌ها</button><button class="vi-action" data-extra="delete" style="color:#e87979">حذف '+(c.type==='group'?'گروه':'کانال')+'</button></div></div>');
+ $('vivoInfoCard').querySelector('[data-extra="pin"]').onclick=()=>{c.pinned=!c.pinned;save();close();renderList()};
+ $('vivoInfoCard').querySelector('[data-extra="clear"]').onclick=()=>{if(confirm('همه پیام‌های این فضا پاک شوند؟')){c.messages=[];save();close();renderMessages()}};
+ $('vivoInfoCard').querySelector('[data-extra="delete"]').onclick=()=>{if(confirm('این فضا و پیام‌های محلی آن حذف شود؟')){db.chats=db.chats.filter(x=>x.id!==c.id);db.active=null;save();close();$('backChats').click()}};
+}
+function openMainMenu(){
+ const c=current();if(!c)return;
+ if(c.type==='group'||c.type==='channel'){
+ const owner=isOwner(c);
+ show('<div class="vi-profile"><h2>مدیریت '+(c.type==='group'?'گروه':'کانال')+'</h2><p class="vi-muted">'+esc(c.name)+'</p><div class="vi-actions"><button class="vi-action" data-menu="info">نمایش اعضا و اطلاعات</button>'+(owner?'<button class="vi-action" data-menu="rename">تغییر نام</button><button class="vi-action" data-menu="photo">تغییر عکس</button><button class="vi-action" data-menu="about">تغییر درباره</button><button class="vi-action" data-menu="permissions">مجوزهای اعضا</button><button class="vi-action" data-menu="add">افزودن عضو</button><button class="vi-action" data-menu="more">تنظیمات بیشتر</button>':'')+'</div></div>');
+ $('vivoInfoCard').querySelectorAll('[data-menu]').forEach(b=>b.onclick=()=>{const a=b.dataset.menu;close();if(a==='info')showRoomInfo(c);else if(a==='rename'){const v=prompt('نام جدید',c.name);if(v?.trim()){c.name=v.trim();save();$('roomName').textContent=c.name;roomAvatar(c);renderList()}}else if(a==='photo')chooseImage(data=>{c.photo=data;save();roomAvatar(c)});else if(a==='about'){const v=prompt('درباره',c.description||'');if(v!==null){c.description=v.trim();save();$('roomSub').textContent=c.description||typeName(c.type)}}else if(a==='permissions')showPermissions(c);else if(a==='add')addMember(c);else if(a==='more')showMore(c)});
+ }else openRoomProfile();
+}
+function init(){
+ if(typeof openChat==='function'){const old=openChat;window.openChat=function(id){old(id);const c=current();if(!c)return;if(['group','channel'].includes(c.type)&&!c.ownerId){c.ownerId=ownerKey();c.members=c.members||[];save()}roomAvatar(c)}}
+ const back=$('backChats');if(back){back.innerHTML='‹';back.title='بازگشت به فهرست گفتگوها';back.setAttribute('aria-label','بازگشت به فهرست گفتگوها')}
+ if($('roomAvatar')){$('roomAvatar').style.cursor='pointer';$('roomAvatar').title='نمایش پروفایل یا اطلاعات گفتگو';$('roomAvatar').onclick=openRoomProfile}
+ if($('roomName'))$('roomName').onclick=openRoomProfile;
+ if($('roomMore')){$('roomMore').title='مدیریت گفتگو';$('roomMore').onclick=openMainMenu}
+ document.addEventListener('keydown',e=>{if(e.key==='Escape'&&$('vivoInfoModal')?.classList.contains('open'))close()});
+ const originalBack=back?.onclick;
+}
+if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',init,{once:true});else init();
+})();
+</script>
 </body></html>
