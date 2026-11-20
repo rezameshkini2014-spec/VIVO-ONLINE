@@ -6,7 +6,8 @@
   "scripts": {
     "android:sync": "cap sync android",
     "android:open": "cap open android",
-    "android:build": "npx cap sync android && cd android && ./gradlew --no-daemon assembleDebug"
+    "android:build": "npx cap sync android && cd android && ./gradlew --no-daemon assembleDebug",
+    "start": "node server.js"
   },
   "dependencies": {
     "@capacitor/android": "^7.4.3",
@@ -14,5 +15,8 @@
   },
   "devDependencies": {
     "@capacitor/cli": "^7.4.3"
+  },
+  "engines": {
+    "node": ">=20"
   }
 }
