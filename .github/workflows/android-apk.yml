@@ -3,7 +3,7 @@ name: Build VIVO Android APK
 on:
   workflow_dispatch:
   push:
-    branches: [main]
+    branches: [main, vivo-original-upgrade-2026-11-20]
     paths:
       - 'index.html'
       - 'manifest.webmanifest'
@@ -11,6 +11,7 @@ on:
       - 'package.json'
       - 'capacitor.config.json'
       - 'www/**'
+      - 'android/**'
       - '.github/workflows/android-apk.yml'
 
 permissions:
@@ -62,8 +63,7 @@ jobs:
           tag_name: vivo-android-${{ github.run_number }}
           name: VIVO Android build ${{ github.run_number }}
           body: |
-            VIVO Android test build.
-            Installable debug APK. It loads the VIVO web application from the internet.
-            This is not a signed production release.
+            VIVO Android installable build.
+            Debug APK for installation and testing. The app loads the VIVO preview deployment.
           files: android/app/build/outputs/apk/debug/app-debug.apk
           make_latest: true
